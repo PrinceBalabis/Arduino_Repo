@@ -1,53 +1,59 @@
 /*
-HC-SR04 Ping distance sensor]
-VCC to arduino 5v GND to arduino GND
-Echo to Arduino pin 13 Trig to Arduino pin 12
-Red POS to Arduino pin 11
-Green POS to Arduino pin 10
-560 ohm resistor to both LED NEG and GRD power rail
-More info at: http://goo.gl/kJ8Gl
-Original code improvements to the Ping sketch sourced from Trollmaker.com
-Some code and wiring inspired by http://en.wikiversity.org/wiki/User:Dstaub/robotcar
-*/
+ HC-SR04 Ping distance sensor:
+ VCC to arduino 5v
+ GND to arduino GND
+ Echo to Arduino pin 7
+ Trig to Arduino pin 8
 
-#define trigPin 13
-#define echoPin 12
-#define led 11
-#define led2 10
+ This sketch originates from Virtualmix: http://goo.gl/kJ8Gl
+ Has been modified by Winkle ink here: http://winkleink.blogspot.com.au/2012/05/arduino-hc-sr04-ultrasonic-distance.html
+ And modified further by ScottC here: http://arduinobasics.blogspot.com.au/2012/11/arduinobasics-hc-sr04-ultrasonic-sensor.html
+ on 10 Nov 2012.
+ */
+
+
+#define echoPin 5 // Echo Pin
+#define trigPin 6 // Trigger Pin
+
+int doorRange = 0;
+long duration, distance; // Duration used to calculate distance
 
 void setup() {
-  Serial.begin (9600);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  pinMode(led, OUTPUT);
-  pinMode(led2, OUTPUT);
+
+  pinMode(9, OUTPUT);
+  pinMode(12, OUTPUT);
+  digitalWrite(9, LOW);
+  digitalWrite(12, LOW);
+
 }
 
 void loop() {
-  long duration, distance;
-  digitalWrite(trigPin, LOW);  // Added this line
-  delayMicroseconds(2); // Added this line
+  /* The following trigPin/echoPin cycle is used to determine the
+   distance of the nearest object by bouncing soundwaves off of it. */
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
   digitalWrite(trigPin, HIGH);
-//  delayMicroseconds(1000); - Removed this line
-  delayMicroseconds(10); // Added this line
+  delayMicroseconds(10);
+
   digitalWrite(trigPin, LOW);
   duration = pulseIn(echoPin, HIGH);
-  distance = (duration/2) / 29.1;
-  if (distance < 4) {  // This is where the LED On/Off happens
-    digitalWrite(led,HIGH); // When the Red condition is met, the Green LED should turn off
-  digitalWrite(led2,LOW);
-}
-  else {
-    digitalWrite(led,LOW);
-    digitalWrite(led2,HIGH);
-  }
-  if (distance >= 200 || distance <= 0){
-    Serial.println("Out of range");
-  }
-  else {
-    Serial.print(distance);
-    Serial.println(" cm");
-  }
-  delay(500);
-}
 
+  //Calculate the distance (in cm) based on the speed of sound.
+  distance = duration / 58.2;
+
+  if (doorRange == 0) {
+    doorRange = distance;
+  }
+
+  if (distance - 3 >= doorRange || distance + 3 <= doorRange) {
+    digitalWrite(9, HIGH);
+    digitalWrite(12, HIGH);
+  }
+
+
+  //Delay 50ms before next reading.
+  delay(150);
+}
