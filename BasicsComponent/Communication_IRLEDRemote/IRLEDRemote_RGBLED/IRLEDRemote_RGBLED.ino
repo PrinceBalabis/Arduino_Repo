@@ -19,6 +19,7 @@ int led_blue = 10;
 int led_red = 8;
 int led_ir = 11;
 
+// Variables used for operations
 int rgbState = 0;
 int greenState = 0;
 int blueState = 0;
