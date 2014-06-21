@@ -1,9 +1,9 @@
 int en1 = 2;
 int en2 = 3;
-int a = 8;
-int b = 9;
-int c = 12;
-int d = 13;
+int a = 12;
+int b = 11;
+int c = 10;
+int d = 9;
 
 void setup() {
   pinMode(en1, OUTPUT);
