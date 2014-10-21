@@ -19,11 +19,12 @@ RCSwitch mySwitch = RCSwitch();
 int mainLightsAddress = 0; // EEPROM address 0
 
 // Button pins
-const int powerButton = 1;
-const int upVolButton = 2;
-const int downVolButton = 3;
-const int muteButton = 4;
-const int MainLightButton = 5;
+const int powerButton = 4;
+const int upVolButton = 8;
+const int downVolButton = 12;
+const int muteButton = 16;
+const int mainLightButton = 1;
+const int pcPowerButton = 5;
 
 // NEXTBASE IR codes
 const unsigned long power = 0xFFC23D;
@@ -42,6 +43,10 @@ unsigned long currentTimer = 0;
 unsigned long previousTimer = 0;
 
 int previousBtnChosen = 0;
+
+// 433 MHZ transmitter pin
+const int pcPowerPin = 2;
+
 
 char keymap[4][4] =
 {
@@ -88,7 +93,8 @@ void setup()
   // 433 MHz transmission setup
   switchesSetup();
   
-  
+  // PC Power switch setup
+  pcPowerSetup();
 }
 
 void loop() {
@@ -110,8 +116,11 @@ void loop() {
   if (muteButton == keyName) {
     sendMuteCommand();
   }
-  if (MainLightButton == keyName) {
+  if (mainLightButton == keyName) {
     sendMainLightPing();
+  }
+    if (pcPowerButton == keyName) {
+    sendPCPowerPing();
   }
   clearButton();
 }
