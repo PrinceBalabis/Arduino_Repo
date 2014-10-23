@@ -1,7 +1,7 @@
 /*
  *  This Sketch is to make a "universal home control".
  *  Controlling PC, lights, speaker & other home electronics
- *  Hardware needed: 
+ *  Hardware needed:
  *  - 940 nm IR LED with a resistor to pin 3
  *  - NPN transistor for PC Power switch
  *  - 433 MHz transmitter
@@ -96,6 +96,12 @@ void loop() {
 
   if (nBPowerButton == keyName) {
     sendPowerCommand();
+  } else if (nBMuteButton == keyName) {
+    sendMuteCommand();
+  } else if (lightMainButton == keyName) {
+    sendMainLightPing();
+  } else if (pcPowerButton == keyName) {
+    sendPCPowerPing();
   }
   while (nBUpVolButton == keyName && state != RELEASED) {
     sendUpVolCommand();
@@ -105,16 +111,6 @@ void loop() {
     sendDownVolCommand();
     state = getKeyState();
   }
-  if (nBMuteButton == keyName) {
-    sendMuteCommand();
-  }
-  if (lightMainButton == keyName) {
-    sendMainLightPing();
-  }
-  if (pcPowerButton == keyName) {
-    sendPCPowerPing();
-  }
   clearButton();
 }
-
 
