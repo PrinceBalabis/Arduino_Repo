@@ -1,14 +1,14 @@
 
 
-// Hold power button for 1 second to run the power command
+// Hold power button for 1 second to run the nBIRPower command
 void sendPowerCommand() {
   currentTimer = millis();
   previousTimer = currentTimer;
-  serialPrintln("Hold power button 1 sec");
+  serialPrintln("Hold power button 0,5 sec");
   while (getKeyState() != RELEASED) {
-    if ((millis() - previousTimer) >= 1000) {
-      sendCommand(power);
-      serialPrintln("Power button was held for 1 sec, sent power command");
+    if ((millis() - previousTimer) >= 500) {
+      sendCommand(nBIRPower);
+      serialPrintln("Power button was held for 1 sec, sent nBIRPower command");
       break;
     }
   }
@@ -17,45 +17,27 @@ void sendPowerCommand() {
 void sendUpVolCommand() {
   currentTimer = millis();
   if ((currentTimer - previousTimer) >= 60) {
-    incVolume(1);
+    sendCommand(nBIRUpVolume);
     previousTimer = currentTimer; // Save last time volume increase
-    serialPrintln("Sent upVolume command");
+    serialPrintln("Sent nBIRUpVolume command");
   }
 }
 
 void sendDownVolCommand() {
   currentTimer = millis();
   if ((currentTimer - previousTimer) >= 60) {
-    incVolume(1);
+    sendCommand(nBIRDownVolume);
     previousTimer = currentTimer; // Save last time volume decrease
-    serialPrintln("Sent downVolume command");
+    serialPrintln("Sent nBIRDownVolume command");
   }
 }
 
 void sendMuteCommand() {
-  sendCommand(mute);
-  previousBtnChosen = muteButton;
-  serialPrintln("Sending mute command");
+  sendCommand(nBIRMute);
+  previousBtnChosen = nBMuteButton;
+  serialPrintln("Sending nBIRMute command");
 }
 
 void sendCommand(unsigned long command) {
   irsend.sendNEC(command, 32);
-}
-
-void incVolume(int volValue) {
-  if (volValue > 30) {
-    volValue = 30;
-  }
-  for (int i = 0; i < volValue; i++) {
-    sendCommand(upVolume);
-  }
-}
-
-void decVolume(int volValue) {
-  if (volValue > 30) {
-    volValue = 30;
-  }
-  for (int i = 0; i < volValue; i++) {
-    sendCommand(downVolume);
-  }
 }

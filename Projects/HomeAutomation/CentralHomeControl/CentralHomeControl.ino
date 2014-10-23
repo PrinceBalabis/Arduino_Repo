@@ -1,52 +1,36 @@
 /*
- *  hardware needed: 940 nm IR LED with a resistor to pin 3
- *  NextBase takes about 9 seconds to boot
- *  Volume option is between 0 and 30 in value
+ *  This Sketch is to make a "universal home control".
+ *  Controlling PC, lights, speaker & other home electronics
+ *  Hardware needed: 
+ *  - 940 nm IR LED with a resistor to pin 3
+ *  - NPN transistor for PC Power switch
+ *  - 433 MHz transmitter
  */
 
-// Needed libraries
+// Needed libraries & config
 #include <CIRremote.h>
-IRsend irsend;
-
 #include <RCSwitch.h>
-RCSwitch mySwitch = RCSwitch();
-
 #include <Keypad.h>
-
 #include <EEPROM.h>
+#include "cnf.h" // config file
 
-// EEPROM variables
+// Needed glbal EEPROM variables
 int mainLightsAddress = 0; // EEPROM address 0
 
-// Button pins
-const int powerButton = 4;
-const int upVolButton = 8;
-const int downVolButton = 12;
-const int muteButton = 16;
-const int mainLightButton = 1;
-const int pcPowerButton = 5;
-
-// NEXTBASE IR codes
-const unsigned long power = 0xFFC23D;
-const unsigned long mute = 0xFF02FD;
-const unsigned long upVolume = 0xFFF00F;
-const unsigned long downVolume = 0xFF708F;
-
-// 433 MHZ transmitter pin
-const int transm433Pin = 12;
-
-// Put 1 to enable serial, 0 to disable
-const int serialEnabled = 0;
-
-// Variables needed for button hold timers
+// Needed glbal Keypad variables
 unsigned long currentTimer = 0;
 unsigned long previousTimer = 0;
-
+int keyHold = 0;
+char keypressed;
+int keyName;
 int previousBtnChosen = 0;
 
-// 433 MHZ transmitter pin
-const int pcPowerPin = 2;
+// Instance of the IRsend class
+IRsend irsend;
 
+//Code that shows the the keypad connections to the arduino terminals
+byte rowPins[4] = {11, 10, 9, 8}; //Rows 0 to 3
+byte colPins[4] = {7, 6, 5, 4}; //Columns 0 to 3
 
 char keymap[4][4] =
 {
@@ -64,17 +48,19 @@ int keymapName[4][4] =
   {1, 5, 9, 13}
 };
 
-//Code that shows the the keypad connections to the arduino terminals
-byte rowPins[4] = {11, 10, 9, 8}; //Rows 0 to 3
-byte colPins[4] = {7, 6, 5, 4}; //Columns 0 to 3
+// Instance of the Keypad class
+Keypad keypad = Keypad(
+                  makeKeymap(keymap), rowPins, colPins, 4, 4
+                );
 
-//initializes an instance of the Keypad class
-Keypad keypad = Keypad(makeKeymap(keymap), rowPins, colPins, 4, 4);
 
-int keyHold = 0;
-char keypressed;
-int keyName;
 
+// Instance of the RCSwitch class
+RCSwitch mySwitch = RCSwitch();
+
+/*
+*  Gets the key name(number) of the button
+*/
 int getKeyName(char keycode) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -85,6 +71,9 @@ int getKeyName(char keycode) {
   }
 }
 
+/*
+* Main setup functin which calls other setup functions
+*/
 void setup()
 {
   // Enable or not enable Serial depending on config
@@ -92,34 +81,37 @@ void setup()
 
   // 433 MHz transmission setup
   switchesSetup();
-  
+
   // PC Power switch setup
   pcPowerSetup();
 }
 
+/*
+* Main loop function which listens for button presses
+*/
 void loop() {
-  keypressed = keypad.waitForKey();
-  keyName = getKeyName(keypressed);
-  int state = 0;
+  keypressed = keypad.waitForKey(); // Program is frozen until button-press
+  keyName = getKeyName(keypressed); // Get keyname/keynumber
+  int state = 0; // Private variable to store button state
 
-  if (powerButton == keyName) {
+  if (nBPowerButton == keyName) {
     sendPowerCommand();
   }
-  while (upVolButton == keyName && state != RELEASED) {
+  while (nBUpVolButton == keyName && state != RELEASED) {
     sendUpVolCommand();
     state = getKeyState();
   }
-  while (downVolButton == keyName && state != RELEASED) {
+  while (nBDownVolButton == keyName && state != RELEASED) {
     sendDownVolCommand();
     state = getKeyState();
   }
-  if (muteButton == keyName) {
+  if (nBMuteButton == keyName) {
     sendMuteCommand();
   }
-  if (mainLightButton == keyName) {
+  if (lightMainButton == keyName) {
     sendMainLightPing();
   }
-    if (pcPowerButton == keyName) {
+  if (pcPowerButton == keyName) {
     sendPCPowerPing();
   }
   clearButton();
