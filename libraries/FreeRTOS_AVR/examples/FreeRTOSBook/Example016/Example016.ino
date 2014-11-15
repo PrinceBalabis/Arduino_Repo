@@ -73,9 +73,9 @@ static char *pcStringsToPrint[] =
 
 /*-----------------------------------------------------------*/
 
-/* Declare a variable of type xQueueHandle.  This is used to send messages from
+/* Declare a variable of type QueueHandle_t.  This is used to send messages from
 the print tasks to the gatekeeper task. */
-xQueueHandle xPrintQueue;
+QueueHandle_t xPrintQueue;
 
 
 void setup( void )
@@ -96,12 +96,12 @@ void setup( void )
     The index to the string they attempt to write is passed in as the task
     parameter (4th parameter to xTaskCreate()).  The tasks are created at
     different priorities so some pre-emption will occur. */
-    xTaskCreate( prvPrintTask, (signed char*)"Print1", 200, ( void * ) 0, 1, NULL );
-    xTaskCreate( prvPrintTask, (signed char*)"Print2", 200, ( void * ) 1, 2, NULL );
+    xTaskCreate( prvPrintTask, "Print1", 200, ( void * ) 0, 1, NULL );
+    xTaskCreate( prvPrintTask, "Print2", 200, ( void * ) 1, 2, NULL );
 
     /* Create the gatekeeper task.  This is the only task that is permitted
     to access standard out. */
-    xTaskCreate( prvStdioGatekeeperTask, (signed char*)"Gatekeeper", 200, NULL, 0, NULL );
+    xTaskCreate( prvStdioGatekeeperTask, "Gatekeeper", 200, NULL, 0, NULL );
 
     /* Start the scheduler so the created tasks start executing. */
     vTaskStartScheduler();
@@ -156,7 +156,7 @@ extern "C"{  // FreeRTOS expectes C linkage
     {
       /* In this case the last parameter (xHigherPriorityTaskWoken) is not
       actually used but must still be supplied. */
-      xQueueSendToFrontFromISR( xPrintQueue, &( pcStringsToPrint[ 2 ] ), (signed char*)&xHigherPriorityTaskWoken );
+      xQueueSendToFrontFromISR( xPrintQueue, &( pcStringsToPrint[ 2 ] ), (BaseType_t*)&xHigherPriorityTaskWoken );
 
       /* Reset the count ready to print out the string again in 200 ticks
       time. */
@@ -193,4 +193,3 @@ int iIndexToString;
 }
 //------------------------------------------------------------------------------
 void loop() {}
-

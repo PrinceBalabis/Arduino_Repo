@@ -71,11 +71,11 @@ void setup( void )
 {
   Serial.begin(9600);
   /* Create two instances of the continuous processing task, both at priority 1. */
-  xTaskCreate( vContinuousProcessingTask, (signed char*)"Task 1", 200, (void*)pcTextForTask1, 1, NULL );
-  xTaskCreate( vContinuousProcessingTask, (signed char*)"Task 2", 200, (void*)pcTextForTask2, 1, NULL );
+  xTaskCreate( vContinuousProcessingTask, "Task 1", 200, (void*)pcTextForTask1, 1, NULL );
+  xTaskCreate( vContinuousProcessingTask, "Task 2", 200, (void*)pcTextForTask2, 1, NULL );
 
   /* Create one instance of the periodic task at priority 2. */
-  xTaskCreate( vPeriodicTask, (signed char*)"Task 3", 200, (void*)pcTextForPeriodicTask, 2, NULL );
+  xTaskCreate( vPeriodicTask, "Task 3", 200, (void*)pcTextForPeriodicTask, 2, NULL );
 
   /* Start the scheduler so our tasks start executing. */
   vTaskStartScheduler();
@@ -105,7 +105,7 @@ char *pcTaskName;
 
 void vPeriodicTask( void *pvParameters )
 {
-portTickType xLastWakeTime;
+TickType_t xLastWakeTime;
 
   /* The xLastWakeTime variable needs to be initialized with the current tick
   count.  Note that this is the only time we access this variable.  From this
@@ -120,7 +120,7 @@ portTickType xLastWakeTime;
     vPrintString( "Periodic task is running\r\n" );
 
     /* We want this task to execute exactly every 500 milliseconds. */
-    vTaskDelayUntil( &xLastWakeTime, ( 500 / portTICK_RATE_MS ) );
+    vTaskDelayUntil( &xLastWakeTime, ( 500 / portTICK_PERIOD_MS ) );
   }
 }
 //------------------------------------------------------------------------------

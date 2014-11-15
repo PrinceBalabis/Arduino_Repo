@@ -73,11 +73,11 @@ void setup( void )
 {
   Serial.begin(9600);
   /* Create the first task at priority 1... */
-  xTaskCreate( vTaskFunction, (signed char*)"Task 1", 200, (void*)pcTextForTask1, 1, NULL );
+  xTaskCreate( vTaskFunction, "Task 1", 200, (void*)pcTextForTask1, 1, NULL );
 
   /* ... and the second task at priority 2.  The priority is the second to
   last parameter. */
-  xTaskCreate( vTaskFunction, (signed char*)"Task 2", 200, (void*)pcTextForTask2, 2, NULL );
+  xTaskCreate( vTaskFunction, "Task 2", 200, (void*)pcTextForTask2, 2, NULL );
 
   /* Start the scheduler so our tasks start executing. */
   vTaskStartScheduler();

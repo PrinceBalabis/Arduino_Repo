@@ -7,7 +7,7 @@
 
 #define LED_PIN 13
 // Semaphore to trigger context switch
-xSemaphoreHandle xSemaphore;
+SemaphoreHandle_t xSemaphore;
 //------------------------------------------------------------------------------
 // high priority thread to set pin low
 static void ledOffTask(void *pvParameters) {
@@ -41,7 +41,7 @@ void setup() {
 
   // create high priority thread
   xTaskCreate(ledOffTask,
-    (signed portCHAR *)"Task1",
+    "Task1",
     configMINIMAL_STACK_SIZE,
     NULL,
     tskIDLE_PRIORITY + 2,
@@ -49,7 +49,7 @@ void setup() {
 
   // create lower priority thread
   xTaskCreate(ledControl,
-    (signed portCHAR *)"Task2",
+    "Task2",
     configMINIMAL_STACK_SIZE,
     NULL,
     tskIDLE_PRIORITY + 1,

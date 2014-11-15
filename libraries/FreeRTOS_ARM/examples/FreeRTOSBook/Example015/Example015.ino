@@ -60,13 +60,13 @@
 static void prvPrintTask( void *pvParameters );
 
 /* The function that uses a mutex to control access to standard out. */
-static void prvNewPrintString( const portCHAR *pcString );
+static void prvNewPrintString( const char *pcString );
 
 /*-----------------------------------------------------------*/
 
-/* Declare a variable of type xSemaphoreHandle.  This is used to reference the
+/* Declare a variable of type SemaphoreHandle_t.  This is used to reference the
 mutex type semaphore that is used to ensure mutual exclusive access to stdout. */
-xSemaphoreHandle xMutex;
+SemaphoreHandle_t xMutex;
 
 
 void setup( void )
@@ -86,8 +86,8 @@ void setup( void )
     /* Create two instances of the tasks that attempt to write stdout.  The
     string they attempt to write is passed in as the task parameter.  The tasks
     are created at different priorities so some pre-emption will occur. */
-    xTaskCreate( prvPrintTask, (signed char*)"Print1", 200, (void*)"Task 1 ******************************************\r\n", 1, NULL );
-    xTaskCreate( prvPrintTask, (signed char*)"Print2", 200, (void*)"Task 2 ------------------------------------------\r\n", 2, NULL );
+    xTaskCreate( prvPrintTask, "Print1", 200, (void*)"Task 1 ******************************************\r\n", 1, NULL );
+    xTaskCreate( prvPrintTask, "Print2", 200, (void*)"Task 2 ------------------------------------------\r\n", 2, NULL );
 
     /* Start the scheduler so the created tasks start executing. */
     vTaskStartScheduler();
@@ -101,7 +101,7 @@ void setup( void )
 }
 /*-----------------------------------------------------------*/
 
-static void prvNewPrintString( const portCHAR *pcString )
+static void prvNewPrintString( const char *pcString )
 {
   /* The semaphore is created before the scheduler is started so already
   exists by the time this task executes.

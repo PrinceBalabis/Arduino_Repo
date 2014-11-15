@@ -65,9 +65,9 @@ static void vReceiverTask( void *pvParameters );
 
 /*-----------------------------------------------------------*/
 
-/* Declare a variable of type xQueueHandle.  This is used to store the queue
+/* Declare a variable of type QueueHandle_t.  This is used to store the queue
 that is accessed by all three tasks. */
-xQueueHandle xQueue;
+QueueHandle_t xQueue;
 
 /* Define the structure type that will be passed on the queue. */
 typedef struct
@@ -96,12 +96,12 @@ void setup( void )
     queue, so one task will continuously send xStructsToSend[ 0 ] to the queue
     while the other task will continuously send xStructsToSend[ 1 ].  Both
     tasks are created at priority 2 which is above the priority of the receiver. */
-    xTaskCreate( vSenderTask, (signed char*)"Sender1", 200, ( void * ) &( xStructsToSend[ 0 ] ), 2, NULL );
-    xTaskCreate( vSenderTask, (signed char*)"Sender2", 200, ( void * ) &( xStructsToSend[ 1 ] ), 2, NULL );
+    xTaskCreate( vSenderTask, "Sender1", 200, ( void * ) &( xStructsToSend[ 0 ] ), 2, NULL );
+    xTaskCreate( vSenderTask, "Sender2", 200, ( void * ) &( xStructsToSend[ 1 ] ), 2, NULL );
 
     /* Create the task that will read from the queue.  The task is created with
     priority 1, so below the priority of the sender tasks. */
-    xTaskCreate( vReceiverTask, (signed char*)"Receiver", 200, NULL, 1, NULL );
+    xTaskCreate( vReceiverTask, "Receiver", 200, NULL, 1, NULL );
 
     /* Start the scheduler so the created tasks start executing. */
     vTaskStartScheduler();
@@ -122,7 +122,7 @@ void setup( void )
 static void vSenderTask( void *pvParameters )
 {
 portBASE_TYPE xStatus;
-const portTickType xTicksToWait = 100 / portTICK_RATE_MS;
+const TickType_t xTicksToWait = 100 / portTICK_PERIOD_MS;
 
   /* As per most tasks, this task is implemented within an infinite loop. */
   for( ;; )

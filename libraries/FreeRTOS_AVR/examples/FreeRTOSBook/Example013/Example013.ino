@@ -69,9 +69,9 @@ static void vExampleInterruptHandler( void );
 
 /*-----------------------------------------------------------*/
 
-/* Declare a variable of type xSemaphoreHandle.  This is used to reference the
+/* Declare a variable of type SemaphoreHandle_t.  This is used to reference the
 semaphore that is used to synchronize a task with an interrupt. */
-xSemaphoreHandle xCountingSemaphore;
+SemaphoreHandle_t xCountingSemaphore;
 
 // pin to generate interrupts
 #if defined(CORE_TEENSY)
@@ -103,12 +103,12 @@ void setup( void )
     with the interrupt.  The handler task is created with a high priority to
     ensure it runs immediately after the interrupt exits.  In this case a
     priority of 3 is chosen. */
-    xTaskCreate( vHandlerTask, (signed char*)"Handler", 200, NULL, 3, NULL );
+    xTaskCreate( vHandlerTask, "Handler", 200, NULL, 3, NULL );
 
     /* Create the task that will periodically generate a software interrupt.
     This is created with a priority below the handler task to ensure it will
     get preempted each time the handler task exist the Blocked state. */
-    xTaskCreate( vPeriodicTask, (signed char*)"Periodic", 200, NULL, 1, NULL );
+    xTaskCreate( vPeriodicTask, "Periodic", 200, NULL, 1, NULL );
 
     /* Start the scheduler so the created tasks start executing. */
     vTaskStartScheduler();
@@ -148,7 +148,7 @@ static void vPeriodicTask( void *pvParameters )
   {
     /* This task is just used to 'simulate' an interrupt.  This is done by
     periodically generating a software interrupt. */
-    vTaskDelay( 500 / portTICK_RATE_MS );
+    vTaskDelay( 500 / portTICK_PERIOD_MS );
 
     /* Generate the interrupt, printing a message both before hand and
     afterwards so the sequence of execution is evident from the output. */
@@ -174,9 +174,9 @@ static portBASE_TYPE xHigherPriorityTaskWoken;
   events getting lost.  This simulates multiple interrupts being taken by the
   processor, even though in this case the events are simulated within a single
   interrupt occurrence.*/
-  xSemaphoreGiveFromISR( xCountingSemaphore, (signed char*)&xHigherPriorityTaskWoken );
-  xSemaphoreGiveFromISR( xCountingSemaphore, (signed char*)&xHigherPriorityTaskWoken );
-  xSemaphoreGiveFromISR( xCountingSemaphore, (signed char*)&xHigherPriorityTaskWoken );
+  xSemaphoreGiveFromISR( xCountingSemaphore, (BaseType_t*)&xHigherPriorityTaskWoken );
+  xSemaphoreGiveFromISR( xCountingSemaphore, (BaseType_t*)&xHigherPriorityTaskWoken );
+  xSemaphoreGiveFromISR( xCountingSemaphore, (BaseType_t*)&xHigherPriorityTaskWoken );
 
   if( xHigherPriorityTaskWoken == pdTRUE )
   {

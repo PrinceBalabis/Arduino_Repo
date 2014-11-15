@@ -74,9 +74,9 @@ unsigned long ul[ 100 ];
 
 /*-----------------------------------------------------------*/
 
-/* Declare two variables of type xQueueHandle.  One queue will be read from
+/* Declare two variables of type QueueHandle_t.  One queue will be read from
 within an ISR, the other will be written to from within an ISR. */
-xQueueHandle xIntegerQueue, xStringQueue;
+QueueHandle_t xIntegerQueue, xStringQueue;
 
 // pins to generate interrupts - they must be connected
 const uint8_t inputPin = 2;
@@ -86,7 +86,7 @@ void setup( void )
 {
   Serial.begin(9600);
 
-    /* Before a queue can be used it must first be created.  Create both queues
+  /* Before a queue can be used it must first be created.  Create both queues
   used by this example.  One queue can hold variables of type unsigned long,
   the other queue can hold variables of type char*.  Both queues can hold a
   maximum of 10 items.  A real application should check the return values to
@@ -94,21 +94,26 @@ void setup( void )
   xIntegerQueue = xQueueCreate( 10, sizeof( unsigned long ) );
   xStringQueue = xQueueCreate( 10, sizeof( char * ) );
 
-  /* Install the interrupt handler. */
-//  _dos_setvect( 0x82, vExampleInterruptHandler );
-
-  pinMode(outputPin, OUTPUT);
-  pinMode(inputPin, INPUT);
-  attachInterrupt(inputPin, vExampleInterruptHandler, RISING);
-
   /* Create the task that uses a queue to pass integers to the interrupt service
   routine.  The task is created at priority 1. */
-  xTaskCreate( vIntegerGenerator, (signed char*)"IntGen", 200, NULL, 1, NULL );
+  xTaskCreate( vIntegerGenerator, "IntGen", 200, NULL, 1, NULL );
 
   /* Create the task that prints out the strings sent to it from the interrupt
   service routine.  This task is created at the higher priority of 2. */
-  xTaskCreate( vStringPrinter, (signed char*)"String", 200, NULL, 2, NULL );
-
+  xTaskCreate( vStringPrinter, "String", 200, NULL, 2, NULL );
+  
+  /* Install the interrupt handler. */
+  pinMode(inputPin, INPUT);
+  pinMode(outputPin, OUTPUT);
+  digitalWrite(outputPin, HIGH);
+  bool tmp = digitalRead(inputPin);
+  digitalWrite(outputPin, LOW);
+  if (digitalRead(inputPin) || !tmp) {
+    Serial.println("pin 2 must be connected to pin 3");
+    while(1);
+  }
+  attachInterrupt(inputPin, vExampleInterruptHandler, RISING);
+  
   /* Start the scheduler so the created tasks start executing. */
   vTaskStartScheduler();
 
@@ -122,7 +127,7 @@ void setup( void )
 
 static void vIntegerGenerator( void *pvParameters )
 {
-portTickType xLastExecutionTime;
+TickType_t xLastExecutionTime;
 unsigned portLONG ulValueToSend = 0;
 int i;
 
@@ -133,7 +138,7 @@ int i;
   {
     /* This is a periodic task.  Block until it is time to run again.
     The task will execute every 200ms. */
-    vTaskDelayUntil( &xLastExecutionTime, 200 / portTICK_RATE_MS );
+    vTaskDelayUntil( &xLastExecutionTime, 200 / portTICK_PERIOD_MS );
 
     /* Send an incrementing number to the queue five times.  These will be
     read from the queue by the interrupt service routine.  A block time is
@@ -147,7 +152,7 @@ int i;
     /* Force an interrupt so the interrupt service routine can read the
     values from the queue. */
     vPrintString( "Generator task - About to generate an interrupt.\r\n" );
-//    __asm{ int 0x82 }
+    
     digitalWrite(outputPin, LOW);
     digitalWrite(outputPin, HIGH);
 
@@ -173,23 +178,22 @@ char *pcString;
 
 static void vExampleInterruptHandler( void )
 {
-static portBASE_TYPE xHigherPriorityTaskWoken;
-static unsigned long ulReceivedNumber;
+  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+  static unsigned long ulReceivedNumber;
 
-/* The strings are declared static const to ensure they are not allocated to the
-interrupt service routine stack, and exist even when the interrupt service routine
-is not executing. */
-static const char *pcStrings[] =
-{
-  "String 0\r\n",
-  "String 1\r\n",
-  "String 2\r\n",
-  "String 3\r\n"
-};
+  /* The strings are declared static const to ensure they are not allocated to the
+  interrupt service routine stack, and exist even when the interrupt service routine
+  is not executing. */
+  static const char *pcStrings[] =
+  {
+    "String 0\r\n",
+    "String 1\r\n",
+    "String 2\r\n",
+    "String 3\r\n"
+  };
 
-  xHigherPriorityTaskWoken = pdFALSE;
 
-  /* Loop until the queeu is empty. */
+  /* Loop until the queue is empty. */
   while( xQueueReceiveFromISR( xIntegerQueue, &ulReceivedNumber, &xHigherPriorityTaskWoken ) != errQUEUE_EMPTY )
   {
     /* Truncate the received value to the last two bits (values 0 to 3 inc.), then
@@ -198,23 +202,17 @@ static const char *pcStrings[] =
     ulReceivedNumber &= 0x03;
     xQueueSendToBackFromISR( xStringQueue, &pcStrings[ ulReceivedNumber ], &xHigherPriorityTaskWoken );
   }
+  /* xHigherPriorityTaskWoken was initialised to pdFALSE.  It will have then
+  been set to pdTRUE only if reading from or writing to a queue caused a task
+  of equal or greater priority than the currently executing task to leave the
+  Blocked state.  When this is the case a context switch should be performed.
+  In all other cases a context switch is not necessary.
 
-  /* Did receiving on a queue or sending on a queue unblock a task that has a
-  priority higher than the currently executing task?  If so, force a context
-  switch here. */
-  if( xHigherPriorityTaskWoken == pdTRUE )
-  {
-    /* NOTE: The syntax for forcing a context switch is different depending
-    on the port being used.  Refer to the examples for the port you are
-    using for the correct method to use! */
-    vPortYield();
-  }
+  NOTE: The syntax for forcing a context switch within an ISR varies between
+  FreeRTOS ports.  The portEND_SWITCHING_ISR() macro is provided as part of
+  the Cortex-M3 port layer for this purpose.  taskYIELD() must never be called
+  from an ISR! */
+  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 }
 //------------------------------------------------------------------------------
 void loop() {}
-
-
-
-
-
-

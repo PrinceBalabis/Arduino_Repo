@@ -74,9 +74,9 @@ unsigned long ul[ 100 ];
 
 /*-----------------------------------------------------------*/
 
-/* Declare two variables of type xQueueHandle.  One queue will be read from
+/* Declare two variables of type QueueHandle_t.  One queue will be read from
 within an ISR, the other will be written to from within an ISR. */
-xQueueHandle xIntegerQueue, xStringQueue;
+QueueHandle_t xIntegerQueue, xStringQueue;
 
 // pin to generate interrupts
 #if defined(CORE_TEENSY)
@@ -107,11 +107,11 @@ void setup( void )
 
   /* Create the task that uses a queue to pass integers to the interrupt service
   routine.  The task is created at priority 1. */
-  xTaskCreate( vIntegerGenerator, (signed char*)"IntGen", 200, NULL, 1, NULL );
+  xTaskCreate( vIntegerGenerator, "IntGen", 200, NULL, 1, NULL );
 
   /* Create the task that prints out the strings sent to it from the interrupt
   service routine.  This task is created at the higher priority of 2. */
-  xTaskCreate( vStringPrinter, (signed char*)"String", 200, NULL, 2, NULL );
+  xTaskCreate( vStringPrinter, "String", 200, NULL, 2, NULL );
 
   /* Start the scheduler so the created tasks start executing. */
   vTaskStartScheduler();
@@ -126,7 +126,7 @@ void setup( void )
 
 static void vIntegerGenerator( void *pvParameters )
 {
-portTickType xLastExecutionTime;
+TickType_t xLastExecutionTime;
 unsigned portLONG ulValueToSend = 0;
 int i;
 
@@ -137,7 +137,7 @@ int i;
   {
     /* This is a periodic task.  Block until it is time to run again.
     The task will execute every 200ms. */
-    vTaskDelayUntil( &xLastExecutionTime, 200 / portTICK_RATE_MS );
+    vTaskDelayUntil( &xLastExecutionTime, 200 / portTICK_PERIOD_MS );
 
     /* Send an incrementing number to the queue five times.  These will be
     read from the queue by the interrupt service routine.  A block time is
@@ -194,13 +194,13 @@ static const char *pcStrings[] =
   xHigherPriorityTaskWoken = pdFALSE;
 
   /* Loop until the queeu is empty. */
-  while( xQueueReceiveFromISR( xIntegerQueue, &ulReceivedNumber, (signed char*)&xHigherPriorityTaskWoken ) != errQUEUE_EMPTY )
+  while( xQueueReceiveFromISR( xIntegerQueue, &ulReceivedNumber, (BaseType_t*)&xHigherPriorityTaskWoken ) != errQUEUE_EMPTY )
   {
     /* Truncate the received value to the last two bits (values 0 to 3 inc.), then
     send the string that corresponds to the truncated value to the other
     queue. */
     ulReceivedNumber &= 0x03;
-    xQueueSendToBackFromISR( xStringQueue, &pcStrings[ ulReceivedNumber ], (signed char*)&xHigherPriorityTaskWoken );
+    xQueueSendToBackFromISR( xStringQueue, &pcStrings[ ulReceivedNumber ], (BaseType_t*)&xHigherPriorityTaskWoken );
   }
 
   /* Did receiving on a queue or sending on a queue unblock a task that has a
@@ -216,7 +216,6 @@ static const char *pcStrings[] =
 }
 //------------------------------------------------------------------------------
 void loop() {}
-
 
 
 

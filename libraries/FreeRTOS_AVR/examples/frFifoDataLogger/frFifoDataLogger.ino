@@ -20,10 +20,10 @@ SdFile file;
 const size_t FIFO_SIZE = 20;
 
 // count of data records in fifo
-xSemaphoreHandle fifoData;
+SemaphoreHandle_t fifoData;
 
 // count of free buffers in fifo
-xSemaphoreHandle fifoSpace;
+SemaphoreHandle_t fifoSpace;
 
 // data type for fifo item
 struct FifoItem_t {
@@ -35,7 +35,7 @@ struct FifoItem_t {
 FifoItem_t fifoArray[FIFO_SIZE];
 //------------------------------------------------------------------------------
 // handle for sensor task
-xTaskHandle sens;
+TaskHandle_t sens;
 static void Task1(void *arg) {
   // index of record to be filled
   size_t fifoHead = 0;
@@ -47,7 +47,7 @@ static void Task1(void *arg) {
   int count = 0;
   
   // initialise the ticks variable with the current time.
-  portTickType ticks = xTaskGetTickCount();
+  TickType_t ticks = xTaskGetTickCount();
   
   while (1) {
     // wait until time for next data point
@@ -169,5 +169,6 @@ void setup() {
 }
 //------------------------------------------------------------------------------
 void loop() {
-  // not used
+  // Not used - idle loop has a very small, configMINIMAL_STACK_SIZE, stack
+  // loop must never block
 }

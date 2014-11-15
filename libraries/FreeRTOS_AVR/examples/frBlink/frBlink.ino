@@ -7,7 +7,7 @@
 const uint8_t LED_PIN = 13;
 
 // Declare a semaphore handle.
-xSemaphoreHandle sem;
+SemaphoreHandle_t sem;
 //------------------------------------------------------------------------------
 /*
  * Thread 1, turn the LED off when signalled by thread 2.

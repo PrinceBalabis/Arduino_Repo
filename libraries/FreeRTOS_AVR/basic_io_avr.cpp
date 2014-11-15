@@ -52,7 +52,7 @@
 #include "FreeRTOS_AVR.h"
 //#include "task.h"
 
-void vPrintString( const portCHAR *pcString )
+void vPrintString( const char *pcString )
 {
 	/* Print the string, suspending the scheduler as method of mutual
 	exclusion. */
@@ -74,7 +74,7 @@ void vPrintString( const portCHAR *pcString )
 }
 /*-----------------------------------------------------------*/
 
-void vPrintStringAndNumber( const portCHAR *pcString, unsigned portLONG ulValue )
+void vPrintStringAndNumber( const char *pcString, unsigned portLONG ulValue )
 {
 	/* Print the string, suspending the scheduler as method of mutual
 	exclusion. */

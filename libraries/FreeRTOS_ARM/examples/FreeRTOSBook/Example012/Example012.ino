@@ -69,9 +69,9 @@ static void vExampleInterruptHandler( void );
 
 /*-----------------------------------------------------------*/
 
-/* Declare a variable of type xSemaphoreHandle.  This is used to reference the
+/* Declare a variable of type SemaphoreHandle_t.  This is used to reference the
 semaphore that is used to synchronize a task with an interrupt. */
-xSemaphoreHandle xBinarySemaphore;
+SemaphoreHandle_t xBinarySemaphore;
 
 // pins to generate interrupts - they must be connected
 const uint8_t inputPin = 2;
@@ -84,14 +84,6 @@ void setup( void )
   a binary semaphore is created. */
     vSemaphoreCreateBinary( xBinarySemaphore );
 
-  /* Install the interrupt handler. */
-//  _dos_setvect( 0x82, vExampleInterruptHandler );
-
-  pinMode(outputPin, OUTPUT);
-  pinMode(inputPin, INPUT);
-  attachInterrupt(inputPin, vExampleInterruptHandler, RISING);
-
-
   /* Check the semaphore was created successfully. */
   if( xBinarySemaphore != NULL )
   {
@@ -99,18 +91,30 @@ void setup( void )
     with the interrupt.  The handler task is created with a high priority to
     ensure it runs immediately after the interrupt exits.  In this case a
     priority of 3 is chosen. */
-    xTaskCreate( vHandlerTask, (signed char*)"Handler", 200, NULL, 3, NULL );
+    xTaskCreate( vHandlerTask, "Handler", 200, NULL, 3, NULL );
 
     /* Create the task that will periodically generate a software interrupt.
     This is created with a priority below the handler task to ensure it will
     get preempted each time the handler task exist the Blocked state. */
-    xTaskCreate( vPeriodicTask, (signed char*)"Periodic", 200, NULL, 1, NULL );
+    xTaskCreate( vPeriodicTask, "Periodic", 200, NULL, 1, NULL );
 
+    /* Install the interrupt handler. */
+    pinMode(inputPin, INPUT);
+    pinMode(outputPin, OUTPUT);
+    digitalWrite(outputPin, HIGH);
+    bool tmp = digitalRead(inputPin);
+    digitalWrite(outputPin, LOW);
+    if (digitalRead(inputPin) || !tmp) {
+      Serial.println("pin 2 must be connected to pin 3");
+      while(1);
+    }
+    attachInterrupt(inputPin, vExampleInterruptHandler, RISING);    
+    
     /* Start the scheduler so the created tasks start executing. */
     vTaskStartScheduler();
   }
 
-    /* If all is well we will never reach here as the scheduler will now be
+  /* If all is well we will never reach here as the scheduler will now be
     running the tasks.  If we do reach here then it is likely that there was
     insufficient heap memory available for a resource to be created. */
   for( ;; );
@@ -151,7 +155,7 @@ static void vPeriodicTask( void *pvParameters )
   {
     /* This task is just used to 'simulate' an interrupt.  This is done by
     periodically generating a software interrupt. */
-    vTaskDelay( 500 / portTICK_RATE_MS );
+    vTaskDelay( 500 / portTICK_PERIOD_MS );
 
     /* Generate the interrupt, printing a message both before hand and
     afterwards so the sequence of execution is evident from the output. */
@@ -174,19 +178,17 @@ static signed portBASE_TYPE xHigherPriorityTaskWoken;
   /* 'Give' the semaphore to unblock the task. */
   xSemaphoreGiveFromISR( xBinarySemaphore, (signed portBASE_TYPE*)&xHigherPriorityTaskWoken );
 
-  if( xHigherPriorityTaskWoken == pdTRUE )
-  {
-    /* Giving the semaphore unblocked a task, and the priority of the
-    unblocked task is higher than the currently running task - force
-    a context switch to ensure that the interrupt returns directly to
-    the unblocked (higher priority) task.
+  /* xHigherPriorityTaskWoken was initialised to pdFALSE.  It will have then
+  been set to pdTRUE only if reading from or writing to a queue caused a task
+  of equal or greater priority than the currently executing task to leave the
+  Blocked state.  When this is the case a context switch should be performed.
+  In all other cases a context switch is not necessary.
 
-    NOTE: The syntax for forcing a context switch is different depending
-    on the port being used.  Refer to the examples for the port you are
-    using for the correct method to use! */
-    // portSWITCH_CONTEXT();
-    vPortYield();
-  }
+  NOTE: The syntax for forcing a context switch within an ISR varies between
+  FreeRTOS ports.  The portEND_SWITCHING_ISR() macro is provided as part of
+  the Cortex-M3 port layer for this purpose.  taskYIELD() must never be called
+  from an ISR! */
+  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 }
 //------------------------------------------------------------------------------
 void loop() {}

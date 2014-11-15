@@ -49,7 +49,7 @@
 
 #ifndef BASIC_IO_H
 #define BASIC_IO_H
-void vPrintString( const portCHAR *pcString );
-void vPrintStringAndNumber( const portCHAR *pcString, unsigned portLONG ulValue );
+void vPrintString( const char *pcString );
+void vPrintStringAndNumber( const char *pcString, unsigned portLONG ulValue );
 #endif
 

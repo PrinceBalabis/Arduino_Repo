@@ -59,7 +59,7 @@ void vTask1( void *pvParameters );
 void vTask2( void *pvParameters );
 
 /* Used to hold the handle of Task2. */
-xTaskHandle xTask2Handle;
+TaskHandle_t xTask2Handle;
 
 /*-----------------------------------------------------------*/
 
@@ -69,14 +69,14 @@ void setup( void )
   /* Create the first task at priority 2.  This time the task parameter is
   not used and is set to NULL.  The task handle is also not used so likewise
   is also set to NULL. */
-  xTaskCreate( vTask1, (signed char*)"Task 1", 200, NULL, 2, NULL );
+  xTaskCreate( vTask1, "Task 1", 200, NULL, 2, NULL );
           /* The task is created at priority 2 ^. */
 
   /* Create the second task at priority 1 - which is lower than the priority
   given to Task1.  Again the task parameter is not used so is set to NULL -
   BUT this time we want to obtain a handle to the task so pass in the address
   of the xTask2Handle variable. */
-  xTaskCreate( vTask2, (signed char*)"Task 2", 200, NULL, 1, &xTask2Handle );
+  xTaskCreate( vTask2, "Task 2", 200, NULL, 1, &xTask2Handle );
          /* The task handle is the last parameter ^^^^^^^^^^^^^ */
 
   /* Start the scheduler so our tasks start executing. */

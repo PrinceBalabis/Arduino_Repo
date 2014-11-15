@@ -39,7 +39,7 @@ static void vPrintTask(void *pvParameters) {
       np = 0;
       tmin = 0XFFFF;
       tmax = 0;
-      Serial.write("clear\r\n");
+      Serial.println(F("clear"));
     }
   }
 }
@@ -51,25 +51,26 @@ void setup() {
   
   // create high priority thread
   xTaskCreate(vJitter,
-    (signed portCHAR *)"Task1",
-    configMINIMAL_STACK_SIZE,
+    "Task1",
+    configMINIMAL_STACK_SIZE + 100,
     NULL,
     tskIDLE_PRIORITY + 2,
     NULL);
 
   // create print task
   xTaskCreate(vPrintTask,
-    (signed portCHAR *)"Task2",
-    configMINIMAL_STACK_SIZE + 100,
+    "Task2",
+    configMINIMAL_STACK_SIZE + 200,
     NULL,
     tskIDLE_PRIORITY + 1,
     NULL);
 
   // start FreeRTOS
+  Serial.println(F("Start"));
   vTaskStartScheduler();
 
   // should never return
-  Serial.println("Die");
+  Serial.println(F("Die"));
   while(1);
 }
 //------------------------------------------------------------------------------

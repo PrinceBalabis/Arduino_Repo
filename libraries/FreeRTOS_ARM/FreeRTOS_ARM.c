@@ -12,7 +12,7 @@
  */
 static void delayMS(uint32_t millis) {
   uint32_t iterations = millis * CAL_FACTOR;
-  int i;
+  uint32_t i;
   for(i = 0; i < iterations; ++i) {
     asm volatile("nop\n\t");
   }
@@ -37,24 +37,15 @@ static void errorBlink(int n) {
   }
 }
 //------------------------------------------------------------------------------
-// catch Teensy and Due exceptions
-/** Hard fault - blink one short flash every two seconds */
-void hard_fault_isr()	{errorBlink(1);}
-/** Hard fault - blink one short flash every two seconds */
-void HardFault_Handler() 	{errorBlink(1);}
-
-/** Bus fault - blink two short flashes every two seconds */
-void bus_fault_isr() {errorBlink(2);}
-/** Bus fault - blink two short flashes every two seconds */
-void BusFault_Handler() {errorBlink(2);}
-
-/** Usage fault - blink three short flashes every two seconds */
-void usage_fault_isr() {errorBlink(3);}
-/** Usage fault - blink three short flashes every two seconds */
-void UsageFault_Handler() {errorBlink(3);}
+/** assertBlink
+ * Blink one short pulse every two seconds if configASSERT fails.
+*/
+void assertBlink() {
+  errorBlink(1);
+}
 //------------------------------------------------------------------------------
 	/** vApplicationMallocFailedHook()
-   Blink four short pulses if malloc fails.
+   Blink two short pulses if malloc fails.
 
 	will only be called if
 	configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
@@ -67,7 +58,7 @@ void UsageFault_Handler() {errorBlink(3);}
 	to query the size of free heap space that remains (although it does not
 	provide information on how the remaining heap might be fragmented). */
 void vApplicationMallocFailedHook() {
-  errorBlink(4);
+  errorBlink(2);
 }
 //------------------------------------------------------------------------------
 
@@ -85,18 +76,34 @@ void  __attribute__((weak)) vApplicationIdleHook( void ) {
   loop();
 }
 /*-----------------------------------------------------------*/
-	/**  Blink five short pulses if stack overflow is detected.
+	/**  Blink three short pulses if stack overflow is detected.
 	Run time stack overflow checking is performed if
 	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
 	function is called if a stack overflow is detected.
   \param[in] pxTask Task handle
   \param[in] pcTaskName Task name
   */
-void vApplicationStackOverflowHook(xTaskHandle pxTask, char *pcTaskName) {
+void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName) {
 	(void) pcTaskName;
 	(void) pxTask;
-	errorBlink(5);
+	errorBlink(3);
 }
+//------------------------------------------------------------------------------
+// catch Teensy 3 and Due exceptions
+/** Hard fault - blink four short flash every two seconds */
+void hard_fault_isr()	{errorBlink(4);}
+/** Hard fault - blink four short flash every two seconds */
+void HardFault_Handler() 	{errorBlink(4);}
+
+/** Bus fault - blink five short flashes every two seconds */
+void bus_fault_isr() {errorBlink(5);}
+/** Bus fault - blink five short flashes every two seconds */
+void BusFault_Handler() {errorBlink(5);}
+
+/** Usage fault - blink six short flashes every two seconds */
+void usage_fault_isr() {errorBlink(6);}
+/** Usage fault - blink six short flashes every two seconds */
+void UsageFault_Handler() {errorBlink(6);}
 /*-----------------------------------------------------------*/
 	/** This function will be called by each tick interrupt if
 	configUSE_TICK_HOOK is set to 1 in FreeRTOSConfig.h.  User code can be

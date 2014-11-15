@@ -50,7 +50,7 @@ void setup() {
 
   // create high priority thread
   xTaskCreate(vJitter,
-    (signed portCHAR *)"Task1",
+    "Task1",
     configMINIMAL_STACK_SIZE,
     NULL,
     tskIDLE_PRIORITY + 2,
@@ -58,7 +58,7 @@ void setup() {
 
   // create print task
   xTaskCreate(vPrintTask,
-    (signed portCHAR *)"Task2",
+    "Task2",
     configMINIMAL_STACK_SIZE + 100,
     NULL,
     tskIDLE_PRIORITY + 1,

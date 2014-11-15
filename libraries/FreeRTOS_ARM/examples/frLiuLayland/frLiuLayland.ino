@@ -37,7 +37,7 @@ int taskCount[] = {2, 2, 3, 3};
 //------------------------------------------------------------------------------
 // override IDE definition to prevent errors
 void printTask(task_t* task);
-void done(const char* msg, task_t* task, portTickType now);
+void done(const char* msg, task_t* task, TickType_t now);
 //------------------------------------------------------------------------------
 // Liu Layland bound = 100*n*(2^(1/n) - 1) in percent
 float LiuLayland[] = {100, 82.84271247, 77.97631497, 75.682846, 74.3491775};
@@ -75,7 +75,7 @@ void printTask(task_t* task) {
     Serial.write(',');
     Serial.println(task->priority);
 }
-void done(const char* msg, task_t* task, portTickType now) {
+void done(const char* msg, task_t* task, TickType_t now) {
   vTaskSuspendAll();
   Serial.println(msg);
   Serial.print("Tick: ");
@@ -86,9 +86,9 @@ void done(const char* msg, task_t* task, portTickType now) {
 }
 //------------------------------------------------------------------------------
 // start tasks at 1000 ticks
-portTickType startTime = 1000;
+TickType_t startTime = 1000;
 // test runs for 3000 ticks
-portTickType finishTime = 4000;
+TickType_t finishTime = 4000;
 
 // task code
 void task(void* arg) {
@@ -96,13 +96,13 @@ void task(void* arg) {
   uint16_t cpu = ((task_t*)arg)->cpu;
 
   // simulate last wake time
-  portTickType lastWakeTime = startTime - period;
+  TickType_t lastWakeTime = startTime - period;
   while (xTaskGetTickCount() < lastWakeTime) vTaskDelay(1);
   while (1) {
     vTaskDelayUntil(&lastWakeTime, period);
     burnCPU(cpu);
     // check of failure or success
-    portTickType now = xTaskGetTickCount();
+    TickType_t now = xTaskGetTickCount();
     if (now >= finishTime) {
       done("Success", (task_t*)arg, now);
     }
@@ -173,6 +173,8 @@ void setup() {
   while(1);
 }
 //------------------------------------------------------------------------------
+// WARNING idle loop has a very small stack (configMINIMAL_STACK_SIZE)
+// loop must never block
 void loop() {
   // not used
 }

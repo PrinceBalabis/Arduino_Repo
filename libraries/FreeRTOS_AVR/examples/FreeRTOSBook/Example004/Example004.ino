@@ -69,11 +69,11 @@ void setup( void )
 {
   Serial.begin(9600);
   /* Create the first task at priority 1... */
-  xTaskCreate( vTaskFunction, (signed char*)"Task 1", 200, (void*)pcTextForTask1, 1, NULL );
+  xTaskCreate( vTaskFunction, "Task 1", 200, (void*)pcTextForTask1, 1, NULL );
 
   /* ... and the second task at priority 2.  The priority is the second to
   last parameter. */
-  xTaskCreate( vTaskFunction, (signed char*)"Task 2", 200, (void*)pcTextForTask2, 2, NULL );
+  xTaskCreate( vTaskFunction, "Task 2", 200, (void*)pcTextForTask2, 2, NULL );
 
   /* Start the scheduler so our tasks start executing. */
   vTaskStartScheduler();
@@ -100,7 +100,7 @@ char *pcTaskName;
     /* Delay for a period.  This time we use a call to vTaskDelay() which
     puts the task into the Blocked state until the delay period has expired.
     The delay period is specified in 'ticks'. */
-    vTaskDelay( 250 / portTICK_RATE_MS );
+    vTaskDelay( 250 / portTICK_PERIOD_MS );
   }
 }
 //------------------------------------------------------------------------------

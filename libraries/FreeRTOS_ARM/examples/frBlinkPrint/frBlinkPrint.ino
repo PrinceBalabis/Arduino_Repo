@@ -10,7 +10,7 @@ const uint8_t LED_PIN = 13;
 volatile uint32_t count = 0;
 
 // handle for blink task
-xTaskHandle blink;
+TaskHandle_t blink;
 
 //------------------------------------------------------------------------------
 // high priority for blinking LED
@@ -62,7 +62,7 @@ void setup() {
 
   // create blink task
   xTaskCreate(vLEDFlashTask,
-    (signed portCHAR *)"Task1",
+    "Task1",
     configMINIMAL_STACK_SIZE + 50,
     NULL,
     tskIDLE_PRIORITY + 2,
@@ -70,7 +70,7 @@ void setup() {
 
   // create print task
   xTaskCreate(vPrintTask,
-    (signed portCHAR *)"Task2",
+    "Task2",
     configMINIMAL_STACK_SIZE + 100,
     NULL,
     tskIDLE_PRIORITY + 1,

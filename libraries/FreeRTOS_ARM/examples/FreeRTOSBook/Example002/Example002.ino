@@ -74,7 +74,7 @@ void setup( void )
   Serial.begin(9600);
   /* Create one of the two tasks. */
   xTaskCreate(  vTaskFunction,      /* Pointer to the function that implements the task. */
-    (signed char*)"Task 1",       /* Text name for the task.  This is to facilitate debugging only. */
+    "Task 1",       /* Text name for the task.  This is to facilitate debugging only. */
     200,          /* Stack depth - most small microcontrollers will use much less stack than this. */
     (void*)pcTextForTask1,  /* Pass the text to be printed in as the task parameter. */
     1,            /* This task will run at priority 1. */
@@ -83,7 +83,7 @@ void setup( void )
   /* Create the other task in exactly the same way.  Note this time that we
   are creating the SAME task, but passing in a different parameter.  We are
   creating two instances of a single task implementation. */
-  xTaskCreate( vTaskFunction, (signed char*)"Task 2", 200, (void*)pcTextForTask2, 1, NULL );
+  xTaskCreate( vTaskFunction, "Task 2", 200, (void*)pcTextForTask2, 1, NULL );
 
   /* Start the scheduler so our tasks start executing. */
   vTaskStartScheduler();
