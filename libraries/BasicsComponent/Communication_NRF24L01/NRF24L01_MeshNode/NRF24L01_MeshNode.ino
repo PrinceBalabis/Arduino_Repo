@@ -51,38 +51,39 @@ void setup(void){
   radio.setRetries(5,15); // Set delay between retries & # of retires for a "radio.write" command
   radio.enableAckPayload(); // Must have Ack enables for this sketch
   radio.openReadingPipe(1,listening_pipes[nodeID]);
-  radio.setPayloadSize(4);  // Set payload size to 2 bytes for sending int-values
+  radio.setPayloadSize(2);  // Set payload size to 1 bytes for sending int-values between 0-255
 
   radio.startListening(); // Start listening for incoming messages
+
+  if(!isSender)
+    Serial.println("SET AS EXAMPLE RECEIVER");
 }
 
 /**
  *  Loop
  */
 void loop(void){
-  if(isSender){
+  if(!isSender){
     /**
      * -------------------Example receive-Program Area-------------------
      * Demonstration of how to receive a message from another node
      */
-    unsigned int msgSender, msgReceived;
+    int msgSender, msgReceived;
     readMessage(&msgSender, &msgReceived);
 
     // Put code in this if-statement which should occur when a message is received
-    if(msgReceived != 0){
-      if(msgReceived != 0){
-        Serial.print("Node "); // Print message
-        Serial.print(msgSender); // Print message
-        Serial.print(": "); // Print message
-        Serial.println(msgReceived); // Print message
-      }
+    if(msgReceived != -1){
+      Serial.print("Node "); // Print message
+      Serial.print(msgSender); // Print message
+      Serial.print(": "); // Print message
+      Serial.println(msgReceived); // Print message
     }
     /**
      * -------------------Example receive-Program Area-------------------
      * 
      */
   } 
-  else if(isSender = 0){
+  else if(isSender){
     /**
      * -------------------Example send-Program Area-------------------
      * Demonstration of how to send a message to another node
@@ -98,15 +99,31 @@ void loop(void){
 
 
     // Send message to server, keep trying untill server confirms receiver gets the message
-    Serial.println("SENDING MESSAGE TO NODE");
+    Serial.println("SENDING MESSAGE TO NODE...");
     unsigned int msgSent = 0;
-    while(!msgSent){
+    unsigned long started_waiting_at = millis();
+    unsigned int timeoutTime = 200; // Amount of time to give trying to resend message to nodes
+    bool timeout = false;
+    bool sendDone = false;
+
+    // Will try to keep send message untill receiver gets it
+    while(!msgSent && !timeout){
       msgSent = sendMessage(msgNode, msgContent);
-      if(!msgContent){
-        Serial.println("ERROR!: Failed to send message to server. retrying...");
+      if (msgSent)
+      {
+        Serial.println("RECEIVER NODE CONFIRMS MESSAGE RELIABILITY WITH ACK");
+      } 
+      else if (millis() - started_waiting_at > timeoutTime ){
+        timeout = true;
+        radio.startListening(); // Start listening for response from sender again
+      }
+      else if(!msgSent){
+        Serial.println("ERROR!: Failed to send message to node. retrying...");
+        delay(20);
       }
     }
-    Serial.println("SERVER CONFIRMS RECEIVER RECEIVED MESSAGE");
+    msgContent++;
+
     Serial.println(); //Extra row for easier serial reading
     /**
      * -------------------Example send-Program Area-------------------
@@ -125,28 +142,27 @@ unsigned int sendMessage(unsigned int msgReceiver, unsigned int msgContent){
   //send message until an ack is returned from sender or timeout
   // Open the correct pipe for writing
   radio.openWritingPipe(listening_pipes[msgReceiver]);
-  unsigned long started_waiting_at = millis();
-  bool timeout = false;
   bool sendDone = false;
-  while (!sendDone && !timeout){
-    sendDone = radio.write(&msgPack, sizeof(unsigned int)); // Send back received value
-    if (millis() - started_waiting_at > timeoutTime ){
-      timeout = true;
-      radio.startListening(); // Start listening for response from sender again
-      return 0;
-    }  
-    else if(sendDone && waitAckPayload(msgPack)){
-      radio.startListening(); // Start listening for response from sender again
-      return 1;
-    }
+  sendDone = radio.write(&msgPack, sizeof(unsigned int)); // Send back received value
+  bool gotAck = 0;
+  if(sendDone)
+    gotAck = waitAckPayload(msgPack);
+  radio.startListening(); // Start listening for response from sender again
+  if(gotAck){
+    return 1;
+  } 
+  else {
+    return 0;
   }
 }
 
 unsigned int waitAckPayload(unsigned int msgPack){
   unsigned long started_waiting_at = millis();
+  unsigned int timeoutTime = 20; // Amount of time to wait for ACK (ms)
   bool timeout = false;
-  unsigned int ack = 0;
-  while(!ack && !timeout){
+  unsigned int ack = -1;
+
+  while(ack == -1 && !timeout){
     if ( radio.isAckPayloadAvailable() )
     {
       radio.read(&ack,sizeof(ack));
@@ -156,6 +172,7 @@ unsigned int waitAckPayload(unsigned int msgPack){
     } 
     else if (millis() - started_waiting_at > timeoutTime ){
       timeout = true;
+      Serial.println("ACK WAITING TIMED OUT!");
       return 0;
     }
   }
@@ -165,7 +182,7 @@ unsigned int waitAckPayload(unsigned int msgPack){
  *  readMessage
  *  This function reads the message and returns it
  */
-void readMessage(unsigned int *pmsgSender, unsigned int *pmsgReceived){
+void readMessage(int *pmsgSender, int *pmsgReceived){
   if (radio.available()){
     bool receiveDone = false;
     unsigned int msgPackReceived;
@@ -179,8 +196,36 @@ void readMessage(unsigned int *pmsgSender, unsigned int *pmsgReceived){
     *pmsgReceived = (msgPackReceived % 1000) /10;
   } 
   else {
-    *pmsgSender = 0;
-    *pmsgReceived = 0;
+    *pmsgSender = -1;
+    *pmsgReceived = -1;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

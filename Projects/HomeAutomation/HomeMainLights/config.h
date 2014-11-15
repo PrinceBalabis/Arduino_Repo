@@ -1,6 +1,6 @@
 // Variables for switch pins
-const int leftSwitchPin = 10;
-const int rightSwitchPin = 11;
+const int leftSwitchPin = 4;
+const int rightSwitchPin = 5;
 
 // Ceiling lights relay/ceiling light pin
 const int ceilingLightsPin = 3;
