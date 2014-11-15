@@ -20,9 +20,12 @@ static msg_t Thread3(void *arg) {
   /** 
    * ----------Tweaks Area Below----------
    */
-  radio.setRetries(5,15); // Retries, all the  nodes must have the same tweak!
-  radio.setPayloadSize(4);  // Set payload size to 2 bytes for sending int-values, all the  nodes must have the same tweak!
+  radio.setRetries(5,15); // Set delay between retries & # of retires for a "radio.write" command
   radio.openReadingPipe(1,listening_pipes[nodeID]);
+  radio.setPayloadSize(2);  // Set payload size to 1 bytes for sending int-values between 0-255
+  radio.setPALevel(RF24_PA_HIGH); // Set power amplifier to highest
+  radio.setDataRate(RF24_250KBPS); // Set data rate to 250kpbs
+  radio.setCRCLength(RF24_CRC_16); // Set CRC length to 16
   /** 
    * ----------Tweaks Area Above-----------
    */

@@ -48,10 +48,14 @@ void setup(void){
   Serial.begin(57600);
 
   radio.begin(); // Initialize radio
+  // Tweaks optimized for compatability, reliability and driftsecurity
   radio.setRetries(5,15); // Set delay between retries & # of retires for a "radio.write" command
   radio.enableAckPayload(); // Must have Ack enables for this sketch
   radio.openReadingPipe(1,listening_pipes[nodeID]);
   radio.setPayloadSize(2);  // Set payload size to 1 bytes for sending int-values between 0-255
+  radio.setPALevel(RF24_PA_HIGH); // Set power amplifier to highest
+  radio.setDataRate(RF24_250KBPS); // Set data rate to 250kpbs
+  radio.setCRCLength(RF24_CRC_16); // Set CRC length to 16
 
   radio.startListening(); // Start listening for incoming messages
 
@@ -200,6 +204,7 @@ void readMessage(int *pmsgSender, int *pmsgReceived){
     *pmsgReceived = -1;
   }
 }
+
 
 
 
