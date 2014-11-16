@@ -3,14 +3,16 @@ void pcPowerSetup() {
   digitalWrite(pcPowerPin, LOW);
 }
 
-void sendPCPowerPing() {
-  currentTimer = millis();
-  if ((currentTimer - previousTimer) >= 500) {
+void sendPCPowerPing(int state) {
+  if(state != RELEASED){
     digitalWrite(pcPowerPin, HIGH);
-    delay(20);
+  } 
+  else {
     digitalWrite(pcPowerPin, LOW);
-    previousTimer = currentTimer; // Save last time volume increase
-    serialPrintln("Sent PC power command");
   }
-
 }
+
+
+
+
+

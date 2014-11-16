@@ -1,5 +1,4 @@
 const int CLAP_SENSOR_PIN = 2;
-const int RELAY_PIN = 13; // Relay pin
 
 const int CLAP_MAXPAUSE = 500; // Maximal pause in between claps (milliseconds)
 const int CLAP_MINPAUSE = 100; // Maximal pause in between claps (milliseconds)

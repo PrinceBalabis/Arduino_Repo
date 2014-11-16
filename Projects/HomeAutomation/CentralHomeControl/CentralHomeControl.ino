@@ -29,29 +29,45 @@ int previousBtnChosen = 0;
 IRsend irsend;
 
 //Code that shows the the keypad connections to the arduino terminals
-byte rowPins[4] = {11, 10, 9, 8}; //Rows 0 to 3
-byte colPins[4] = {7, 6, 5, 4}; //Columns 0 to 3
+byte rowPins[4] = {
+  11, 10, 9, 8}; //Rows 0 to 3
+byte colPins[4] = {
+  7, 6, 5, 4}; //Columns 0 to 3
 
 char keymap[4][4] =
 {
-  {'a', 'b', 'c', 'd'},
-  {'e', 'f', 'g', 'h'},
-  {'i', 'j', 'k', 'l'},
-  {'m', 'n', 'o', 'p'}
+  {
+    'a', 'b', 'c', 'd'      }
+  ,
+  {
+    'e', 'f', 'g', 'h'      }
+  ,
+  {
+    'i', 'j', 'k', 'l'      }
+  ,
+  {
+    'm', 'n', 'o', 'p'      }
 };
 
 int keymapName[4][4] =
 {
-  {4, 8, 12, 16},
-  {3, 7, 11, 15},
-  {2, 6, 10, 14},
-  {1, 5, 9, 13}
+  {
+    4, 8, 12, 16      }
+  ,
+  {
+    3, 7, 11, 15      }
+  ,
+  {
+    2, 6, 10, 14      }
+  ,
+  {
+    1, 5, 9, 13      }
 };
 
 // Instance of the Keypad class
 Keypad keypad = Keypad(
-                  makeKeymap(keymap), rowPins, colPins, 4, 4
-                );
+makeKeymap(keymap), rowPins, colPins, 4, 4
+);
 
 
 
@@ -60,7 +76,7 @@ RCSwitch mySwitch = RCSwitch();
 
 /*
 *  Gets the key name(number) of the button
-*/
+ */
 int getKeyName(char keycode) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -73,7 +89,7 @@ int getKeyName(char keycode) {
 
 /*
 * Main setup functin which calls other setup functions
-*/
+ */
 void setup()
 {
   // Enable or not enable Serial depending on config
@@ -88,7 +104,7 @@ void setup()
 
 /*
 * Main loop function which listens for button presses
-*/
+ */
 void loop() {
   keypressed = keypad.waitForKey(); // Program is frozen until button-press
   keyName = getKeyName(keypressed); // Get keyname/keynumber
@@ -96,21 +112,28 @@ void loop() {
 
   if (nBPowerButton == keyName) {
     sendPowerCommand();
-  } else if (nBMuteButton == keyName) {
+  } 
+  else if (nBMuteButton == keyName) {
     sendMuteCommand();
-  } else if (lightMainButton == keyName) {
+  } 
+  else if (lightMainButton == keyName) {
     sendMainLightPing();
-  } else if (pcPowerButton == keyName) {
-    sendPCPowerPing();
+  } 
+  while (pcPowerButton == keyName && state != RELEASED) { // "While holding"
+    state = getKeyState();
+    sendPCPowerPing(state);
   }
-  while (nBUpVolButton == keyName && state != RELEASED) {
+  while (nBUpVolButton == keyName && state != RELEASED) { // "While holding"
     sendUpVolCommand();
     state = getKeyState();
   }
-  while (nBDownVolButton == keyName && state != RELEASED) {
+  while (nBDownVolButton == keyName && state != RELEASED) { // "While holding"
     sendDownVolCommand();
     state = getKeyState();
   }
   clearButton();
 }
+
+
+
 
