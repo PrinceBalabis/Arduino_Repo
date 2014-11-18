@@ -1,20 +1,20 @@
 #include <ChibiOS_AVR.h>
-#include "config.h"
+#include <RF24Network.h>
+#include <RF24.h>
 #include <SPI.h>
-#include "nRF24L01.h"
-#include "RF24.h"
+#include "config.h"
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(sem, 0);
 
-// 64 byte stack beyond task switch and interrupt needs
-static WORKING_AREA(waThread1, 64);
+// 128 byte stack beyond task switch and interrupt needs
+static WORKING_AREA(waThread1, 128);
 
-// 64 byte stack beyond task switch and interrupt needs
-static WORKING_AREA(waThread2, 64);
+// 128 byte stack beyond task switch and interrupt needs
+static WORKING_AREA(waThread2, 128);
 
-// 64 byte stack beyond task switch and interrupt needs
-static WORKING_AREA(waThread3, 64);
+// 128 byte stack beyond task switch and interrupt needs
+static WORKING_AREA(waThread3, 128);
 
 //------------------------------------------------------------------------------
 void setup() {

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// Thread 2, turn the LED on and signal thread 1 to turn the LED off.
+// Thread 2, Listen for claps, then runs the send command thread
 
 int relayState = 0;
 unsigned long commandMillis = 0;

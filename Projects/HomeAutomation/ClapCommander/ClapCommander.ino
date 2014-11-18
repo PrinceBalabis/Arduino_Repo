@@ -1,12 +1,12 @@
-#include <ChibiOS_AVR.h>
-#include "config.h"
-#include <SPI.h>
-#include <nRF24L01.h>
-#include <RF24.h>
 #include <Wire.h>
+#include <ChibiOS_AVR.h>
+#include <RF24Network.h>
+#include <RF24.h>
+#include <SPI.h>
+#include "config.h"
 
-static WORKING_AREA(waThread2, 64);
-static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread2, 128);
+static WORKING_AREA(waThread1, 128);
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(sem, 0);
@@ -26,7 +26,6 @@ void setup() {
 // main thread runs at NORMALPRIO
 void chSetup() {
 
-  // start blink thread
   chThdCreateStatic(waThread1, sizeof(waThread1),
     NORMALPRIO + 2, Thread1, NULL);
 

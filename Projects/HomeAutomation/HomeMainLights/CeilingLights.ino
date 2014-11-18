@@ -26,6 +26,3 @@ void toggleLights(){
   digitalWrite(ceilingLightsPin, ceilingLightsState);
   Serial.println("Toggled lights");
 }
-
-
-
