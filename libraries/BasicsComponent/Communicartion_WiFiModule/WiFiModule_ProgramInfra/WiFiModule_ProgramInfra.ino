@@ -1,10 +1,9 @@
 // Digital pin 2 is RX(TX on other device)
 // Digital pin 3 is TX(RX on other device)
 
-
-String aPSSID = "TeliaGatewayA4-B1-E9-98-CB-2A";
-String aPPass = "EBA9759C61";
-int encryption = 3;
+Const String aPSSID = "Router";
+Const String aPPass = "kungarike";
+Const int encryption = 7; // WPA2-PSK [AES]
 #include <SoftwareSerial.h>
 
 SoftwareSerial wiFiSerial(2, 3); //RX, TX
@@ -15,30 +14,28 @@ void setup() {
 
   delay(6000); // Let Wi-Fi module initialize
 
-  sendCommandReceiveAnswer("+++");
-  sendCommandReceiveAnswer("AT+");
-  sendCommandReceiveAnswer("AT+SSID=!" + aPSSID);
-  sendCommandReceiveAnswer("AT+ENCRY=!"+encryption);
-  sendCommandReceiveAnswer("AT+KEY=!1,0," + aPPass);
-  sendCommandReceiveAnswer("AT+NIP=!0");
-  sendCommandReceiveAnswer("AT+WBGR=!0,11");
-  sendCommandReceiveAnswer("AT+Z");
+  sendCommand("+++");
+  sendCommand("AT+");
+  sendCommand("AT+SSID=!" + aPSSID);
+  sendCommand("AT+ENCRY=!"+encryption);
+  sendCommand("AT+KEY=!1,0," + aPPass);
+  sendCommand("AT+NIP=!0");
+  sendCommand("AT+WBGR=!0,11");
+  sendCommand("AT+Z");
 
   delay(2000);
   wiFiSerial.begin(115200);
-  sendCommandReceiveAnswer("AT+LKSTT");
+  sendCommand("AT+LKSTT");
 }
 
-void sendCommandReceiveAnswer(String command) {
-  wiFiSerial.println(command);
-  if (wiFiSerial.available()) {
-    Serial.println(wiFiSerial.read());
-  }
+void sendCommand(String command) {
+  wiFiSerial.println(command); // Write command to WiFi-Module
+  while (!wiFiSerial.available()); // Wait here for response from WiFi-module
+  Serial.println(wiFiSerial.read()); // Print out response
 }
 
 void loop()
 {
-  while (1) {
-    // End program
-  }
+  while (1); // End program
 }
+
