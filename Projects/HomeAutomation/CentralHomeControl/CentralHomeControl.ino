@@ -37,31 +37,31 @@ byte colPins[4] = {
 char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'      }
+    'a', 'b', 'c', 'd'          }
   ,
   {
-    'e', 'f', 'g', 'h'      }
+    'e', 'f', 'g', 'h'          }
   ,
   {
-    'i', 'j', 'k', 'l'      }
+    'i', 'j', 'k', 'l'          }
   ,
   {
-    'm', 'n', 'o', 'p'      }
+    'm', 'n', 'o', 'p'          }
 };
 
 int keymapName[4][4] =
 {
   {
-    4, 8, 12, 16      }
+    4, 8, 12, 16          }
   ,
   {
-    3, 7, 11, 15      }
+    3, 7, 11, 15          }
   ,
   {
-    2, 6, 10, 14      }
+    2, 6, 10, 14          }
   ,
   {
-    1, 5, 9, 13      }
+    1, 5, 9, 13          }
 };
 
 // Instance of the Keypad class
@@ -119,6 +119,9 @@ void loop() {
   else if (lightMainButton == keyName) {
     sendMainLightPing();
   } 
+  else if(sleepButton == keyName) {
+    sleepAllDevices();
+  }
   while (pcPowerButton == keyName && state != RELEASED) { // "While holding"
     state = getKeyState();
     sendPCPowerPing(state);
@@ -135,5 +138,9 @@ void loop() {
 }
 
 
+void sleepAllDevices(void){
+  sendPowerCommand();
+  sendMainLightPing();
+}
 
 

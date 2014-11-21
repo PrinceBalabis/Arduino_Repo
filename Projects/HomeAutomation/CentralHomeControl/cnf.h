@@ -22,6 +22,8 @@ const int nBMuteButton = 16;
 const int lightMainButton = 1;
 // PC
 const int pcPowerButton = 5;
+// Sleep button
+const int sleepButton = 13;
 
 /*
 *  ------------------------------------

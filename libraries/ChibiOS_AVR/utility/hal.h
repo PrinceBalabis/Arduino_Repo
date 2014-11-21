@@ -37,8 +37,7 @@
 #define _HAL_H_
 
 #include "ch.h"
-
-#if 0  // WHG
+  #if 0  // WHG
 #include "board.h"
 #include "halconf.h"
 
@@ -52,7 +51,6 @@
 #include "mmcsd.h"
 
 /* Layered drivers.*/
-
 #include "tm.h"
 #include "pal.h"
 #include "adc.h"
@@ -74,6 +72,7 @@
 #include "mmc_spi.h"
 #include "serial_usb.h"
 #endif  // WHG
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
