@@ -9,13 +9,9 @@
 
 // Needed libraries & config
 #include <CIRremote.h>
-#include <RCSwitch.h>
 #include <Keypad.h>
 #include <EEPROM.h>
 #include "cnf.h" // config file
-
-// Needed glbal EEPROM variables
-int mainLightsAddress = 0; // EEPROM address 0
 
 // Needed glbal Keypad variables
 unsigned long currentTimer = 0;
@@ -69,11 +65,6 @@ Keypad keypad = Keypad(
 makeKeymap(keymap), rowPins, colPins, 4, 4
 );
 
-
-
-// Instance of the RCSwitch class
-RCSwitch mySwitch = RCSwitch();
-
 /*
 *  Gets the key name(number) of the button
  */
@@ -95,9 +86,6 @@ void setup()
   // Enable or not enable Serial depending on config
   serialSetup();
 
-  // 433 MHz transmission setup
-  switchesSetup();
-
   // PC Power switch setup
   pcPowerSetup();
 }
@@ -117,7 +105,7 @@ void loop() {
     sendMuteCommand();
   } 
   else if (lightMainButton == keyName) {
-    sendMainLightPing();
+    // Code for NRF24 communication
   } 
   else if(sleepButton == keyName) {
     sleepAllDevices();
@@ -137,10 +125,8 @@ void loop() {
   clearButton();
 }
 
-
 void sleepAllDevices(void){
   sendPowerCommand();
-  sendMainLightPing();
 }
 
 
