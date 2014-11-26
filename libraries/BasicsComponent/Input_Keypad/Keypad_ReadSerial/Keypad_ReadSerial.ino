@@ -1,3 +1,8 @@
+/**
+* Just connect the keypad directly between digital pin 11 and 3
+* Don't use pin D12 for the keypad! It's bugged!
+*/
+
 #include <Keypad.h>
 
 char keymap[4][4] =
@@ -10,15 +15,15 @@ char keymap[4][4] =
 
 int keymapName[4][4] =
 {
-  {4, 8, 12, 16},
-  {3, 7, 11, 15},
-  {2, 6, 10, 14},
-  {1, 5, 9, 13}
+  {1, 2, 3, 4},
+  {5, 6, 7, 8},
+  {9, 10, 11, 12},
+  {13, 14, 15, 16}
 };
 
 //Code that shows the the keypad connections to the arduino terminals
-byte rowPins[4] = {9, 8, 7, 6}; //Rows 0 to 3
-byte colPins[4] = {5, 4, 3, 2}; //Columns 0 to 3
+byte rowPins[4] = {7, 6, 5, 4}; //Rows 0 to 3
+byte colPins[4] = {8, 9, 10, 11}; //Columns 0 to 3
 
 //initializes an instance of the Keypad class
 Keypad myKeypad = Keypad(makeKeymap(keymap), rowPins, colPins, 4, 4);

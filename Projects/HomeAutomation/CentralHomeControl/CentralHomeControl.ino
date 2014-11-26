@@ -5,128 +5,73 @@
  *  - 940 nm IR LED with a resistor to pin 3
  *  - NPN transistor for PC Power switch
  *  - 433 MHz transmitter
+ *
+ * WARNING: Don't use Digital Pin 10 even if its not used, its reserved by SPI library!
  */
 
 // Needed libraries & config
+#include <ChibiOS_AVR.h>
+#include <Wire.h>
+#include <RF24Network.h>
+#include <RF24.h>
+#include <SPI.h>
 #include <CIRremote.h>
 #include <Keypad.h>
-#include <EEPROM.h>
-#include "cnf.h" // config file
+#include "config.h" // config file
 
-// Needed glbal Keypad variables
-unsigned long currentTimer = 0;
-unsigned long previousTimer = 0;
-int keyHold = 0;
-char keypressed;
-int keyName;
-int previousBtnChosen = 0;
+// Mutex for atomic access to data.
+MUTEX_DECL(dataMutex);
 
-// Instance of the IRsend class
-IRsend irsend;
+// Data to share
+volatile unsigned int dataX = 0;
+volatile unsigned int dataY = 0;
 
-//Code that shows the the keypad connections to the arduino terminals
-byte rowPins[4] = {
-  11, 10, 9, 8}; //Rows 0 to 3
-byte colPins[4] = {
-  7, 6, 5, 4}; //Columns 0 to 3
+// 64 byte stack beyond task switch and interrupt needs.
+static WORKING_AREA(waThread1, 64);
+// 128 byte stack beyond task switch and interrupt needs.
+static WORKING_AREA(waThread2, 128);
 
-char keymap[4][4] =
-{
-  {
-    'a', 'b', 'c', 'd'          }
-  ,
-  {
-    'e', 'f', 'g', 'h'          }
-  ,
-  {
-    'i', 'j', 'k', 'l'          }
-  ,
-  {
-    'm', 'n', 'o', 'p'          }
-};
-
-int keymapName[4][4] =
-{
-  {
-    4, 8, 12, 16          }
-  ,
-  {
-    3, 7, 11, 15          }
-  ,
-  {
-    2, 6, 10, 14          }
-  ,
-  {
-    1, 5, 9, 13          }
-};
-
-// Instance of the Keypad class
-Keypad keypad = Keypad(
-makeKeymap(keymap), rowPins, colPins, 4, 4
-);
-
-/*
-*  Gets the key name(number) of the button
- */
-int getKeyName(char keycode) {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      if (keymap[i][j] == keycode) {
-        return keymapName[i][j];
-      }
-    }
+//------------------------------------------------------------------------------
+void setup() {
+  // Enable Serial
+  Serial.begin(9600);
+  // Wait for USB Serial.
+  while (!Serial) {
   }
-}
 
-/*
-* Main setup functin which calls other setup functions
- */
-void setup()
-{
-  // Enable or not enable Serial depending on config
-  serialSetup();
+  // Read any input
+  delay(200);
+  while (Serial.read() >= 0) {
+  }
 
   // PC Power switch setup
   pcPowerSetup();
+
+  Serial.println(F("Starting RTOS & threads"));
+  chBegin(mainThread);
+  // chBegin never returns, main thread continues with mainThread()
+  while(1);
 }
 
-/*
-* Main loop function which listens for button presses
- */
-void loop() {
-  keypressed = keypad.waitForKey(); // Program is frozen until button-press
-  keyName = getKeyName(keypressed); // Get keyname/keynumber
-  int state = 0; // Private variable to store button state
+//------------------------------------------------------------------------------
+// main thread runs at NORMALPRIO
+void mainThread() {
 
-  if (nBPowerButton == keyName) {
-    sendPowerCommand();
-  } 
-  else if (nBMuteButton == keyName) {
-    sendMuteCommand();
-  } 
-  else if (lightMainButton == keyName) {
-    // Code for NRF24 communication
-  } 
-  else if(sleepButton == keyName) {
-    sleepAllDevices();
-  }
-  while (pcPowerButton == keyName && state != RELEASED) { // "While holding"
-    state = getKeyState();
-    sendPCPowerPing(state);
-  }
-  while (nBUpVolButton == keyName && state != RELEASED) { // "While holding"
-    sendUpVolCommand();
-    state = getKeyState();
-  }
-  while (nBDownVolButton == keyName && state != RELEASED) { // "While holding"
-    sendDownVolCommand();
-    state = getKeyState();
-  }
-  clearButton();
+  // start blink thread
+  chThdCreateStatic(waThread1, sizeof(waThread1),
+  NORMALPRIO + 2, Thread1, NULL);
+
+  // start print thread
+  chThdCreateStatic(waThread2, sizeof(waThread2),
+  NORMALPRIO + 1, Thread2, NULL);
 }
 
-void sleepAllDevices(void){
-  sendPowerCommand();
-}
+//------------------------------------------------------------------------------
+void loop(){
+  // not used
+} 
+
+
+
 
 

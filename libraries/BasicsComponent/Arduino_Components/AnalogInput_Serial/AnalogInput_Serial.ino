@@ -1,13 +1,15 @@
-const int analogInPin = A0;
-
 void setup() {
   Serial.begin(9600); 
-//  analogReference(EXTERNAL);
+  //  analogReference(EXTERNAL);
 }
 
-void loop() {
-  int sensorValue = analogRead(analogInPin);            
-  Serial.println(sensorValue);      
-
+void loop() {           
+  Serial.print(analogRead(A0));
+  Serial.print(" ");      
+  
+  Serial.println();
   delay(2);                     
 }
+
+
+
