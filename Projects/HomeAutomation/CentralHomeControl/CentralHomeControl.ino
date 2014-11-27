@@ -23,11 +23,11 @@
 MUTEX_DECL(dataMutex);
 
 // Data to share
-volatile unsigned int dataX = 0;
-volatile unsigned int dataY = 0;
+volatile int dataX = -1;
+volatile int dataY = -1;
 
-// 64 byte stack beyond task switch and interrupt needs.
-static WORKING_AREA(waThread1, 64);
+// 128 byte stack beyond task switch and interrupt needs.
+static WORKING_AREA(waThread1, 128);
 // 128 byte stack beyond task switch and interrupt needs.
 static WORKING_AREA(waThread2, 128);
 
@@ -57,13 +57,13 @@ void setup() {
 // main thread runs at NORMALPRIO
 void mainThread() {
 
-  // start blink thread
+  // keypad listening thread
   chThdCreateStatic(waThread1, sizeof(waThread1),
-  NORMALPRIO + 2, Thread1, NULL);
+  NORMALPRIO + 1, Thread1, NULL);
 
-  // start print thread
+  // rf24 mesh network thread
   chThdCreateStatic(waThread2, sizeof(waThread2),
-  NORMALPRIO + 1, Thread2, NULL);
+  NORMALPRIO + 2, Thread2, NULL);
 }
 
 //------------------------------------------------------------------------------

@@ -10,22 +10,22 @@ RF24Network network(radio);
 void runCommand(int32_t command){
   if (speakerPower == command)
   {
-    sendSpeakerPowerCommand();
+    dataX = 01;
     Serial.println(F("Toggled Speaker power"));
   }
   else if (speakerVolumeUp == command)
   {
-    sendSpeakerUpVolCommandOnce();
+    dataX = 02;
     Serial.println(F("Increased Speaker volume"));
   }
   else if (speakerVolumeDown == command)
   {
-    sendSpeakerDownVolCommandOnce();
+    dataX = 03;
     Serial.println(F("Decreased Speaker volume"));
   }
   else if (speakerMute == command)
   {
-    sendSpeakerMuteCommand();
+    dataX = 04;
     Serial.println(F("Muted Speaker"));
   }
 }
@@ -54,17 +54,19 @@ static msg_t Thread2(void *arg)
     int msgContent = dataX;
     int msgNode = dataY;
 
-    if(!msgContent)
+    if(msgNode == -1 )
     {
+
       int32_t msgReceived;
       readMessage(&msgReceived);
 
       // Put code in this if-statement which should occur when a message is received
       if(msgReceived != -1){
         runCommand(msgReceived);
+        Serial.println(F("Received Data"));
       }
     } 
-    else if(msgContent)
+    else if(msgNode >= 0)
     {
       Serial.println(F("MESSAGE SEND PROGRAM"));
       Serial.print(F("nodeID OF RECEIVER: "));
@@ -97,8 +99,8 @@ static msg_t Thread2(void *arg)
       }
 
       // Clear message and receiver content
-      dataX = 0;
-      dataY = 0;
+      dataX = -1;
+      dataY = -1;
 
     }
     // Unlock data access.
@@ -150,6 +152,11 @@ void initTweaks(void){
   radio.setPALevel(powerAmplifierLevel); // Set power amplifier to highest
   radio.setDataRate(dataRate); // Set data rate to 250kpbs
 }
+
+
+
+
+
 
 
 

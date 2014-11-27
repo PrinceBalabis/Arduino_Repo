@@ -50,8 +50,6 @@ const uint8_t nBMuteButton = 1;
 const uint8_t lightMainButton = 8;
 // PC swtich
 const uint8_t pcPowerButton = 12;
-// Sleep button
-const uint8_t sleepButton =16;
 /*
 *  ------------------------------------
 *  IR Codes
@@ -69,4 +67,4 @@ const unsigned long nBIRDownVolume = 0xFF708F;
 *  ------------------------------------
 */
 // PC Power pin pin
-const int pcPowerPin = A2;
+const int pcPowerPin = 7;

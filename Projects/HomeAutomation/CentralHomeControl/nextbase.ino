@@ -20,7 +20,7 @@ void sendSpeakerUpVolCommand(unsigned long previousTimer)
 
 void sendSpeakerUpVolCommandOnce(void) 
 {
-  for(int i = 0; i < 5 ; i++)
+  for(int i = 0; i < 10 ; i++)
     sendSpeakerCommand(nBIRUpVolume);
   Serial.println(F("Sent nBIRUpVolume command"));
 }
@@ -37,7 +37,7 @@ void sendSpeakerDownVolCommand(unsigned long previousTimer)
 
 void sendSpeakerDownVolCommandOnce(void) 
 {
-  for(int i = 0; i < 5 ; i++)
+  for(int i = 0; i < 10 ; i++)
     sendSpeakerCommand(nBIRDownVolume);
   Serial.println(F("Sent nBIRDownVolume command once"));
 }
