@@ -1,3 +1,0 @@
-[submodule "hardware/attiny"]
-	path = hardware/attiny
-	url = https://github.com/damellis/attiny.git
