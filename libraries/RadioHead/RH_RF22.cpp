@@ -1,7 +1,7 @@
 // RH_RF22.cpp
 //
 // Copyright (C) 2011 Mike McCauley
-// $Id: RH_RF22.cpp,v 1.17 2014/05/30 19:30:54 mikem Exp mikem $
+// $Id: RH_RF22.cpp,v 1.22 2014/09/17 22:41:47 mikem Exp $
 
 #include <RH_RF22.h>
 
@@ -63,6 +63,11 @@ RH_RF22::RH_RF22(uint8_t slaveSelectPin, uint8_t interruptPin, RHGenericSPI& spi
     _interruptPin = interruptPin;
     _idleMode = RH_RF22_XTON; // Default idle state is READY mode
     _polynomial = CRC_16_IBM; // Historical
+}
+
+void RH_RF22::setIdleMode(uint8_t idleMode)
+{
+    _idleMode = idleMode;
 }
 
 bool RH_RF22::init()
@@ -162,7 +167,6 @@ bool RH_RF22::init()
 // C++ level interrupt handler for this instance
 void RH_RF22::handleInterrupt()
 {
-    digitalWrite(2, HIGH);
     uint8_t _lastInterruptFlags[2];
     // Read the interrupt flags which clears the interrupt
     spiBurstRead(RH_RF22_REG_03_INTERRUPT_STATUS1, _lastInterruptFlags, 2);
@@ -200,7 +204,7 @@ void RH_RF22::handleInterrupt()
     if (_lastInterruptFlags[0] & RH_RF22_ITXFFAEM)
     {
 	// See if more data has to be loaded into the Tx FIFO 
-	sendNextFragment();
+  	sendNextFragment();
 //	Serial.println("ITXFFAEM");  
     }
     if (_lastInterruptFlags[0] & RH_RF22_IRXFFAFULL)
@@ -271,7 +275,7 @@ void RH_RF22::handleInterrupt()
     if (_lastInterruptFlags[1] & RH_RF22_IPREAVAL)
     {
 //	Serial.println("IPREAVAL");  
-	_lastRssi = (int8_t)(-(spiRead(RH_RF22_REG_26_RSSI) / 2));
+	_lastRssi = (int8_t)(-120 + ((spiRead(RH_RF22_REG_26_RSSI) / 2)));
 	_lastPreambleTime = millis();
 	resetRxFifo();
 	clearRxBuf();
@@ -430,6 +434,16 @@ void RH_RF22::setModeIdle()
     }
 }
 
+bool RH_RF22::sleep()
+{
+    if (_mode != RHModeSleep)
+    {
+	setOpMode(0);
+	_mode = RHModeSleep;
+    }
+    return true;
+}
+
 void RH_RF22::setModeRx()
 {
     if (_mode != RHModeRx)
@@ -506,7 +520,11 @@ void RH_RF22::clearRxBuf()
 bool RH_RF22::available()
 {
     if (!_rxBufValid)
+    {
+	if (_mode == RHModeTx)
+	    return false;
 	setModeRx(); // Make sure we are receiving
+    }
     return _rxBufValid;
 }
 

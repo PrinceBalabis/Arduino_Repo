@@ -1,7 +1,7 @@
 // RH_NRF24.h
 // Author: Mike McCauley
 // Copyright (C) 2012 Mike McCauley
-// $Id: RH_NRF24.h,v 1.9 2014/06/02 20:43:24 mikem Exp mikem $
+// $Id: RH_NRF24.h,v 1.12 2014/09/17 22:41:47 mikem Exp $
 //
 
 #ifndef RH_NRF24_h
@@ -11,7 +11,7 @@
 #include <RHNRFSPIDriver.h>
 
 // This is the maximum number of bytes that can be carried by the nRF24.
-// We use some for headers, keavin fewer for RadioHead messages
+// We use some for headers, keeping fewer for RadioHead messages
 #define RH_NRF24_MAX_PAYLOAD_LEN 32
 
 // The length of the headers we add.
@@ -114,6 +114,7 @@
 #define RH_NRF24_PWR_m12dBm                                0x02
 #define RH_NRF24_PWR_m6dBm                                 0x04
 #define RH_NRF24_PWR_0dBm                                  0x06
+#define RH_NRF24_LNA_HCURR                                 0x01
 
 // #define RH_NRF24_REG_07_STATUS                             0x07
 #define RH_NRF24_RX_DR                                     0x40
@@ -137,7 +138,7 @@
 #define RH_NRF24_RX_EMPTY                                  0x01
 
 // #define RH_NRF24_REG_1C_DYNPD                              0x1c
-#define RH_NRF24_DPL_ALL                                   0x2f
+#define RH_NRF24_DPL_ALL                                   0x3f
 #define RH_NRF24_DPL_P5                                    0x20
 #define RH_NRF24_DPL_P4                                    0x10
 #define RH_NRF24_DPL_P3                                    0x08
@@ -214,7 +215,7 @@
 /// The examples below assume the Sparkfun WRL-00691 module
 ///
 /// Connect the nRF24L01 to most Arduino's like this (Caution, Arduino Mega has different pins for SPI, 
-/// see below). Use these same connections for Teensy 3.1.
+/// see below). Use these same connections for Teensy 3.1 (use 3.3V not 5V Vcc).
 /// \code
 ///                 Arduino      Sparkfun WRL-00691
 ///                 5V-----------VCC   (3.3V to 7V in)
@@ -255,7 +256,53 @@
 ///                              IRQ   (Interrupt output, not connected)
 ///                 GND----------GND   (ground in)
 /// \endcode
-/// and you can then use the default constructor RH_NRF24(). 
+/// and you can then use the constructor RH_NRF24(8, 53). 
+///
+/// For an Itead Studio IBoard Pro http://imall.iteadstudio.com/iboard-pro.html, connected by hardware SPI to the 
+/// ITDB02 Parallel LCD Module Interface pins:
+/// \code
+///  IBoard Signal=ITDB02 pin          Sparkfun WRL-00691
+///        3.3V      37-----------VCC  (3.3V to 7V in)
+///         D2       28-----------CE   (chip enable in)
+///         D29      27----------CSN   (chip select in)
+///         SCK D52  32----------SCK   (SPI clock in)
+///        MOSI D51  34----------SDI   (SPI Data in)
+///        MISO D50  30----------SDO   (SPI data out)
+///                              IRQ   (Interrupt output, not connected)
+///        GND       39----------GND   (ground in)
+/// \endcode
+/// And initialise like this:
+/// \code
+/// RH_NRF24 nrf24(2, 29);
+/// \endcode
+///
+/// For an Itead Studio IBoard Pro http://imall.iteadstudio.com/iboard-pro.html, connected by software SPI to the 
+/// nRF24L01+ Module Interface pins. CAUTION: performance of software SPI is very slow and is not
+/// compatible with other modules running hardware SPI.
+/// \code
+///  IBoard Signal=Module pin          Sparkfun WRL-00691
+///        3.3V      2-----------VCC  (3.3V to 7V in)
+///         D12      3-----------CE   (chip enable in)
+///         D29      4----------CSN   (chip select in)
+///         D9       5----------SCK   (SPI clock in)
+///         D8       6----------SDI   (SPI Data in)
+///         D7       7----------SDO   (SPI data out)
+///                              IRQ   (Interrupt output, not connected)
+///        GND       1----------GND   (ground in)
+/// \endcode
+/// And initialise like this:
+/// \code
+/// #include <SPI.h>
+/// #include <RH_NRF24.h>
+/// #include <RHSoftwareSPI.h>
+/// Singleton instance of the radio driver
+/// RHSoftwareSPI spi;
+/// RH_NRF24 nrf24(12, 11, spi);
+/// void setup() {
+///     spi.setPins(7, 8, 9);
+///     ....
+/// \endcode
+///
 /// You can override the default settings for the CSN and CE pins 
 /// in the NRF24() constructor if you wish to connect the slave select CSN to other than the normal one for your 
 /// Arduino (D10 for Diecimila, Uno etc and D53 for Mega)
@@ -344,10 +391,12 @@ public:
 	TransmitPowerm6dBm,             ///< On nRF24, -6 dBm
 	TransmitPower0dBm,              ///< On nRF24, 0 dBm
 	// Sigh, different power levels for the same bit patterns on RFM73:
+	// On RFM73P-S, there is a Tx power amp, so expect higher power levels, up to 20dBm. Alas
+	// there is no clear documentation on the power for different settings :-(
 	RFM73TransmitPowerm10dBm = 0,   ///< On RFM73, -10 dBm
 	RFM73TransmitPowerm5dBm,        ///< On RFM73, -5 dBm
 	RFM73TransmitPowerm0dBm,        ///< On RFM73, 0 dBm
-	RFM73TransmitPower5dBm          ///< On RFM73, 5 dBm
+	RFM73TransmitPower5dBm          ///< On RFM73, 5 dBm. 20dBm on RFM73P-S2 ?
 
     } TransmitPower;
 
@@ -457,8 +506,7 @@ public:
     /// Sends data to the address set by setTransmitAddress()
     /// Sets the radio to TX mode
     /// \param [in] data Data bytes to send.
-    /// \param [in] len Number of data bytes to set in teh TX buffer. The actual size of the 
-    /// transmitted data payload is set by setPayloadSize
+    /// \param [in] len Number of data bytes to send
     /// \return true on success (which does not necessarily mean the receiver got the message, only that the message was
     /// successfully transmitted).
     bool send(const uint8_t* data, uint8_t len);
@@ -498,6 +546,13 @@ public:
     /// The maximum message length supported by this driver
     /// \return The maximum message length supported by this driver
     uint8_t maxMessageLength();
+
+    /// Sets the radio into Power Down mode.
+    /// If successful, the radio will stay in Power Down mode until woken by 
+    /// changing mode it idle, transmit or receive (eg by calling send(), recv(), available() etc)
+    /// Caution: there is a time penalty as the radio takes a finite time to wake from sleep mode.
+    /// \return true if sleep mode was successfully entered.
+    virtual bool    sleep();
 
 protected:
     /// Flush the TX FIFOs
