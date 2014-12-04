@@ -13,31 +13,31 @@ byte colPins[4] = {
 char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'                                                                                                                                                                }
+    'a', 'b', 'c', 'd'                                                                                                                                                                    }
   ,
   {
-    'e', 'f', 'g', 'h'                                                                                                                                                                }
+    'e', 'f', 'g', 'h'                                                                                                                                                                    }
   ,
   {
-    'i', 'j', 'k', 'l'                                                                                                                                                                }
+    'i', 'j', 'k', 'l'                                                                                                                                                                    }
   ,
   {
-    'm', 'n', 'o', 'p'                                                                                                                                                                }
+    'm', 'n', 'o', 'p'                                                                                                                                                                    }
 };
 
 int keymapName[4][4] =
 {
   {
-    1, 2, 3, 4                                                                                                                                                      }
+    1, 2, 3, 4                                                                                                                                                          }
   ,
   {
-    5, 6, 7, 8                                                                                                                                                      }
+    5, 6, 7, 8                                                                                                                                                          }
   ,
   {
-    9, 10, 11, 12                                                                                                                                                      }
+    9, 10, 11, 12                                                                                                                                                          }
   ,
   {
-    13, 14, 15, 16                                                                                                                                                      }
+    13, 14, 15, 16                                                                                                                                                          }
 };
 
 // Instance of the Keypad class
@@ -90,11 +90,11 @@ static msg_t Thread1(void *arg) {
     // The different commands for the buttons
     if (nBPowerButton == keyName && state == PRESSED) // Run once
     { 
-      sendSpeakerPowerCommand();
+      toggleSpeakerPower();
     } 
     else if (nBMuteButton == keyName && state == PRESSED) // Run once
     { 
-      sendSpeakerMuteCommand();
+      toggleSpeakerMuteCommand();
     } 
     else if (nBUpVolButton == keyName && state != RELEASED) // "While holding"
     { 
@@ -121,9 +121,9 @@ static msg_t Thread1(void *arg) {
         // Unlock data access.
       chMtxUnlock();
     } 
-    else if(dataX == 01 && dataY == -1)
+    else if(dataX == speakerPowerToggle && dataY == -1) // Asking to toggle Speaker
     {
-      sendSpeakerPowerCommand();
+      toggleSpeakerPower();
 
       // Lock access to data.
       chMtxLock(&dataMutex);
@@ -134,7 +134,34 @@ static msg_t Thread1(void *arg) {
       // Unlock data access.
       chMtxUnlock();
     }
-    else if(dataX == 02 && dataY == -1)
+    else if(dataX == speakerPowerOn && dataY == -1) // Asking to turn on speaker
+    {
+      sendSpeakerPowerOnCommand();
+
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
+    else if(dataX == speakerPowerOff && dataY == -1) // Asking to turn off speaker
+    {
+      sendSpeakerPowerOffCommand();
+
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
+
+    else if(dataX == speakerVolumeUp && dataY == -1)
     {
       sendSpeakerUpVolCommandOnce();
 
@@ -147,7 +174,7 @@ static msg_t Thread1(void *arg) {
       // Unlock data access.
       chMtxUnlock();
     }
-    else if(dataX == 03 && dataY == -1)
+    else if(dataX == speakerVolumeDown && dataY == -1)
     {
       sendSpeakerDownVolCommandOnce();
 
@@ -160,9 +187,35 @@ static msg_t Thread1(void *arg) {
       // Unlock data access.
       chMtxUnlock();
     }
-    else if(dataX == 04 && dataY == -1)
+    else if(dataX == speakerMuteToggle && dataY == -1)
     {
-      sendSpeakerMuteCommand();
+      toggleSpeakerMuteCommand();
+
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
+    else if(dataX == speakerMuteOn && dataY == -1)
+    {
+      sendSpeakerMuteOnCommand();
+
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
+    else if(dataX == speakerMuteOff && dataY == -1)
+    {
+      sendSpeakerMuteOffCommand();
 
       // Lock access to data.
       chMtxLock(&dataMutex);
@@ -200,6 +253,8 @@ void keypadEvent(KeypadEvent key){
     break;
   }
 }
+
+
 
 
 

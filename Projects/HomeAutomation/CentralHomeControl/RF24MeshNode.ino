@@ -4,31 +4,31 @@
 RF24 radio(8,9); // CE & CSN pins
 RF24Network network(radio);
 
-/**
- *  This function runs the command it receives from other nodes
- **/
-void runCommand(int32_t command){
-  if (speakerPower == command)
-  {
-    dataX = 01;
-    Serial.println(F("Toggled Speaker power"));
-  }
-  else if (speakerVolumeUp == command)
-  {
-    dataX = 02;
-    Serial.println(F("Increased Speaker volume"));
-  }
-  else if (speakerVolumeDown == command)
-  {
-    dataX = 03;
-    Serial.println(F("Decreased Speaker volume"));
-  }
-  else if (speakerMute == command)
-  {
-    dataX = 04;
-    Serial.println(F("Muted Speaker"));
-  }
-}
+///**
+// *  This function runs the command it receives from other nodes
+// **/
+//void runCommand(int32_t command){
+//  if (speakerPowerToggle == command)
+//  {
+//    dataX = 01;
+//    Serial.println(F("Toggled Speaker power"));
+//  }
+//  else if (speakerVolumeUp == command)
+//  {
+//    dataX = 02;
+//    Serial.println(F("Increased Speaker volume"));
+//  }
+//  else if (speakerVolumeDown == command)
+//  {
+//    dataX = 03;
+//    Serial.println(F("Decreased Speaker volume"));
+//  }
+//  else if (speakerMute == command)
+//  {
+//    dataX = 04;
+//    Serial.println(F("Muted Speaker"));
+//  }
+//}
 
 /**
  *  RF24 thread
@@ -62,7 +62,7 @@ static msg_t Thread2(void *arg)
 
       // Put code in this if-statement which should occur when a message is received
       if(msgReceived != -1){
-        runCommand(msgReceived);
+        dataX = msgReceived;
         Serial.println(F("Received Data"));
       }
     } 
