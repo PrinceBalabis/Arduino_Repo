@@ -1,9 +1,12 @@
-RCSwitch switch433 = RCSwitch();
+NewRemoteTransmitter transmitter(15303606, 6, 260,  3);
 
-void switch433Setup(){
-  switch433.enableTransmit(switch433TransmitterPin);
+boolean diningTableSwitch = false;
+
+void setRemoteSwitch(uint8_t unit, boolean state){
+  transmitter.sendUnit(unit, state);
 }
 
-void send433Command(uint32_t command){
-  switch433.send(command, 24);
+void toggleFoodLampSwitch(){
+  diningTableSwitch = !diningTableSwitch;
+  transmitter.sendUnit(lightDiningTable, diningTableSwitch);
 }

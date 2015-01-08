@@ -33,6 +33,8 @@ const int32_t speakerVolumeDown = 5;
 const int32_t speakerMuteToggle = 6;
 const int32_t speakerMuteOn = 7;
 const int32_t speakerMuteOff = 8;
+const int32_t diningTableOn = 9;
+const int32_t diningTableOff = 10;
 
 // Tweaks optimized for compatibility, reliability and driftsecurity
 const uint8_t retryDelay = 5;
@@ -52,6 +54,7 @@ const uint8_t nBDownVolButton = 2;
 const uint8_t nBMuteButton = 1;
 // NRF24
 const uint8_t lightMainButton = 8;
+const uint8_t lightDiningTableButton = 7;
 // PC swtich
 const uint8_t pcPowerButton = 12;
 /*
@@ -70,8 +73,8 @@ const unsigned long nBIRDownVolume = 0xFF708F;
  *  433 MHz Switches codes
  *  ------------------------------------
  */
-const uint32_t speaker433PowerOn = 5526613;
-const uint32_t speaker433PowerOff = 5526612;
+const uint8_t speakerUnit = 2;
+const uint8_t lightDiningTable = 1;
 
 /*
 *  ------------------------------------

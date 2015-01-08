@@ -6,38 +6,38 @@ int state = RELEASED;
 
 //Code that shows the the keypad connections to the arduino terminals
 byte rowPins[4] = {
-  18, 19, 5, 4}; //Rows 0 to 3
+  18, 19, 5, 4 }; //Rows 0 to 3
 byte colPins[4] = {
   17, 16, 15, 14 }; //Columns 0 to 3
 
 char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'                                                                                                                                                                    }
+    'a', 'b', 'c', 'd'    }
   ,
   {
-    'e', 'f', 'g', 'h'                                                                                                                                                                    }
+    'e', 'f', 'g', 'h'    }
   ,
   {
-    'i', 'j', 'k', 'l'                                                                                                                                                                    }
+    'i', 'j', 'k', 'l'     }
   ,
   {
-    'm', 'n', 'o', 'p'                                                                                                                                                                    }
+    'm', 'n', 'o', 'p'     }
 };
 
 int keymapName[4][4] =
 {
   {
-    1, 2, 3, 4                                                                                                                                                          }
+    1, 2, 3, 4     }
   ,
   {
-    5, 6, 7, 8                                                                                                                                                          }
+    5, 6, 7, 8     }
   ,
   {
-    9, 10, 11, 12                                                                                                                                                          }
+    9, 10, 11, 12     }
   ,
   {
-    13, 14, 15, 16                                                                                                                                                          }
+    13, 14, 15, 16     }
 };
 
 // Instance of the Keypad class
@@ -108,6 +108,10 @@ static msg_t Thread1(void *arg) {
     { 
       setPCPowerSwitch(TRUE);
     }
+    else if (lightDiningTableButton == keyName && state == PRESSED ) 
+    { 
+      toggleFoodLampSwitch();
+    }
     else if (lightMainButton == keyName && state == PRESSED) 
     {
       Serial.println(F("Notifies the RF24 to send data"));
@@ -121,6 +125,33 @@ static msg_t Thread1(void *arg) {
         // Unlock data access.
       chMtxUnlock();
     } 
+    else if(dataX == diningTableOn && dataY == -1) // Asking to toggle Speaker
+    {
+      setRemoteSwitch(1, TRUE);
+      Serial.println(F("Turned on dining table lights"));
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
+    else if(dataX == diningTableOff && dataY == -1) // Asking to toggle Speaker
+    {
+      setRemoteSwitch(1, FALSE);
+      Serial.println(F("Turned off dining table lights"));
+
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
     else if(dataX == speakerPowerToggle && dataY == -1) // Asking to toggle Speaker
     {
       toggleSpeakerPower();
@@ -253,10 +284,3 @@ void keypadEvent(KeypadEvent key){
     break;
   }
 }
-
-
-
-
-
-
-

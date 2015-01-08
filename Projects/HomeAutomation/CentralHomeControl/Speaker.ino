@@ -18,8 +18,8 @@ void toggleSpeakerPower(void){
 void sendSpeakerPowerOnCommand(void){
   if(!speakerState)
   {
-    send433Command(speaker433PowerOn); // Toggle 433 MHz switch for speaker on
-    chThdSleepMilliseconds(200); // Wait for 433 MHz switch to turn on speaker
+    setRemoteSwitch(2, true); // Toggle 433 MHz switch for speaker on
+    chThdSleepMilliseconds(300); // Wait for 433 MHz switch to turn on speaker
     sendSpeakerIRPowerCommand(); // Send IR power command
     speakerState = 1;
   }
@@ -28,7 +28,7 @@ void sendSpeakerPowerOnCommand(void){
 void sendSpeakerPowerOffCommand(void){
   if(speakerState)
   {
-    send433Command(speaker433PowerOff);
+    setRemoteSwitch(2, false);
     speakerState = 0;
     speakerMuteState = 0;
   }

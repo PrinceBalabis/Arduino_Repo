@@ -4,32 +4,6 @@
 RF24 radio(8,9); // CE & CSN pins
 RF24Network network(radio);
 
-///**
-// *  This function runs the command it receives from other nodes
-// **/
-//void runCommand(int32_t command){
-//  if (speakerPowerToggle == command)
-//  {
-//    dataX = 01;
-//    Serial.println(F("Toggled Speaker power"));
-//  }
-//  else if (speakerVolumeUp == command)
-//  {
-//    dataX = 02;
-//    Serial.println(F("Increased Speaker volume"));
-//  }
-//  else if (speakerVolumeDown == command)
-//  {
-//    dataX = 03;
-//    Serial.println(F("Decreased Speaker volume"));
-//  }
-//  else if (speakerMute == command)
-//  {
-//    dataX = 04;
-//    Serial.println(F("Muted Speaker"));
-//  }
-//}
-
 /**
  *  RF24 thread
  **/

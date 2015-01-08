@@ -17,7 +17,7 @@
 #include <SPI.h>
 #include <CIRremote.h>
 #include <Keypad.h>
-#include <RCSwitch.h>
+#include <NewRemoteTransmitter.h>
 #include "config.h" // config file
 
 // Mutex for atomic access to data.
@@ -47,9 +47,6 @@ void setup() {
 
   // PC Power switch setup
   pcPowerSetup();
-
-  // 433 MHz RC setup
-  switch433Setup();
 
   Serial.println(F("Starting RTOS & threads"));
   chBegin(mainThread);
