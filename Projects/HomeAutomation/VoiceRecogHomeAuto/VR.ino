@@ -17,18 +17,19 @@ enum Group1
 {
   G1_MAIN_ROOM = 0,
   G1_MAIN_LIGHTS = 1,
-  G1_MAIN_ROOM_LIGHTS = 2,
-  G1_DINING_TABLE = 3,
-  G1_TABLE = 4,
-  G1_TABLE_LIGHTS = 5,
-  G1_DINING_TABLE_LIGHTS = 6,
-  G1_SPEAKERS = 7,
-  G1_SPEAKER = 8,
-  G1_SLEEP_MODE = 9,
-  G1_ENTER_SLEEP_MODE = 10,
+  G1_DINING_TABLE = 2,
+  G1_TABLE = 3,
+  G1_TABLE_LIGHTS = 4,
+  G1_DINING_TABLE_LIGHTS = 5,
+  G1_SPEAKERS = 6,
+  G1_SPEAKER = 7,
+  G1_SLEEP_MODE = 8,
+  G1_IM_GOING_TO_SLEEP = 9,
+  G1_IM_GOING_TO_BED = 10,
   G1_IM_AWAKE = 11,
   G1_NOTHING = 12,
   G1_NEVER_MIND = 13,
+  G1_JARVIS = 14,
 };
 
 EasyVRBridge bridge;
@@ -37,12 +38,13 @@ int8_t group, idx;
 
 static msg_t Thread2(void *arg) {
   port.begin(9600);
-
   while (!easyvr.detect())
   {
     Serial.println("EasyVR not detected!");
     chThdSleepMilliseconds(1000);
   }
+//  easyvr.changeBaudrate(38400); //Change baudrate to faster
+//  port.begin(38400); //Change baudrate to faster
 
   easyvr.setPinOutput(EasyVR::IO1, LOW);
   Serial.println("EasyVR detected!");
@@ -103,6 +105,7 @@ static msg_t Thread2(void *arg) {
       {
         Serial.print("Error ");
         Serial.println(err, HEX);
+        group = EasyVR::TRIGGER; //<-- start group (customize)
         easyvr.playSound(0, EasyVR::VOL_FULL);
         easyvr.playSound(0, EasyVR::VOL_FULL);
       }
@@ -139,10 +142,6 @@ void action()
       toggleMainLights();
       group = GROUP_0;
       break;
-    case G1_MAIN_ROOM_LIGHTS:
-      toggleMainLights();
-      group = GROUP_0;
-      break;
     case G1_DINING_TABLE:
       toggleDiningTableLights();
       group = GROUP_0;
@@ -171,7 +170,11 @@ void action()
       enterSleepMode();
       group = GROUP_0;
       break;
-    case G1_ENTER_SLEEP_MODE:
+    case G1_IM_GOING_TO_SLEEP:
+      enterSleepMode();
+      group = GROUP_0;
+      break;
+    case G1_IM_GOING_TO_BED:
       enterSleepMode();
       group = GROUP_0;
       break;
@@ -185,10 +188,19 @@ void action()
     case G1_NEVER_MIND:
       group = GROUP_0;
       break;
+    case G1_JARVIS:
+      break;
     }
     break;
   }
 }
+
+
+
+
+
+
+
 
 
 

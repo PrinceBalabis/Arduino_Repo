@@ -164,12 +164,20 @@ void setSpeakerPowerOff(){
   msgContent = 03;
 }
 
-void enterSleepMode(){
+void shutdownAll(){
   setMainLightsOff();
   chThdSleepMilliseconds(20);
   setDiningTableLightsOff();
   chThdSleepMilliseconds(2000);
   setSpeakerPowerOff();
+}
+
+void enterSleepMode(){
+  shutdownAll();
+}
+
+void leavingApartment(){
+  shutdownAll();
 }
 
 void exitSleepMode(){
