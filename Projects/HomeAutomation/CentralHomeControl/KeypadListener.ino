@@ -13,31 +13,31 @@ byte colPins[4] = {
 char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'    }
+    'a', 'b', 'c', 'd'        }
   ,
   {
-    'e', 'f', 'g', 'h'    }
+    'e', 'f', 'g', 'h'        }
   ,
   {
-    'i', 'j', 'k', 'l'     }
+    'i', 'j', 'k', 'l'         }
   ,
   {
-    'm', 'n', 'o', 'p'     }
+    'm', 'n', 'o', 'p'         }
 };
 
 int keymapName[4][4] =
 {
   {
-    1, 2, 3, 4     }
+    1, 2, 3, 4         }
   ,
   {
-    5, 6, 7, 8     }
+    5, 6, 7, 8         }
   ,
   {
-    9, 10, 11, 12     }
+    9, 10, 11, 12         }
   ,
   {
-    13, 14, 15, 16     }
+    13, 14, 15, 16         }
 };
 
 // Instance of the Keypad class
@@ -110,7 +110,7 @@ static msg_t Thread1(void *arg) {
     }
     else if (lightDiningTableButton == keyName && state == PRESSED ) 
     { 
-      toggleFoodLampSwitch();
+      toggleDiningTableSwitch();
     }
     else if (lightMainButton == keyName && state == PRESSED) 
     {
@@ -127,7 +127,7 @@ static msg_t Thread1(void *arg) {
     } 
     else if(dataX == diningTableOn && dataY == -1) // Asking to toggle Speaker
     {
-      setRemoteSwitch(1, TRUE);
+      setDiningTableSwitchOn();
       Serial.println(F("Turned on dining table lights"));
       // Lock access to data.
       chMtxLock(&dataMutex);
@@ -140,8 +140,22 @@ static msg_t Thread1(void *arg) {
     }
     else if(dataX == diningTableOff && dataY == -1) // Asking to toggle Speaker
     {
-      setRemoteSwitch(1, FALSE);
+      setDiningTableSwitchOff();
       Serial.println(F("Turned off dining table lights"));
+
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      dataX = -1;
+      dataY = -1;
+
+      // Unlock data access.
+      chMtxUnlock();
+    }
+    else if(dataX == diningTableToggle && dataY == -1) // Asking to toggle Speaker
+    {
+      toggleDiningTableSwitch();
+      Serial.println(F("Toggled dining table lights"));
 
       // Lock access to data.
       chMtxLock(&dataMutex);
@@ -284,3 +298,5 @@ void keypadEvent(KeypadEvent key){
     break;
   }
 }
+
+

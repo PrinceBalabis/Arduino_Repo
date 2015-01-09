@@ -20,9 +20,6 @@ const int ceilingLightsPin = 3;
 // Other nodes we can communicate with
 const unsigned int mainLights = 00; 
 const unsigned int raspberryPi = 01; 
-const unsigned int node02 = 02; 
-const unsigned int node03 = 03; 
-const unsigned int node04 = 04; 
 
 // This is the nodeID of this Arduino.
 const unsigned int nodeID = mainLights; 

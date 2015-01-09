@@ -35,6 +35,7 @@ const int32_t speakerMuteOn = 7;
 const int32_t speakerMuteOff = 8;
 const int32_t diningTableOn = 9;
 const int32_t diningTableOff = 10;
+const int32_t diningTableToggle = 11;
 
 // Tweaks optimized for compatibility, reliability and driftsecurity
 const uint8_t retryDelay = 5;
