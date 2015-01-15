@@ -12,7 +12,6 @@ static msg_t Thread3(void *arg) {
     if(digitalRead(motorButton) && lastState == 0){ // Toggle motorPowerState when button is pressed
       lastState = 1;
       chThdSleepMilliseconds(50);
-      Serial.println(F("Pressed power button"));
       motorPowerState = !motorPowerState;
     } 
     else if(!digitalRead(motorButton))

@@ -6,9 +6,9 @@
 #include <ChibiOS_AVR.h>
 #include <firFilter.h>
 
-static WORKING_AREA(waThread1, 64);
-static WORKING_AREA(waThread2, 64);
-static WORKING_AREA(waThread3, 64);
+static WORKING_AREA(waThread1, 128);
+static WORKING_AREA(waThread2, 128);
+static WORKING_AREA(waThread3, 128);
 
 int motorPowerState = 0;
 
@@ -32,7 +32,7 @@ void mainThread() {
   NORMALPRIO + 1, Thread2, NULL);
 
   chThdCreateStatic(waThread3, sizeof(waThread3),
-  NORMALPRIO + 1, Thread3, NULL);
+  NORMALPRIO, Thread3, NULL);
 
   while (1) {
   }

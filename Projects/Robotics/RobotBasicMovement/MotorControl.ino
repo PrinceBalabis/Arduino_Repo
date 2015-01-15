@@ -13,6 +13,7 @@ unsigned long currentMillis;
 unsigned long previousMillis = 0;
 const long interval = 2000; 
 int chosenMovement = 0;
+boolean lastPowerState = 0;
 
 enum Moves 
 {
@@ -20,7 +21,10 @@ enum Moves
   FORWARD = 1,
   TURN_RIGHT = 2,
   TURN_LEFT = 3,
-  BACKWARDS = 4
+  BACKWARDS = 4,
+  SHUT_MOTORS = 5,
+  START_MOTORS = 6,
+  FLOAT = 7
 };
 
 static msg_t Thread1(void *arg) {
@@ -31,7 +35,7 @@ static msg_t Thread1(void *arg) {
   pinMode(b, OUTPUT);
   pinMode(c, OUTPUT);
   pinMode(d, OUTPUT);
-  startMotors();
+  setMovement(SHUT_MOTORS);
 
   while (1) {
     currentMillis = millis();
@@ -46,13 +50,14 @@ static msg_t Thread1(void *arg) {
         chosenMovement = 1;
 
       setMovement(chosenMovement);
-
+      lastPowerState = 1;
     } 
-    else if (!motorPowerState){
-      breakMotors();
+    else if (!motorPowerState && lastPowerState){
+      setMovement(STOP);
       if(chosenMovement > 1)
         chosenMovement--; // Rewind a movement to be able to continue again
       previousMillis = 0; // Set to 0 in able to cycle to a new movenet as soon as it continues
+      lastPowerState = 0;
     }
 
     chThdSleepMilliseconds(50);
@@ -65,113 +70,63 @@ void setMovement(int movement){
   switch (movement)
   {
   case STOP:
-    breakMotors();
     Serial.println(F("Breaks"));
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
     break;
   case FORWARD:
-    startMotors();
+    setMovement(START_MOTORS);
     Serial.println(F("Forward"));
-    forward();
+    digitalWrite(a, LOW);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, LOW);
+    digitalWrite(d, HIGH);
     break;
   case TURN_RIGHT:
-    startMotors();
+    setMovement(START_MOTORS);
     Serial.println(F("Right turn"));
-    turnRight();
+    digitalWrite(a, HIGH);
+    digitalWrite(b, LOW);
+    digitalWrite(c, LOW);
+    digitalWrite(d, HIGH);
     break;
   case TURN_LEFT:
-    startMotors();
+    setMovement(START_MOTORS);
     Serial.println(F("Left turn"));
-    turnLeft();
+    digitalWrite(a, LOW);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, LOW);
     break;
   case BACKWARDS:
+    setMovement(START_MOTORS);
     Serial.println(F("Backwards"));
-    backwards();
+    digitalWrite(a, HIGH);
+    digitalWrite(b, LOW);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, LOW);
+    break;
+  case SHUT_MOTORS:
+    Serial.println(F("Shut down motors"));
+    digitalWrite(en1, LOW); // Disable motor 1 (Left motor)
+    digitalWrite(en2, LOW); // Disable motor 2 (Right motor)
+    break;
+  case START_MOTORS:
+    Serial.println(F("(Re)start motors"));
+    digitalWrite(en1, HIGH); // Enable motor 1 (Left motor)
+    digitalWrite(en2, HIGH); // Enable motor 2 (Right motor)
+    break;
+  case FLOAT:
+    Serial.println(F("Backwards"));
+    digitalWrite(a, LOW);
+    digitalWrite(b, LOW);
+    digitalWrite(c, LOW);
+    digitalWrite(d, LOW);
     break;
   }
 }
-
-
-void shutMotors(){
-  digitalWrite(en1, LOW); // Disable motor 1 (Left motor)
-  digitalWrite(en2, LOW); // Disable motor 2 (Right motor)
-}
-
-void startMotors(){
-  digitalWrite(en1, HIGH); // Enable motor 1 (Left motor)
-  digitalWrite(en2, HIGH); // Enable motor 2 (Right motor)
-}
-
-void breakMotors(){
-  digitalWrite(a, HIGH);
-  digitalWrite(b, HIGH);
-  digitalWrite(c, HIGH);
-  digitalWrite(d, HIGH);
-}
-
-void floatMotor(){
-  digitalWrite(a, LOW);
-  digitalWrite(b, LOW);
-  digitalWrite(c, LOW);
-  digitalWrite(d, LOW);
-}
-
-void forward() {
-  digitalWrite(a, LOW);
-  digitalWrite(b, HIGH);
-  digitalWrite(c, LOW);
-  digitalWrite(d, HIGH);
-}
-
-void backwards() {
-  digitalWrite(a, HIGH);
-  digitalWrite(b, LOW);
-  digitalWrite(c, HIGH);
-  digitalWrite(d, LOW);
-}
-
-void turnRight() {
-  digitalWrite(a, HIGH);
-  digitalWrite(b, LOW);
-  digitalWrite(c, LOW);
-  digitalWrite(d, HIGH);
-}
-
-void turnLeft() {
-  digitalWrite(a, LOW);
-  digitalWrite(b, HIGH);
-  digitalWrite(c, HIGH);
-  digitalWrite(d, LOW);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
