@@ -46,8 +46,8 @@ static msg_t Thread1(void *arg) {
       // Cycle through each movement
       chosenMovement++;
 
-      if(chosenMovement > 5)
-        chosenMovement = 1;
+      if(chosenMovement > 4)
+        chosenMovement = 0;
 
       setMovement(chosenMovement);
       lastPowerState = 1;
@@ -114,7 +114,7 @@ void setMovement(int movement){
     digitalWrite(en2, LOW); // Disable motor 2 (Right motor)
     break;
   case START_MOTORS:
-    Serial.println(F("(Re)start motors"));
+    Serial.println(F("Start motors"));
     digitalWrite(en1, HIGH); // Enable motor 1 (Left motor)
     digitalWrite(en2, HIGH); // Enable motor 2 (Right motor)
     break;
