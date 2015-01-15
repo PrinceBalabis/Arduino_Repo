@@ -19,6 +19,7 @@
 const uint16_t mainLights = 00; // Main Light Node
 const uint16_t centralHomeControl = 01; // Centra Home Control Node
 const uint16_t raspberryPi = 02; // Raspberry Pi Node
+const uint16_t voiceRecog = 03; // VoiceRecog Node
 
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
@@ -53,9 +54,10 @@ const uint8_t nBPowerButton = 4;
 const uint8_t nBUpVolButton = 3;
 const uint8_t nBDownVolButton = 2;
 const uint8_t nBMuteButton = 1;
-// NRF24
+// Lights
 const uint8_t lightMainButton = 8;
 const uint8_t lightDiningTableButton = 7;
+const uint8_t lightBedButton = 13;
 // PC swtich
 const uint8_t pcPowerButton = 12;
 /*

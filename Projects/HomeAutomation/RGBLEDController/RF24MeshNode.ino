@@ -168,7 +168,7 @@ void shutdownAll(){
   setMainLightsOff();
   chThdSleepMilliseconds(20);
   setDiningTableLightsOff();
-  chThdSleepMilliseconds(1000);
+  chThdSleepMilliseconds(2000);
   setSpeakerPowerOff();
 }
 
@@ -188,14 +188,5 @@ void exitSleepMode(){
 
 void toggleBedLights(){
 }
-
-void setPartyMode() {
-  setDiningTableLightsOn();
-  chThdSleepMilliseconds(20);
-  setMainLightsOff();
-  chThdSleepMilliseconds(700);
-  setSpeakerPowerOn();
-}
-
 
 

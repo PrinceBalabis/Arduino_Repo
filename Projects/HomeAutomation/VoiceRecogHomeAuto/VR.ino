@@ -16,20 +16,13 @@ enum Group0
 enum Group1 
 {
   G1_MAIN_ROOM = 0,
-  G1_MAIN_LIGHTS = 1,
-  G1_DINING_TABLE = 2,
-  G1_TABLE = 3,
-  G1_TABLE_LIGHTS = 4,
-  G1_DINING_TABLE_LIGHTS = 5,
-  G1_SPEAKERS = 6,
-  G1_SPEAKER = 7,
-  G1_SLEEP_MODE = 8,
-  G1_IM_GOING_TO_SLEEP = 9,
-  G1_IM_GOING_TO_BED = 10,
-  G1_IM_AWAKE = 11,
-  G1_NOTHING = 12,
-  G1_NEVER_MIND = 13,
-  G1_JARVIS = 14,
+  G1_DINING_TABLE = 1,
+  G1_TABLE = 2,
+  G1_SPEAKER = 3,
+  G1_IM_GOING_TO_BED = 4,
+  G1_IM_AWAKE = 5,
+  G1_LETS_PARTY = 6,
+  G1_JARVIS = 7,
 };
 
 EasyVRBridge bridge;
@@ -43,8 +36,8 @@ static msg_t Thread2(void *arg) {
     Serial.println("EasyVR not detected!");
     chThdSleepMilliseconds(1000);
   }
-//  easyvr.changeBaudrate(38400); //Change baudrate to faster
-//  port.begin(38400); //Change baudrate to faster
+  //  easyvr.changeBaudrate(38400); //Change baudrate to faster
+  //  port.begin(38400); //Change baudrate to faster
 
   easyvr.setPinOutput(EasyVR::IO1, LOW);
   Serial.println("EasyVR detected!");
@@ -54,7 +47,11 @@ static msg_t Thread2(void *arg) {
   group = EasyVR::TRIGGER; //<-- start group (customize)
 
   while (1) {
-    easyvr.setPinOutput(EasyVR::IO1, HIGH); // LED on (listening)
+    
+    if(group == GROUP_0)
+      easyvr.setPinOutput(EasyVR::IO1, LOW); // LED off (listening for code word)
+    else if(group == GROUP_1)
+      easyvr.setPinOutput(EasyVR::IO1, HIGH); // LED on (listening for command)
 
     Serial.print("Say a command in Group ");
     Serial.println(group);
@@ -67,7 +64,6 @@ static msg_t Thread2(void *arg) {
     }
     while (!easyvr.hasFinished());
 
-    easyvr.setPinOutput(EasyVR::IO1, LOW); // LED off
     idx = easyvr.getWord();
     if (idx >= 0)
     {
@@ -138,10 +134,6 @@ void action()
       toggleMainLights();
       group = GROUP_0;
       break;
-    case G1_MAIN_LIGHTS:
-      toggleMainLights();
-      group = GROUP_0;
-      break;
     case G1_DINING_TABLE:
       toggleDiningTableLights();
       group = GROUP_0;
@@ -150,28 +142,8 @@ void action()
       toggleDiningTableLights();
       group = GROUP_0;
       break;
-    case G1_TABLE_LIGHTS:
-      toggleDiningTableLights();
-      group = GROUP_0;
-      break;
-    case G1_DINING_TABLE_LIGHTS:
-      toggleDiningTableLights();
-      group = GROUP_0;
-      break;
-    case G1_SPEAKERS:
-      toggleSpeakerPower();
-      group = GROUP_0;
-      break;
     case G1_SPEAKER:
       toggleSpeakerPower();
-      group = GROUP_0;
-      break;
-    case G1_SLEEP_MODE:
-      enterSleepMode();
-      group = GROUP_0;
-      break;
-    case G1_IM_GOING_TO_SLEEP:
-      enterSleepMode();
       group = GROUP_0;
       break;
     case G1_IM_GOING_TO_BED:
@@ -182,18 +154,22 @@ void action()
       exitSleepMode();
       group = GROUP_0;
       break;
-    case G1_NOTHING:
-      group = GROUP_0;
-      break;
-    case G1_NEVER_MIND:
+    case G1_LETS_PARTY:
+      setPartyMode();
       group = GROUP_0;
       break;
     case G1_JARVIS:
+      // Do nothing here to stay in group 1
       break;
     }
     break;
   }
 }
+
+
+
+
+
 
 
 

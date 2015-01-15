@@ -112,6 +112,19 @@ static msg_t Thread1(void *arg) {
     { 
       toggleDiningTableSwitch();
     }
+        else if (lightBedButton == keyName && state == PRESSED ) 
+    { 
+      Serial.println(F("Notifies the RF24 to send data"));
+      // Lock access to data.
+      chMtxLock(&dataMutex);
+
+      // Copy tmp variables to shared data.
+      dataX = 3; // Send 01 which is the code to toggle lights
+      dataY = voiceRecog; // Send the receiver of the code which is the code to toggle lights
+
+        // Unlock data access.
+      chMtxUnlock();
+    }
     else if (lightMainButton == keyName && state == PRESSED) 
     {
       Serial.println(F("Notifies the RF24 to send data"));
