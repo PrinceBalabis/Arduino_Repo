@@ -45,11 +45,14 @@ static msg_t Thread1(void *arg) {
       if(chosenMovement > 5)
         chosenMovement = 1;
 
-        setMovement(chosenMovement);
+      setMovement(chosenMovement);
 
     } 
     else if (!motorPowerState){
-      stopmotors();
+      breakMotors();
+      if(chosenMovement > 1)
+        chosenMovement--; // Rewind a movement to be able to continue again
+      previousMillis = 0; // Set to 0 in able to cycle to a new movenet as soon as it continues
     }
 
     chThdSleepMilliseconds(50);
@@ -62,8 +65,8 @@ void setMovement(int movement){
   switch (movement)
   {
   case STOP:
-    stopmotors();
-    Serial.println(F("Stopped"));
+    breakMotors();
+    Serial.println(F("Breaks"));
     break;
   case FORWARD:
     startMotors();
@@ -88,7 +91,7 @@ void setMovement(int movement){
 }
 
 
-void stopmotors(){
+void shutMotors(){
   digitalWrite(en1, LOW); // Disable motor 1 (Left motor)
   digitalWrite(en2, LOW); // Disable motor 2 (Right motor)
 }
@@ -96,6 +99,20 @@ void stopmotors(){
 void startMotors(){
   digitalWrite(en1, HIGH); // Enable motor 1 (Left motor)
   digitalWrite(en2, HIGH); // Enable motor 2 (Right motor)
+}
+
+void breakMotors(){
+  digitalWrite(a, HIGH);
+  digitalWrite(b, HIGH);
+  digitalWrite(c, HIGH);
+  digitalWrite(d, HIGH);
+}
+
+void floatMotor(){
+  digitalWrite(a, LOW);
+  digitalWrite(b, LOW);
+  digitalWrite(c, LOW);
+  digitalWrite(d, LOW);
 }
 
 void forward() {
@@ -125,6 +142,8 @@ void turnLeft() {
   digitalWrite(c, HIGH);
   digitalWrite(d, LOW);
 }
+
+
 
 
 
