@@ -1,56 +1,45 @@
-int en1 = 2;
-int en2 = 3;
-int a = 12;
-int b = 11;
-int c = 10;
-int d = 9;
+/**
+ *
+ *
+ */
 
+#include <ChibiOS_AVR.h>
+#include <firFilter.h>
+
+static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread2, 64);
+static WORKING_AREA(waThread3, 64);
+
+int motorPowerState = 0;
+
+//------------------------------------------------------------------------------
 void setup() {
-  pinMode(en1, OUTPUT);
-  pinMode(en2, OUTPUT);
-  pinMode(a, OUTPUT);
-  pinMode(b, OUTPUT);
-  pinMode(c, OUTPUT);
-  pinMode(d, OUTPUT);
-  digitalWrite(en1, HIGH);
-  digitalWrite(en2, HIGH);
-}
+  Serial.begin(9600);
 
+  chBegin(mainThread);
+  // chBegin never returns, main thread continues with mainThread()
+  while(1) {
+  }
+}
+//------------------------------------------------------------------------------
+// main thread runs at NORMALPRIO
+void mainThread() {
+
+  chThdCreateStatic(waThread1, sizeof(waThread1),
+  NORMALPRIO + 2, Thread1, NULL);
+
+  chThdCreateStatic(waThread2, sizeof(waThread2),
+  NORMALPRIO + 1, Thread2, NULL);
+
+  chThdCreateStatic(waThread3, sizeof(waThread3),
+  NORMALPRIO + 1, Thread3, NULL);
+
+  while (1) {
+  }
+}
+//------------------------------------------------------------------------------
 void loop() {
-  forward();
-  delay(1500);
-  turnRight();
-  delay(1500);
-  backwards();
-  delay(1500);
-  turnLeft();
-  delay(1500);
+  // not used
 }
 
-void forward() {
-  digitalWrite(a, LOW);
-  digitalWrite(b, HIGH);
-  digitalWrite(c, LOW);
-  digitalWrite(d, HIGH);
-}
 
-void backwards() {
-  digitalWrite(a, HIGH);
-  digitalWrite(b, LOW);
-  digitalWrite(c, HIGH);
-  digitalWrite(d, LOW);
-}
-
-void turnRight() {
-  digitalWrite(a, HIGH);
-  digitalWrite(b, LOW);
-  digitalWrite(c, LOW);
-  digitalWrite(d, HIGH);
-}
-
-void turnLeft() {
-  digitalWrite(a, LOW);
-  digitalWrite(b, HIGH);
-  digitalWrite(c, HIGH);
-  digitalWrite(d, LOW);
-}
