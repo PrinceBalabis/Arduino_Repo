@@ -64,13 +64,13 @@ static msg_t Thread2(void *arg) {
     }
     while (!easyvr.hasFinished());
 
-    idx = easyvr.getWord();
-    if (idx >= 0)
-    {
-      // built-in trigger (ROBOT)
-      // group = GROUP_X; <-- jump to another group X
-      //      return;
-    }
+//    idx = easyvr.getWord();
+//    if (idx >= 0)
+//    {
+//      // built-in trigger (ROBOT)
+//      // group = GROUP_X; <-- jump to another group X
+//      //      return;
+//    }
     idx = easyvr.getCommand();
     if (idx >= 0)
     {
