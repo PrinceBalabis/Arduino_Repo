@@ -26,6 +26,8 @@ MUTEX_DECL(dataMutex);
 // Data to share
 volatile int dataX = -1;
 volatile int dataY = -1;
+boolean speakerState = 0;
+boolean lastSpeakerPinState = 0;
 
 // 128 byte stack beyond task switch and interrupt needs.
 static WORKING_AREA(waThread1, 128);
@@ -44,6 +46,9 @@ void setup() {
   delay(200);
   while (Serial.read() >= 0) {
   }
+  
+  // Speaker sensor setup
+  setupSpeaker();
 
   // PC Power switch setup
   pcPowerSetup();
@@ -71,6 +76,7 @@ void mainThread() {
 void loop(){
   // not used
 } 
+
 
 
 

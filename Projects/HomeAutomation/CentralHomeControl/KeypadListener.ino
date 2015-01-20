@@ -13,31 +13,31 @@ byte colPins[4] = {
 char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'        }
+    'a', 'b', 'c', 'd'                }
   ,
   {
-    'e', 'f', 'g', 'h'        }
+    'e', 'f', 'g', 'h'                }
   ,
   {
-    'i', 'j', 'k', 'l'         }
+    'i', 'j', 'k', 'l'                 }
   ,
   {
-    'm', 'n', 'o', 'p'         }
+    'm', 'n', 'o', 'p'                 }
 };
 
 int keymapName[4][4] =
 {
   {
-    1, 2, 3, 4         }
+    1, 2, 3, 4                 }
   ,
   {
-    5, 6, 7, 8         }
+    5, 6, 7, 8                 }
   ,
   {
-    9, 10, 11, 12         }
+    9, 10, 11, 12                 }
   ,
   {
-    13, 14, 15, 16         }
+    13, 14, 15, 16                 }
 };
 
 // Instance of the Keypad class
@@ -86,6 +86,16 @@ static msg_t Thread1(void *arg) {
       previousState = state;
     }
 
+//    if (digitalRead(speakerIdlePin) && !speakerState && !lastSpeakerPinState) 
+//    { 
+//      sendSpeakerPowerOnCommand();
+//      lastSpeakerPinState = 1;
+//    } 
+    else if(!digitalRead(speakerIdlePin) && speakerState && lastSpeakerPinState) {
+      sendSpeakerPowerOffCommand();
+      lastSpeakerPinState = 0;
+    }
+
 
     // The different commands for the buttons
     if (nBPowerButton == keyName && state == PRESSED) // Run once
@@ -112,7 +122,7 @@ static msg_t Thread1(void *arg) {
     { 
       toggleDiningTableSwitch();
     }
-        else if (lightBedButton == keyName && state == PRESSED ) 
+    else if (lightBedButton == keyName && state == PRESSED ) 
     { 
       Serial.println(F("Notifies the RF24 to send data"));
       // Lock access to data.
@@ -122,7 +132,7 @@ static msg_t Thread1(void *arg) {
       dataX = 3; // Send 01 which is the code to toggle lights
       dataY = voiceRecog; // Send the receiver of the code which is the code to toggle lights
 
-        // Unlock data access.
+      // Unlock data access.
       chMtxUnlock();
     }
     else if (lightMainButton == keyName && state == PRESSED) 
@@ -311,5 +321,9 @@ void keypadEvent(KeypadEvent key){
     break;
   }
 }
+
+
+
+
 
 

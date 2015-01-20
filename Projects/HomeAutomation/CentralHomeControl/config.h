@@ -90,4 +90,5 @@ const int pcPowerPin = 7;
 // 433 MHz switch transmitter pin
 const int switch433TransmitterPin = 6;
 
-
+// Speaker idle listener pin
+const int speakerIdlePin = A6;
