@@ -26,12 +26,10 @@ MUTEX_DECL(dataMutex);
 // Data to share
 volatile int dataX = -1;
 volatile int dataY = -1;
-boolean speakerState = 0;
-boolean lastSpeakerPinState = 0;
 
-static WORKING_AREA(waThread1, 128);
-static WORKING_AREA(waThread2, 128);
-static WORKING_AREA(waThread3, 128);
+static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread2, 64);
+static WORKING_AREA(waThread3, 64);
 
 //------------------------------------------------------------------------------
 void setup() {
@@ -45,9 +43,10 @@ void setup() {
   delay(200);
   while (Serial.read() >= 0) {
   }
-  
+
   // PC Power switch setup
   pcPowerSetup();
+
 
   Serial.println(F("Starting RTOS & threads"));
   chBegin(mainThread);
@@ -59,11 +58,12 @@ void setup() {
 // main thread runs at NORMALPRIO
 void mainThread() {
 
+
   // keypad listening thread
   chThdCreateStatic(waThread1, sizeof(waThread1),
   NORMALPRIO + 1, Thread1, NULL);
 
-  // ActionExecutioner thread which executes commands
+  // CommandExecutioner thread which executes commands
   chThdCreateStatic(waThread3, sizeof(waThread3),
   NORMALPRIO + 2, Thread3, NULL);
 
@@ -76,6 +76,13 @@ void mainThread() {
 void loop(){
   // not used
 } 
+
+
+
+
+
+
+
 
 
 

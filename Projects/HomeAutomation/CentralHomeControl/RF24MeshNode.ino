@@ -9,9 +9,8 @@ RF24Network network(radio);
  **/
 static msg_t Thread2(void *arg) 
 {
-  chThdSleepMilliseconds(5000);  //Give other threads some time to start
+  chThdSleepMilliseconds(6000);  //Give other threads some time to start
   Serial.println(F("Started rf24 thread"));
-
   SPI.begin();
   radio.begin(); // Initialize radio
   network.begin(/*channel*/ 90, nodeID);
@@ -132,17 +131,28 @@ void initTweaks(void){
   radio.setDataRate(dataRate); // Set data rate to 250kpbs
 }
 
+void sendRF24Command(int receiver, int command){
+  Serial.println(F("Notifies the RF24 to send data"));
+  // Lock access to data.
+  chMtxLock(&dataMutex);
 
+  // Copy tmp variables to shared data.
+  dataX = command; // Send 01 which is the code to toggle lights
+  dataY = receiver; // Send the receiver of the code which is the code to toggle lights
 
+  // Unlock data access.
+  chMtxUnlock();
 
+}
 
+void clearRF24Command(){
+  // Lock access to data.
+  chMtxLock(&dataMutex);
 
+  dataX = -1;
+  dataY = -1;
 
-
-
-
-
-
-
-
+  // Unlock data access.
+  chMtxUnlock();
+}
 

@@ -13,31 +13,31 @@ byte colPins[4] = {
 char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'                }
+    'a', 'b', 'c', 'd'                                                      }
   ,
   {
-    'e', 'f', 'g', 'h'                }
+    'e', 'f', 'g', 'h'                                                      }
   ,
   {
-    'i', 'j', 'k', 'l'                 }
+    'i', 'j', 'k', 'l'                                                       }
   ,
   {
-    'm', 'n', 'o', 'p'                 }
+    'm', 'n', 'o', 'p'                                                       }
 };
 
 int keymapName[4][4] =
 {
   {
-    1, 2, 3, 4                 }
+    1, 2, 3, 4                                                       }
   ,
   {
-    5, 6, 7, 8                 }
+    5, 6, 7, 8                                                       }
   ,
   {
-    9, 10, 11, 12                 }
+    9, 10, 11, 12                                                       }
   ,
   {
-    13, 14, 15, 16                 }
+    13, 14, 15, 16                                                       }
 };
 
 // Instance of the Keypad class
@@ -62,8 +62,9 @@ static msg_t Thread1(void *arg) {
   Serial.println(F("Keypad listener started"));
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
-  unsigned long previousTimer = 0;
+  keypad.setDebounceTime(1); //Time untill a new key is accepted
   int previousState = 0;
+  unsigned long previousTimer = 0;
 
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
@@ -110,182 +111,12 @@ static msg_t Thread1(void *arg) {
     { 
       toggleDiningTableSwitch();
     }
-    else if (lightBedButton == keyName && state == PRESSED ) 
-    { 
-      Serial.println(F("Notifies the RF24 to send data"));
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      // Copy tmp variables to shared data.
-      dataX = 3; // Send 01 which is the code to toggle lights
-      dataY = voiceRecog; // Send the receiver of the code which is the code to toggle lights
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
     else if (lightMainButton == keyName && state == PRESSED) 
     {
-      Serial.println(F("Notifies the RF24 to send data"));
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      // Copy tmp variables to shared data.
-      dataX = 01; // Send 01 which is the code to toggle lights
-      dataY = mainLights; // Send the receiver of the code which is the code to toggle lights
-
-        // Unlock data access.
-      chMtxUnlock();
+      sendRF24Command(mainLights, 01);
     } 
-    else if(dataX == diningTableOn && dataY == -1) // Asking to toggle Speaker
-    {
-      setDiningTableSwitchOn();
-      Serial.println(F("Turned on dining table lights"));
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == diningTableOff && dataY == -1) // Asking to toggle Speaker
-    {
-      setDiningTableSwitchOff();
-      Serial.println(F("Turned off dining table lights"));
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == diningTableToggle && dataY == -1) // Asking to toggle Speaker
-    {
-      toggleDiningTableSwitch();
-      Serial.println(F("Toggled dining table lights"));
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerPowerToggle && dataY == -1) // Asking to toggle Speaker
-    {
-      toggleSpeakerPower();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerPowerOn && dataY == -1) // Asking to turn on speaker
-    {
-      sendSpeakerPowerOnCommand();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerPowerOff && dataY == -1) // Asking to turn off speaker
-    {
-      sendSpeakerPowerOffCommand();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-
-    else if(dataX == speakerVolumeUp && dataY == -1)
-    {
-      sendSpeakerUpVolCommandOnce();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerVolumeDown && dataY == -1)
-    {
-      sendSpeakerDownVolCommandOnce();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerMuteToggle && dataY == -1)
-    {
-      toggleSpeakerMuteCommand();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerMuteOn && dataY == -1)
-    {
-      sendSpeakerMuteOnCommand();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-    else if(dataX == speakerMuteOff && dataY == -1)
-    {
-      sendSpeakerMuteOffCommand();
-
-      // Lock access to data.
-      chMtxLock(&dataMutex);
-
-      dataX = -1;
-      dataY = -1;
-
-      // Unlock data access.
-      chMtxUnlock();
-    }
-
     chThdSleepMilliseconds(50); // Sleep to let other threads do some work
   } 
-  return 0;
 }
 
 /**
@@ -309,6 +140,25 @@ void keypadEvent(KeypadEvent key){
     break;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

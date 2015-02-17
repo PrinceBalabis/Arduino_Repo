@@ -51,7 +51,6 @@ const uint8_t nBMuteButton = 1;
 // Lights
 const uint8_t lightMainButton = 8;
 const uint8_t lightDiningTableButton = 7;
-const uint8_t lightBedButton = 13;
 // PC swtich
 const uint8_t pcPowerButton = 12;
 /*

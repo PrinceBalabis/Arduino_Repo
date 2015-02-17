@@ -1,6 +1,7 @@
 // Instance of the IRsend class
 IRsend irsend;
 boolean speakerMuteState = 0;
+boolean speakerState = 0;
 
 void toggleSpeakerPower(void){
   if(speakerState)
@@ -18,7 +19,7 @@ void sendSpeakerPowerOnCommand(void){
   if(!speakerState)
   {
     setRemoteSwitch(2, true); // Toggle 433 MHz switch for speaker on
-    chThdSleepMilliseconds(300); // Wait for 433 MHz switch to turn on speaker
+    chThdSleepMilliseconds(200); // Wait for 433 MHz switch to turn on speaker
     sendSpeakerIRPowerCommand(); // Send IR power command
     speakerState = 1;
     Serial.println(F("Turning on speaker"));
