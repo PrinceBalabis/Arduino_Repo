@@ -11,7 +11,7 @@ const int rightSwitchPin = 5;
  */
 
 // Ceiling lights relay/ceiling light pin
-const int ceilingLightsPin = 3;
+const int ceilingLightsPin = A0;
 
 /** 
  * MESHNODE

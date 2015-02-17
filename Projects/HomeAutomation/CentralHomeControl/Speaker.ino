@@ -2,10 +2,6 @@
 IRsend irsend;
 boolean speakerMuteState = 0;
 
-void setupSpeaker(){
-  pinMode(speakerIdlePin, INPUT);
-}
-
 void toggleSpeakerPower(void){
   if(speakerState)
   {
@@ -109,15 +105,4 @@ void sendSpeakerCommand(unsigned long command)
 {
   irsend.sendNEC(command, 32);
 }
-
-
-
-
-
-
-
-
-
-
-
 

@@ -29,10 +29,9 @@ volatile int dataY = -1;
 boolean speakerState = 0;
 boolean lastSpeakerPinState = 0;
 
-// 128 byte stack beyond task switch and interrupt needs.
 static WORKING_AREA(waThread1, 128);
-// 128 byte stack beyond task switch and interrupt needs.
 static WORKING_AREA(waThread2, 128);
+static WORKING_AREA(waThread3, 128);
 
 //------------------------------------------------------------------------------
 void setup() {
@@ -47,9 +46,6 @@ void setup() {
   while (Serial.read() >= 0) {
   }
   
-  // Speaker sensor setup
-  setupSpeaker();
-
   // PC Power switch setup
   pcPowerSetup();
 
@@ -66,6 +62,10 @@ void mainThread() {
   // keypad listening thread
   chThdCreateStatic(waThread1, sizeof(waThread1),
   NORMALPRIO + 1, Thread1, NULL);
+
+  // ActionExecutioner thread which executes commands
+  chThdCreateStatic(waThread3, sizeof(waThread3),
+  NORMALPRIO + 2, Thread3, NULL);
 
   // rf24 mesh network thread
   chThdCreateStatic(waThread2, sizeof(waThread2),

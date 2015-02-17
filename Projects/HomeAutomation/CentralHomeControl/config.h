@@ -38,12 +38,6 @@ const int32_t diningTableOn = 9;
 const int32_t diningTableOff = 10;
 const int32_t diningTableToggle = 11;
 
-// Tweaks optimized for compatibility, reliability and driftsecurity
-const uint8_t retryDelay = 5;
-const uint8_t retryTimes = 15;
-const uint8_t powerAmplifierLevel = RF24_PA_HIGH;
-const rf24_datarate_e dataRate = RF24_250KBPS;
-
 /*
 *  ------------------------------------
  *  Keypad Button reservations
@@ -89,6 +83,3 @@ const int pcPowerPin = 7;
 
 // 433 MHz switch transmitter pin
 const int switch433TransmitterPin = 6;
-
-// Speaker idle listener pin
-const int speakerIdlePin = A6;

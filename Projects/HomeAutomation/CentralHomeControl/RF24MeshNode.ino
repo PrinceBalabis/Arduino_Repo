@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // RF24 Mesh Node Thread
 
-RF24 radio(8,9); // CE & CSN pins
+RF24 radio(8, 9); // CE & CSN pins
 RF24Network network(radio);
 
 /**
@@ -9,7 +9,7 @@ RF24Network network(radio);
  **/
 static msg_t Thread2(void *arg) 
 {
-  chThdSleepMilliseconds(5000);  //Give KeypadListener thread some time to start
+  chThdSleepMilliseconds(5000);  //Give other threads some time to start
   Serial.println(F("Started rf24 thread"));
 
   SPI.begin();
@@ -122,10 +122,16 @@ void readMessage(int32_t *pmsgReceived){
  *  Runs commands to tweak the radio communication according to settings in config.h
  */
 void initTweaks(void){
+  // Tweaks optimized for compatibility, reliability and driftsecurity
+  const uint8_t retryDelay = 5;
+  const uint8_t retryTimes = 15;
+  const uint8_t powerAmplifierLevel = RF24_PA_HIGH;
+  const rf24_datarate_e dataRate = RF24_250KBPS;
   radio.setRetries(retryDelay, retryTimes); // Set delay between retries & # of retires for a "radio.write" command
   radio.setPALevel(powerAmplifierLevel); // Set power amplifier to highest
   radio.setDataRate(dataRate); // Set data rate to 250kpbs
 }
+
 
 
 

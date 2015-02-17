@@ -85,18 +85,6 @@ static msg_t Thread1(void *arg) {
     {
       previousState = state;
     }
-
-//    if (digitalRead(speakerIdlePin) && !speakerState && !lastSpeakerPinState) 
-//    { 
-//      sendSpeakerPowerOnCommand();
-//      lastSpeakerPinState = 1;
-//    } 
-    else if(!digitalRead(speakerIdlePin) && speakerState && lastSpeakerPinState) {
-      sendSpeakerPowerOffCommand();
-      lastSpeakerPinState = 0;
-    }
-
-
     // The different commands for the buttons
     if (nBPowerButton == keyName && state == PRESSED) // Run once
     { 
