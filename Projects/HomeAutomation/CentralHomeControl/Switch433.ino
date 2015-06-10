@@ -1,4 +1,4 @@
-NewRemoteTransmitter transmitter(15303606, 6, 260, 3);
+NewRemoteTransmitter transmitter(15303606, 6, 260, 4);
 
 boolean diningTableSwitch = false;
 

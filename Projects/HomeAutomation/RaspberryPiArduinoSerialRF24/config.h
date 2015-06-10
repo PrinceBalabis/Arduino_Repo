@@ -1,6 +1,6 @@
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
-const uint16_t nodeID = 04 ;
+const uint16_t nodeID = 02;
 
 // Tweaks optimized for compatability, reliability and driftsecurity
 const uint8_t retryDelay = 5;

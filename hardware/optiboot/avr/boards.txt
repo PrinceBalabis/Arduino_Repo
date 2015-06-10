@@ -9,6 +9,7 @@ atmega328o.name=[Optiboot] Arduino Duemilanove or Nano w/ ATmega328
 atmega328o.upload.protocol=arduino
 atmega328o.upload.maximum_size=32256
 atmega328o.upload.speed=115200
+atmega328o.upload.tool=arduino:avrdude
 atmega328o.bootloader.low_fuses=0xff
 atmega328o.bootloader.high_fuses=0xde
 atmega328o.bootloader.extended_fuses=0x05

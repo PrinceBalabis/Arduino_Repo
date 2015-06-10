@@ -74,7 +74,7 @@ uint8_t sendMessage(uint16_t msgReceiver, int32_t msgContent){
 
   // Sends message
   bool sendDone = network.write(header, &msgContent, sizeof(msgContent));
-
+  
   if(sendDone){
     return 1;
   } 
@@ -92,4 +92,5 @@ void initTweaks(void){
   radio.setPALevel(powerAmplifierLevel); // Set power amplifier to highest
   radio.setDataRate(dataRate); // Set data rate to 250kpbs
 }
+
 
