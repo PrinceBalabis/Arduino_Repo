@@ -1,5 +1,5 @@
 /** @file
-EasyVR library v1.5
+EasyVR library v1.6
 Copyright (C) 2014 RoboTech srl
 
 Written for Arduino and compatible boards for use with EasyVR modules or
@@ -9,36 +9,75 @@ Released under the terms of the MIT license, as found in the accompanying
 file COPYING.txt or at this address: <http://www.opensource.org/licenses/MIT>
 */
 
+#pragma once
+
 #include <Stream.h>
 #include <stdint.h>
 
 /*****************************************************************************/
 
+/** 
+  By defining these symbols before the library include directive, you can
+  alter the default settings used by the library implementation.
+  
+  These settings are available for completeness. The default settings should
+  be appropriate for normal use cases.
+  
+  @defgroup macros EasyVR library settings
+  @{
+*/
+
 #ifndef EASYVR_RX_TIMEOUT
-#define EASYVR_RX_TIMEOUT  100  //  default receive timeout (in ms)
+/** @brief Receive timeout (in ms).
+  The maximum time that is spent waiting for a reply from the %EasyVR module.
+*/
+#define EASYVR_RX_TIMEOUT  100
+#endif
+
+#ifndef EASYVR_STORAGE_TIMEOUT
+/** @brief Reply timeout for storage operations (in ms).
+  The maximum time that is spent waiting for a reply after a command that
+  involves write access to the %EasyVR internal storage.
+*/
+#define EASYVR_STORAGE_TIMEOUT  500
 #endif
 
 #ifndef EASYVR_WAKE_TIMEOUT
-#define EASYVR_WAKE_TIMEOUT  200  // wakeup max delay (in ms)
+/** @brief Wakeup maximum delay (in ms).
+  The maximum time that the %EasyVR module can spend for waking up from
+  idle states.
+*/
+#define EASYVR_WAKE_TIMEOUT  200
 #endif
 
 #ifndef EASYVR_PLAY_TIMEOUT
-#define EASYVR_PLAY_TIMEOUT  5000  // playback max duration (in ms)
+/** @brief Playback maximum duration (in ms).
+  The maximum time that is spent waiting for a synchronous playback operation
+  to complete. Asynchronous playback is not affected.
+*/
+#define EASYVR_PLAY_TIMEOUT  5000
 #endif
 
 #ifndef EASYVR_TOKEN_TIMEOUT
-#define EASYVR_TOKEN_TIMEOUT  1500  // token max duration (in ms)
+/** @brief Token maximum duration (in ms).
+  The maximum time that is spent by the %EasyVR module for sending a SonicNet
+  token and reply.
+*/
+#define EASYVR_TOKEN_TIMEOUT  1500
 #endif
+
+/** @}
+*/
 
 /**
   An implementation of the %EasyVR communication protocol.
 */
 class EasyVR
 {
-private:
-  Stream* _s;
+protected:
+  Stream* _s; // communication interface for the EasyVR module
 
-  uint8_t _value;
+  uint8_t _value; // store last result or error code
 
   union
   {
@@ -57,24 +96,29 @@ private:
     }
     b;
   }
-  _status;
-  
-  enum
+  _status; // store last command status or type of result
+
+  int8_t _group; // last used group (cached by the module)
+
+  int8_t _id; // last detected module id (can optimize some functions)
+
+  enum // internal constants
   {
       NO_TIMEOUT = 0, INFINITE = -1,
       DEF_TIMEOUT = EASYVR_RX_TIMEOUT,
       WAKE_TIMEOUT = EASYVR_WAKE_TIMEOUT,
       PLAY_TIMEOUT = EASYVR_PLAY_TIMEOUT,
       TOKEN_TIMEOUT = EASYVR_TOKEN_TIMEOUT,
-      RESET_TIMEOUT = 40000,
+      STORAGE_TIMEOUT = EASYVR_STORAGE_TIMEOUT,
   };
 
+  // internal functions
   void send(uint8_t c);
-  void sendCmd(uint8_t c) { _s->flush(); send(c); }
+  void sendCmd(uint8_t c);
   void sendArg(int8_t c);
   void sendGroup(int8_t c);
   int recv(int16_t timeout = INFINITE);
-  bool recvArg(int8_t& c, int16_t timeout = INFINITE);
+  bool recvArg(int8_t& c);
     
 public:
   /** Module identification number (firmware version) */
@@ -84,6 +128,7 @@ public:
     EASYVR,   /**< Identifies an EasyVR module */
     EASYVR2,  /**< Identifies an EasyVR module version 2 */
     EASYVR2_3, /**< Identifies an EasyVR module version 2, firmware revision 3 */
+    EASYVR3 = 8, /**< Identifies an EasyVR module version 3, firmware revision 0 */
   };
   /** Language to use for recognition of built-in words */
   enum Language
@@ -177,9 +222,12 @@ public:
   /** Available pin numbers on the extra I/O connector */
   enum PinNumber
   {
-    IO1 = 1,  /**< Pin IO1 */
-    IO2 = 2,  /**< Pin IO2 */
-    IO3 = 3,  /**< Pin IO3 */
+    IO1 = 1,  /**< Identifier of pin IO1 */
+    IO2 = 2,  /**< Identifier of pin IO2 */
+    IO3 = 3,  /**< Identifier of pin IO3 */
+    IO4 = 4,  /**< Identifier of pin IO4 (only EasyVR3) */
+    IO5 = 5,  /**< Identifier of pin IO5 (only EasyVR3) */
+    IO6 = 6,  /**< Identifier of pin IO6 (only EasyVR3) */
   };
   /** Some quick volume settings for the sound playback functions
   (any value in the range 0-31 can be used) */
@@ -258,6 +306,13 @@ public:
     ERR_SW_STACK_OVERFLOW       = 0xC0, /**< no room left in software stack */
     ERR_INTERNAL_T2SI_BAD_SETUP = 0xCC, /**< T2SI test mode error */
   };
+  /** Type of Bridge mode requested */
+  enum BridgeMode
+  {
+    BRIDGE_NONE,    /**< Bridge mode has not been requested */
+    BRIDGE_NORMAL,  /**< Normal bridge mode (EasyVR baudrate 9600) */
+    BRIDGE_BOOT,    /**< Bridge mode for EasyVR bootloader (baudrate 115200) */
+  };
 
   /**
     Creates an EasyVR object, using a communication object implementing the 
@@ -265,7 +320,10 @@ public:
     and #NewSoftSerial).
     @param s the Stream object to use for communication with the EasyVR module
   */
-  EasyVR(Stream& s) : _s(&s) { };
+  EasyVR(Stream& s) : _s(&s), _value(-1), _group(-1), _id(-1)
+  {
+    _status.v = 0;
+  };
   /**
     Detects an EasyVR module, waking it from sleep mode and checking
     it responds correctly.
@@ -297,8 +355,8 @@ public:
   bool setTimeout(int8_t seconds);
   /**
     Sets the operating distance of the microphone.
-	This setting represents the distance between the microphone and the
-	user's mouth, in one of three possible configurations.
+    This setting represents the distance between the microphone and the
+    user's mouth, in one of three possible configurations.
     @param dist (1-3) is one of values in #Distance
     @retval true if the operation is successful
   */
@@ -598,12 +656,26 @@ public:
   bool playPhoneTone(int8_t tone, uint8_t duration);
   /**
     Empties internal memory for custom commands and groups.
+    @param wait specifies whether to wait until the operation is complete (or times out)
     @retval true if the operation is successful
     @note It will take about 35 seconds for the whole process to complete
     and it cannot be interrupted. During this time the module cannot
     accept any other command. The sound table and custom grammars data is not affected.
   */
-  bool resetAll();
+  bool resetAll(bool wait = true);
+  /**
+    Tests if bridge mode has been requested on the specified port
+    @param port is the target serial port (usually the PC serial port)
+    @retval non zero if bridge mode should be started
+    @note The %EasyVR Commander software can request bridge mode when connected
+    to the specified serial port, with a special handshake sequence.
+  */
+  int bridgeRequested(Stream& port);
+  /**
+    Performs bridge mode between the EasyVR serial port and the specified port
+    in a continuous loop. It can be aborted by sending a question mark ('?') on
+    the target port.
+    @param port is the target serial port (usually the PC serial port)
+  */
+  void bridgeLoop(Stream& port);
 };
-
-#include "EasyVRBridge.h"

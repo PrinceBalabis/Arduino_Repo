@@ -30,7 +30,7 @@
   Details are displayed on the serial monitor window.
 
 **
-  Example code for the EasyVR library v1.5
+  Example code for the EasyVR library v1.6
   Written in 2014 by RoboTech srl for VeeaR <http:://www.veear.eu>
 
   To the extent possible under law, the author(s) have dedicated all
@@ -42,19 +42,20 @@
   If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
 */
 
-#if defined(ARDUINO) && ARDUINO >= 100
-  #include "Arduino.h"
-  #include "Platform.h"
-  #include "SoftwareSerial.h"
-#ifndef CDC_ENABLED
-  // Shield Jumper on SW
-  SoftwareSerial port(12,13);
-#else
-  // Shield Jumper on HW (for Leonardo)
-  #define port Serial1
+#include "Arduino.h"
+#if !defined(SERIAL_PORT_MONITOR)
+  #error "Arduino version not supported. Please update your IDE to the latest version."
 #endif
+
+#if defined(SERIAL_PORT_USBVIRTUAL)
+  // Shield Jumper on HW (for Leonardo and Due)
+  #define port SERIAL_PORT_HARDWARE
+  #define pcSerial SERIAL_PORT_USBVIRTUAL
 #else
-  #error "Arduino version not supported. Please update your IDE."
+  // Shield Jumper on SW (using pins 12/13 or 8/9 as RX/TX)
+  #include "SoftwareSerial.h"
+  SoftwareSerial port(12, 13);
+  #define pcSerial SERIAL_PORT_MONITOR
 #endif
 
 #include "EasyVR.h"
@@ -73,93 +74,105 @@ bool useCommands = true;
 bool useTokens = false;
 bool isSleeping = false;
 
-EasyVRBridge bridge;
-
 void setup()
 {
-#ifndef CDC_ENABLED
-  // bridge mode?
-  if (bridge.check())
-  {
-    cli();
-    bridge.loop(0, 1, 12, 13);
-  }
-  // run normally
-  Serial.begin(9600);
-  Serial.println(F("---"));
-  Serial.println(F("Bridge not started!"));
-#else
-  // bridge mode?
-  if (bridge.check())
-  {
-    port.begin(9600);
-    bridge.loop(port);
-  }
-  Serial.println(F("---"));
-  Serial.println(F("Bridge connection aborted!"));
-#endif
-  port.begin(9600);
+  // setup PC serial port
+  pcSerial.begin(9600);
 
+  // bridge mode?
+  int mode = easyvr.bridgeRequested(pcSerial);
+  switch (mode)
+  {
+  case EasyVR::BRIDGE_NONE:
+    // setup EasyVR serial port
+    port.begin(9600);
+    // run normally
+    pcSerial.println(F("---"));
+    pcSerial.println(F("Bridge not started!"));
+    break;
+    
+  case EasyVR::BRIDGE_NORMAL:
+    // setup EasyVR serial port (low speed)
+    port.begin(9600);
+    // soft-connect the two serial ports (PC and EasyVR)
+    easyvr.bridgeLoop(pcSerial);
+    // resume normally if aborted
+    pcSerial.println(F("---"));
+    pcSerial.println(F("Bridge connection aborted!"));
+    break;
+    
+  case EasyVR::BRIDGE_BOOT:
+    // setup EasyVR serial port (high speed)
+    port.begin(115200);
+    // soft-connect the two serial ports (PC and EasyVR)
+    easyvr.bridgeLoop(pcSerial);
+    // resume normally if aborted
+    pcSerial.println(F("---"));
+    pcSerial.println(F("Bridge connection aborted!"));
+    break;
+  }
+
+  // initialize EasyVR  
   while (!easyvr.detect())
   {
-    Serial.println(F("EasyVR not detected!"));
+    pcSerial.println(F("EasyVR not detected!"));
     delay(1000);
   }
 
   easyvr.setPinOutput(EasyVR::IO1, LOW);
-  Serial.print(F("EasyVR detected, version "));
-  Serial.println(easyvr.getID());
+  pcSerial.print(F("EasyVR detected, version "));
+  pcSerial.println(easyvr.getID());
   easyvr.setTimeout(5);
   lang = EasyVR::ENGLISH;
   easyvr.setLanguage(lang);
 
   int16_t count = 0;
 
-  Serial.print(F("Sound table: "));
+  pcSerial.print(F("Sound table: "));
   if (easyvr.dumpSoundTable(name, count))
   {
-    Serial.println(name);
-    Serial.print(F("Sound entries: "));
-    Serial.println(count);
+    pcSerial.println(name);
+    pcSerial.print(F("Sound entries: "));
+    pcSerial.println(count);
   }
   else
-    Serial.println(F("n/a"));
+    pcSerial.println(F("n/a"));
 
-  Serial.print(F("Custom Grammars: "));
+  pcSerial.print(F("Custom Grammars: "));
   grammars = easyvr.getGrammarsCount();
   if (grammars > 4)
   {
-    Serial.println(grammars - 4);
+    pcSerial.println(grammars - 4);
     for (set = 4; set < grammars; ++set)
     {
-      Serial.print(F("Grammar "));
-      Serial.print(set);
+      pcSerial.print(F("Grammar "));
+      pcSerial.print(set);
 
       uint8_t flags, num;
       if (easyvr.dumpGrammar(set, flags, num))
       {
-        Serial.print(F(" has "));
-        Serial.print(num);
+        pcSerial.print(F(" has "));
+        pcSerial.print(num);
         if (flags & EasyVR::GF_TRIGGER)
-          Serial.println(F(" trigger"));
+          pcSerial.println(F(" trigger"));
         else
-          Serial.println(F(" command(s)"));
+          pcSerial.println(F(" command(s)"));
       }
       else
-        Serial.println(F(" error"));
+        pcSerial.println(F(" error"));
 
       for (int8_t idx = 0; idx < num; ++idx)
       {
-        Serial.print(idx);
-        Serial.print(F(" = "));
+        pcSerial.print(idx);
+        pcSerial.print(F(" = "));
         if (!easyvr.getNextWordLabel(name))
           break;
-        Serial.println(name);
+        pcSerial.println(name);
       }
     }
   }
   else
-    Serial.println(F("n/a"));
+    pcSerial.println(F("n/a"));
 
   if (easyvr.getGroupMask(mask))
   {
@@ -168,43 +181,43 @@ void setup()
     {
       if (!(msk & 1)) continue;
       if (group == EasyVR::TRIGGER)
-        Serial.print(F("Trigger: "));
+        pcSerial.print(F("Trigger: "));
       else if (group == EasyVR::PASSWORD)
-        Serial.print(F("Password: "));
+        pcSerial.print(F("Password: "));
       else
       {
-        Serial.print(F("Group "));
-        Serial.print(group);
-        Serial.print(F(" has "));
+        pcSerial.print(F("Group "));
+        pcSerial.print(group);
+        pcSerial.print(F(" has "));
       }
       count = easyvr.getCommandCount(group);
-      Serial.print(count);
+      pcSerial.print(count);
       if (group == 0)
-        Serial.println(F(" trigger(s)"));
+        pcSerial.println(F(" trigger(s)"));
       else
-        Serial.println(F(" command(s)"));
+        pcSerial.println(F(" command(s)"));
       for (int8_t idx = 0; idx < count; ++idx)
       {
         if (easyvr.dumpCommand(group, idx, name, train))
         {
-          Serial.print(idx);
-          Serial.print(F(" = "));
-          Serial.print(name);
-          Serial.print(F(", Trained "));
-          Serial.print(train, DEC);
+          pcSerial.print(idx);
+          pcSerial.print(F(" = "));
+          pcSerial.print(name);
+          pcSerial.print(F(", Trained "));
+          pcSerial.print(train, DEC);
           if (!easyvr.isConflict())
-            Serial.println(F(" times, OK"));
+            pcSerial.println(F(" times, OK"));
           else
           {
             int8_t confl = easyvr.getWord();
             if (confl >= 0)
-              Serial.print(F(" times, Similar to Word "));
+              pcSerial.print(F(" times, Similar to Word "));
             else
             {
               confl = easyvr.getCommand();
-              Serial.print(F(" times, Similar to Command "));
+              pcSerial.print(F(" times, Similar to Command "));
             }
-            Serial.println(confl);
+            pcSerial.println(confl);
           }
         }
       }
@@ -214,7 +227,7 @@ void setup()
   useCommands = (mask != 0);
   mask |= 1; // force to use trigger
   isSleeping = false;
-  Serial.println(F("---"));
+  pcSerial.println(F("---"));
 }
 
 const char* ws0[] =
@@ -259,11 +272,11 @@ const char** ws[] = { ws0, ws1, ws2, ws3 };
 
 bool checkMonitorInput()
 {
-  if (Serial.available() <= 0)
+  if (pcSerial.available() <= 0)
     return false;
 
   // check console commands
-  int16_t rx = Serial.read();
+  int16_t rx = pcSerial.read();
   if (rx == '?')
   {
     setup();
@@ -274,7 +287,7 @@ bool checkMonitorInput()
     // any character received will exit sleep
     isSleeping = false;
     easyvr.stop();
-    Serial.println(F("Forced wake-up!"));
+    pcSerial.println(F("Forced wake-up!"));
     return true;
   }
   if (rx == 'l')
@@ -283,11 +296,11 @@ bool checkMonitorInput()
     lang++;
     if (easyvr.setLanguage(lang) || easyvr.setLanguage(lang = 0))
     {
-      Serial.print(F("Language set to "));
-      Serial.println(lang);
+      pcSerial.print(F("Language set to "));
+      pcSerial.println(lang);
     }
     else
-      Serial.println(F("Error while setting language!"));
+      pcSerial.println(F("Error while setting language!"));
   }
   if (rx == 'b')
   {
@@ -333,7 +346,7 @@ bool checkMonitorInput()
   {
     int16_t num = 0;
     delay(5);
-    while ((rx = Serial.read()) >= 0)
+    while ((rx = pcSerial.read()) >= 0)
     {
       delay(5);
       if (isdigit(rx))
@@ -341,8 +354,8 @@ bool checkMonitorInput()
       else
         break;
     }
-    Serial.print(F("Play token "));
-    Serial.println(num);
+    pcSerial.print(F("Play token "));
+    pcSerial.println(num);
     easyvr.stop();
     easyvr.sendToken(bits, num);
   }
@@ -350,7 +363,7 @@ bool checkMonitorInput()
   {
     int16_t num = 0;
     delay(5);
-    while ((rx = Serial.read()) >= 0)
+    while ((rx = pcSerial.read()) >= 0)
     {
       delay(5);
       if (isdigit(rx))
@@ -358,18 +371,18 @@ bool checkMonitorInput()
       else
         break;
     }
-    Serial.print(F("Play sound "));
-    Serial.println(num);
+    pcSerial.print(F("Play sound "));
+    pcSerial.println(num);
     easyvr.stop();
     easyvr.playSound(num, EasyVR::VOL_DOUBLE);
   }
   if (rx == 'd')
   {
     easyvr.stop();
-    Serial.println(F("Play tones:"));
+    pcSerial.println(F("Play tones:"));
     int16_t num = 0;
     delay(5);
-    while ((rx = Serial.read()) >= 0)
+    while ((rx = pcSerial.read()) >= 0)
     {
       delay(5);
       if (isdigit(rx))
@@ -384,18 +397,18 @@ bool checkMonitorInput()
         num = -1;
       else
         break;
-      Serial.print(num);
+      pcSerial.print(num);
       if (easyvr.playPhoneTone(num, 3))
-        Serial.println(F(" OK"));
+        pcSerial.println(F(" OK"));
       else
-        Serial.println(F(" ERR"));
+        pcSerial.println(F(" ERR"));
     }
   }
   if (rx == 'm')
   {
     int16_t num = 0;
     delay(5);
-    while ((rx = Serial.read()) >= 0)
+    while ((rx = pcSerial.read()) >= 0)
     {
       delay(5);
       if (isdigit(rx))
@@ -403,8 +416,8 @@ bool checkMonitorInput()
       else
         break;
     }
-    Serial.print(F("Mic distance "));
-    Serial.println(num);
+    pcSerial.print(F("Mic distance "));
+    pcSerial.println(num);
     easyvr.stop();
     easyvr.setMicDistance(num);
   }
@@ -412,7 +425,7 @@ bool checkMonitorInput()
   {
     int8_t mode = 0;
     delay(5);
-    while ((rx = Serial.read()) >= 0)
+    while ((rx = pcSerial.read()) >= 0)
     {
       delay(5);
       if (rx == 'w')
@@ -424,8 +437,8 @@ bool checkMonitorInput()
       if (rx == 'l')
         mode = EasyVR::WAKE_ON_LOUDSOUND;
     }
-    Serial.print(F("Sleep mode "));
-    Serial.println(mode);
+    pcSerial.print(F("Sleep mode "));
+    pcSerial.println(mode);
     easyvr.stop();
     easyvr.setPinOutput(EasyVR::IO1, LOW); // LED off
     isSleeping = easyvr.sleep(mode);
@@ -435,7 +448,7 @@ bool checkMonitorInput()
   if (rx >= 0)
   {
     easyvr.stop();
-    Serial.flush();
+    pcSerial.flush();
     return true;
   }
   return false;
@@ -450,21 +463,21 @@ void loop()
     easyvr.setPinOutput(EasyVR::IO1, HIGH); // LED on (listening)
     if (useTokens)
     {
-      Serial.print(F("Detect a "));
-      Serial.print(bits);
-      Serial.println(F(" bit token ..."));
+      pcSerial.print(F("Detect a "));
+      pcSerial.print(bits);
+      pcSerial.println(F(" bit token ..."));
       easyvr.detectToken(bits, EasyVR::REJECTION_AVG, 0);
     }
     else if (useCommands)
     {
-      Serial.print(F("Say a command in Group "));
-      Serial.println(group);
+      pcSerial.print(F("Say a command in Group "));
+      pcSerial.println(group);
       easyvr.recognizeCommand(group);
     }
     else
     {
-      Serial.print(F("Say a word in Wordset "));
-      Serial.println(set);
+      pcSerial.print(F("Say a word in Wordset "));
+      pcSerial.println(set);
       easyvr.recognizeWord(set);
     }
   }
@@ -480,7 +493,7 @@ void loop()
 
   if (easyvr.isAwakened())
   {
-    Serial.println(F("Audio wake-up!"));
+    pcSerial.println(F("Audio wake-up!"));
     return;
   }
 
@@ -490,8 +503,8 @@ void loop()
     idx = easyvr.getToken();
     if (idx >= 0)
     {
-      Serial.print(F("Token: "));
-      Serial.println(idx);
+      pcSerial.print(F("Token: "));
+      pcSerial.println(idx);
       easyvr.playSound(0, EasyVR::VOL_FULL);
     }
   }
@@ -499,14 +512,14 @@ void loop()
   idx = easyvr.getWord();
   if (idx >= 0)
   {
-    Serial.print(F("Word: "));
-    Serial.print(easyvr.getWord());
-    Serial.print(F(" = "));
+    pcSerial.print(F("Word: "));
+    pcSerial.print(easyvr.getWord());
+    pcSerial.print(F(" = "));
     if (useCommands)
-      Serial.println(ws[group][idx]);
+      pcSerial.println(ws[group][idx]);
     // --- optional: builtin words can be retrieved from the module
     else if (set < 4)
-      Serial.println(ws[set][idx]);
+      pcSerial.println(ws[set][idx]);
     // ---
     else
     {
@@ -518,9 +531,9 @@ void loop()
             break;
         }
       if (idx < 0)
-        Serial.println(name);
+        pcSerial.println(name);
       else
-        Serial.println();
+        pcSerial.println();
     }
     // ok, let's try another set
     if (set < 4)
@@ -542,15 +555,15 @@ void loop()
     idx = easyvr.getCommand();
     if (idx >= 0)
     {
-      Serial.print(F("Command: "));
-      Serial.print(easyvr.getCommand());
+      pcSerial.print(F("Command: "));
+      pcSerial.print(easyvr.getCommand());
       if (easyvr.dumpCommand(group, idx, name, train))
       {
-        Serial.print(F(" = "));
-        Serial.println(name);
+        pcSerial.print(F(" = "));
+        pcSerial.println(name);
       }
       else
-        Serial.println();
+        pcSerial.println();
       // ok, let's try another group
       do
       {
@@ -564,12 +577,12 @@ void loop()
     else // errors or timeout
     {
       if (easyvr.isTimeout())
-        Serial.println(F("Timed out, try again..."));
+        pcSerial.println(F("Timed out, try again..."));
       int16_t err = easyvr.getError();
       if (err >= 0)
       {
-        Serial.print(F("Error 0x"));
-        Serial.println(err, HEX);
+        pcSerial.print(F("Error 0x"));
+        pcSerial.println(err, HEX);
       }
     }
   }

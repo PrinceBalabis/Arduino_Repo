@@ -1,5 +1,5 @@
 /*
-EasyVR library v1.5
+EasyVR library v1.6
 Copyright (C) 2014 RoboTech srl
 
 Written for Arduino and compatible boards for use with EasyVR modules or
@@ -9,12 +9,7 @@ Released under the terms of the MIT license, as found in the accompanying
 file COPYING.txt or at this address: <http://www.opensource.org/licenses/MIT>
 */
 
-#if defined(ARDUINO) && ARDUINO >= 100
-  #include "Arduino.h"
-#else
-  #error "Arduino version not supported. Please update your IDE."
-#endif
-
+#include "Arduino.h"
 #include "EasyVR.h"
 #include "internal/protocol.h"
 
@@ -26,19 +21,29 @@ void EasyVR::send(uint8_t c)
   _s->write(c);
 }
 
-/*
-inline void EasyVR::sendArg(int8_t c)
+void EasyVR::sendCmd(uint8_t c)
+{
+  _s->flush();
+  send(c);
+}
+
+void EasyVR::sendArg(int8_t c)
 {
   send(c + ARG_ZERO);
 }
-*/
-#define sendArg(c) send((c) + ARG_ZERO)
 
 inline void EasyVR::sendGroup(int8_t c)
 {
-  delay(1);
-  _s->write(c + ARG_ZERO);
-  delay(19); // worst case time to cache a full group in memory
+  send(c + ARG_ZERO);
+  if (c != _group)
+  {
+    _group = c;
+    // worst case time to cache a full group in memory
+    if (_id >= EASYVR3)
+      delay(39);
+    else
+      delay(19);
+  }
 }
 
 int EasyVR::recv(int16_t timeout) // negative means forever
@@ -52,10 +57,10 @@ int EasyVR::recv(int16_t timeout) // negative means forever
   return _s->read();
 }
 
-bool EasyVR::recvArg(int8_t& c, int16_t timeout)
+bool EasyVR::recvArg(int8_t& c)
 {
   send(ARG_ACK);
-  int r = recv(timeout);
+  int r = recv(DEF_TIMEOUT);
   c = r - ARG_ZERO;
   return r >= ARG_MIN && r <= ARG_MAX;
 }
@@ -100,11 +105,11 @@ int8_t EasyVR::getID()
   sendCmd(CMD_ID);
   if (recv(DEF_TIMEOUT) == STS_ID)
   {
-    int8_t rx;
-    if (recvArg(rx, DEF_TIMEOUT))
-      return rx;
+    if (recvArg(_id))
+      return _id;
   }
-  return -1;
+  _id = -1;
+  return _id;
 }
 
 bool EasyVR::setLanguage(int8_t lang)
@@ -192,7 +197,7 @@ bool EasyVR::addCommand(int8_t group, int8_t index)
   sendGroup(group);
   sendArg(index);
 
-  int rx = recv(DEF_TIMEOUT);
+  int rx = recv(STORAGE_TIMEOUT);
   if (rx == STS_SUCCESS)
     return true;
   _status.v = 0;
@@ -207,7 +212,7 @@ bool EasyVR::removeCommand(int8_t group, int8_t index)
   sendGroup(group);
   sendArg(index);
 
-  if (recv(DEF_TIMEOUT) == STS_SUCCESS)
+  if (recv(STORAGE_TIMEOUT) == STS_SUCCESS)
     return true;
   return false;
 }
@@ -245,7 +250,7 @@ bool EasyVR::setCommandLabel(int8_t group, int8_t index, const char* name)
     }
   }
 
-  if (recv(DEF_TIMEOUT) == STS_SUCCESS)
+  if (recv(STORAGE_TIMEOUT) == STS_SUCCESS)
     return true;
   return false;
 }
@@ -256,7 +261,7 @@ bool EasyVR::eraseCommand(int8_t group, int8_t index)
   sendGroup(group);
   sendArg(index);
 
-  if (recv(DEF_TIMEOUT) == STS_SUCCESS)
+  if (recv(STORAGE_TIMEOUT) == STS_SUCCESS)
     return true;
   return false;
 }
@@ -272,10 +277,10 @@ bool EasyVR::getGroupMask(uint32_t& mask)
     mask = 0;
     for (int8_t i = 0; i < 4; ++i)
     {
-      if (!recvArg(rx, DEF_TIMEOUT))
+      if (!recvArg(rx))
         return false;
       ((uint8_t*)&mask)[i] |= rx & 0x0F;
-      if (!recvArg(rx, DEF_TIMEOUT))
+      if (!recvArg(rx))
         return false;
       ((uint8_t*)&mask)[i] |= (rx << 4) & 0xF0;
     }
@@ -292,7 +297,7 @@ int8_t EasyVR::getCommandCount(int8_t group)
   if (recv(DEF_TIMEOUT) == STS_COUNT)
   {
     int8_t rx;
-    if (recvArg(rx, DEF_TIMEOUT))
+    if (recvArg(rx))
     {
       return rx == -1 ? 32 : rx;
     }
@@ -310,7 +315,7 @@ bool EasyVR::dumpCommand(int8_t group, int8_t index, char* name, uint8_t& traini
     return false;
   
   int8_t rx;
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   training = rx & 0x07;
   if (rx == -1 || training == 7)
@@ -321,20 +326,20 @@ bool EasyVR::dumpCommand(int8_t group, int8_t index, char* name, uint8_t& traini
   _status.b._command = (rx & 0x08) != 0;
   _status.b._builtin = (rx & 0x10) != 0;
   
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   _value = rx;
 
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   int8_t len = rx == -1 ? 32 : rx;
   for ( ; len > 0; --len, ++name)
   {
-    if (!recvArg(rx, DEF_TIMEOUT))
+    if (!recvArg(rx))
       return false;
     if (rx == '^' - ARG_ZERO)
     {
-      if (!recvArg(rx, DEF_TIMEOUT))
+      if (!recvArg(rx))
         return false;
       *name = '0' + rx;
       --len;
@@ -356,7 +361,7 @@ int8_t EasyVR::getGrammarsCount(void)
   if (recv(DEF_TIMEOUT) == STS_COUNT)
   {
     int8_t rx;
-    if (recvArg(rx, DEF_TIMEOUT))
+    if (recvArg(rx))
     {
       return rx == -1 ? 32 : rx;
     }
@@ -373,11 +378,11 @@ bool EasyVR::dumpGrammar(int8_t grammar, uint8_t& flags, uint8_t& count)
     return false;
   
   int8_t rx;
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   flags = rx == -1 ? 32 : rx;
   
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   count = rx;
   return true;
@@ -386,7 +391,7 @@ bool EasyVR::dumpGrammar(int8_t grammar, uint8_t& flags, uint8_t& count)
 bool EasyVR::getNextWordLabel(char* name)
 {
   int8_t count;
-  if (!recvArg(count, DEF_TIMEOUT))
+  if (!recvArg(count))
     return false;
   if (count == -1)
     count = 32;
@@ -394,12 +399,12 @@ bool EasyVR::getNextWordLabel(char* name)
   for ( ; count > 0; --count, ++name)
   {
     int8_t rx;
-    if (!recvArg(rx, DEF_TIMEOUT))
+    if (!recvArg(rx))
       return false;
     
     if (rx == '^' - ARG_ZERO)
     {
-      if (!recvArg(rx, DEF_TIMEOUT))
+      if (!recvArg(rx))
         return false;
       
       *name = '0' + rx;
@@ -455,7 +460,7 @@ bool EasyVR::hasFinished()
     _status.b._command = true;
   
   GET_WORD_INDEX:
-    if (recvArg(rx, DEF_TIMEOUT))
+    if (recvArg(rx))
     {
       _value = rx;
       return true;
@@ -465,10 +470,10 @@ bool EasyVR::hasFinished()
   case STS_TOKEN:
     _status.b._token = true;
   
-    if (recvArg(rx, DEF_TIMEOUT))
+    if (recvArg(rx))
     {
       _value = rx << 5;
-      if (recvArg(rx, DEF_TIMEOUT))
+      if (recvArg(rx))
       {
         _value |= rx;
         return true;
@@ -490,10 +495,10 @@ bool EasyVR::hasFinished()
     
   case STS_ERROR:
     _status.b._error = true;
-    if (recvArg(rx, DEF_TIMEOUT))
+    if (recvArg(rx))
     {
       _value = rx << 4;
-      if (recvArg(rx, DEF_TIMEOUT))
+      if (recvArg(rx))
       {
         _value |= rx;
         return true;
@@ -529,7 +534,7 @@ int8_t EasyVR::getPinInput(int8_t pin, int8_t config)
   if (recv(DEF_TIMEOUT) == STS_PIN)
   {
     int8_t rx;
-    if (recvArg(rx, DEF_TIMEOUT))
+    if (recvArg(rx))
       return rx;
   }
   return -1;
@@ -627,23 +632,23 @@ bool EasyVR::dumpSoundTable(char* name, int16_t& count)
     return false;
   
   int8_t rx;
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   count = rx << 5;
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   count |= rx;
   
-  if (!recvArg(rx, DEF_TIMEOUT))
+  if (!recvArg(rx))
     return false;
   int len = rx;
   for (int8_t i = 0, k = 0; i < len; ++i, ++k)
   {
-    if (!recvArg(rx, DEF_TIMEOUT))
+    if (!recvArg(rx))
       return false;
     if (rx == '^' - ARG_ZERO)
     {
-      if (!recvArg(rx, DEF_TIMEOUT))
+      if (!recvArg(rx))
         return false;
       ++i;
       name[k] = '0' + rx;
@@ -657,33 +662,124 @@ bool EasyVR::dumpSoundTable(char* name, int16_t& count)
   return true;
 }
 
-
-bool EasyVR::resetAll()
+bool EasyVR::resetAll(bool wait)
 {
   sendCmd(CMD_RESETALL);
   sendArg(17);
 
-  if (recv(RESET_TIMEOUT) == STS_SUCCESS)
+  if (!wait)
+    return true;
+
+  int timeout = 40; // seconds
+  if (getID() >= EASYVR3)
+    timeout = 5;
+  while (timeout != 0 && _s->available() == 0)
+  {
+    delay(1000);
+    if (timeout > 0)
+      --timeout;
+  }
+  if (_s->read() == STS_SUCCESS)
     return true;
   return false;
 }
 
+// Bridge Mode implementation
+
+void EasyVR::bridgeLoop(Stream& pcSerial)
+{
+  unsigned long time = millis();
+  int rx, cmd = -1;
+  for (;;)
+  {
+    if (cmd >= 0 && millis() >= time)
+      return;
+    if (pcSerial.available())
+    {
+      rx = pcSerial.read();
+      if (rx == '?' && millis() >= time)
+      {
+        cmd = rx;
+        time = millis() + 100;
+        continue;
+      }
+      _s->write(rx);
+      cmd = -1;
+      time = millis() + 100;
+    }
+    if (_s->available())
+      pcSerial.write(_s->read());
+  }
+}
+
+int EasyVR::bridgeRequested(Stream& pcSerial)
+{
+  // look for a request header
+  int bridge = BRIDGE_NONE;
+  bool request = false;
+  int t, rx;
+  for (t=0; t<150; ++t)
+  {
+    delay(10);
+    rx = pcSerial.read();
+    if (rx < 0)
+      continue;
+    if (!request)
+    {
+      if (rx == 0xBB)
+      {
+        pcSerial.write(0xCC);
+        delay(1); // flush not reliable on some core libraries
+        pcSerial.flush();
+        request = true;
+        continue;
+      }
+      request = false;
+    }
+    else
+    {
+      if (rx == 0xDD)
+      {
+        pcSerial.write(0xEE);
+        delay(1); // flush not reliable on some core libraries
+        pcSerial.flush();
+        bridge = BRIDGE_NORMAL;
+        break;
+      }
+      if (rx == 0xAA)
+      {
+        pcSerial.write(0xFF);
+        delay(1); // flush not reliable on some core libraries
+        pcSerial.flush();
+        bridge = BRIDGE_BOOT;
+        break;
+      }
+      request = false;
+    }
+  }
+  return bridge;
+}
+
 /** @mainpage
 
+  The EasyVR library implements the serial communication protocol to
+  manage the %EasyVR module and the %EasyVR Shield from Arduino boards and 
+  controllers and it enables easy access to all the %EasyVR features.
+
   <table><tr><td>
-  <img src="EasyVR_2.jpg" alt="EasyVR module" title="EasyVR module">
+  ![EasyVR module](@ref EasyVR_2.jpg)
   </td><td>
-  <img src="EasyVR_Shield_2.jpg" alt="EasyVR Shield" title="EasyVR Shield">
+  ![EasyVR Shield](@ref EasyVR_Shield_2.jpg)
   </td></tr></table>
 
-  The %EasyVR library implements the serial communication protocol to
-  manage the %EasyVR module and the EasyVR Shield from Arduino boards and 
-  controllers and it enables easy access to all the EasyVR features.
+  ### Installation
 
-  The library is composed of two classes:
-  - #EasyVR
-  - #EasyVRBridge
+  To install the EasyVR library on your Arduino IDE use the menu
+  Sketch > Import Library ... > Add Library and open the released zip archive.
+  
+  ### Examples
 
-  Examples for using the library are available from inside the Arduino
-  IDE, as for any other library (menu File > Examples > %EasyVR).
+  You can easily open the example sketches included with the EasyVR library
+  from inside the Arduino IDE, using the menu File > Examples > %EasyVR and
+  choosing one of the available sketches.
 */

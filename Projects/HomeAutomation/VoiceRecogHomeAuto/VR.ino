@@ -1,28 +1,26 @@
-SoftwareSerial port(2,3);
+SoftwareSerial port(2, 3);
 EasyVR easyvr(port);
 
+//Groups and Commands
 enum Groups
 {
   GROUP_0  = 0,
   GROUP_1  = 1,
 };
 
-
-enum Group0 
+enum Group0
 {
   G0_JARVIS = 0,
 };
 
-enum Group1 
+enum Group1
 {
-  G1_MAIN_ROOM = 0,
-  G1_DINING_TABLE = 1,
-  G1_TABLE = 2,
-  G1_SPEAKER = 3,
-  G1_IM_GOING_TO_BED = 4,
-  G1_IM_AWAKE = 5,
-  G1_LETS_PARTY = 6,
-  G1_JARVIS = 7,
+  G1_ROOM = 0,
+  G1_SPEAKER = 1,
+  G1_IM_GOING_TO_BED = 2,
+  G1_IM_AWAKE = 3,
+  G1_JARVIS = 4,
+  G1_PAINTINGS = 5,
 };
 
 EasyVRBridge bridge;
@@ -47,10 +45,10 @@ static msg_t Thread2(void *arg) {
   group = EasyVR::TRIGGER; //<-- start group (customize)
 
   while (1) {
-    
-    if(group == GROUP_0)
+
+    if (group == GROUP_0)
       easyvr.setPinOutput(EasyVR::IO1, LOW); // LED off (listening for code word)
-    else if(group == GROUP_1)
+    else if (group == GROUP_1)
       easyvr.setPinOutput(EasyVR::IO1, HIGH); // LED on (listening for command)
 
     Serial.print("Say a command in Group ");
@@ -64,13 +62,13 @@ static msg_t Thread2(void *arg) {
     }
     while (!easyvr.hasFinished());
 
-//    idx = easyvr.getWord();
-//    if (idx >= 0)
-//    {
-//      // built-in trigger (ROBOT)
-//      // group = GROUP_X; <-- jump to another group X
-//      //      return;
-//    }
+    //    idx = easyvr.getWord();
+    //    if (idx >= 0)
+    //    {
+    //      // built-in trigger (ROBOT)
+    //      // group = GROUP_X; <-- jump to another group X
+    //      //      return;
+    //    }
     idx = easyvr.getCommand();
     if (idx >= 0)
     {
@@ -92,7 +90,7 @@ static msg_t Thread2(void *arg) {
     }
     else // errors or timeout
     {
-      if (easyvr.isTimeout()){
+      if (easyvr.isTimeout()) {
         Serial.println("Timed out, try again...");
         group = EasyVR::TRIGGER; //<-- start group (customize)
       }
@@ -117,52 +115,44 @@ void action()
 {
   switch (group)
   {
-  case GROUP_0:
-    switch (idx)
-    {
-    case G0_JARVIS:
-      // write your action code here
-      // group = GROUP_X; <-- or jump to another group X for composite commands
-      group = GROUP_1;
+    case GROUP_0:
+      switch (idx)
+      {
+        case G0_JARVIS:
+          // write your action code here
+          // group = GROUP_X; <-- or jump to another group X for composite commands
+          group = GROUP_1;
+          break;
+      }
       break;
-    }
-    break;
-  case GROUP_1:
-    switch (idx)
-    {
-    case G1_MAIN_ROOM:
-      toggleMainLights();
-      group = GROUP_0;
+    case GROUP_1:
+      switch (idx)
+      {
+        case G1_ROOM:
+          toggleMainLights();
+          group = GROUP_0;
+          break;
+        case G1_SPEAKER:
+          toggleSpeakerPower();
+          group = GROUP_0;
+          break;
+        case G1_IM_GOING_TO_BED:
+          enterSleepMode();
+          group = GROUP_0;
+          break;
+        case G1_IM_AWAKE:
+          exitSleepMode();
+          group = GROUP_0;
+          break;
+        case G1_JARVIS:
+          // Do nothing here to stay in group 1
+          break;
+        case G1_PAINTINGS:
+          // write your action code here
+          // group = GROUP_X; <-- or jump to another group X for composite commands
+          break;
+      }
       break;
-    case G1_DINING_TABLE:
-      toggleDiningTableLights();
-      group = GROUP_0;
-      break;
-    case G1_TABLE:
-      toggleDiningTableLights();
-      group = GROUP_0;
-      break;
-    case G1_SPEAKER:
-      toggleSpeakerPower();
-      group = GROUP_0;
-      break;
-    case G1_IM_GOING_TO_BED:
-      enterSleepMode();
-      group = GROUP_0;
-      break;
-    case G1_IM_AWAKE:
-      exitSleepMode();
-      group = GROUP_0;
-      break;
-    case G1_LETS_PARTY:
-      setPartyMode();
-      group = GROUP_0;
-      break;
-    case G1_JARVIS:
-      // Do nothing here to stay in group 1
-      break;
-    }
-    break;
   }
 }
 
