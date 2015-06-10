@@ -134,17 +134,17 @@ void setMainLightsOff(){
   msgContent = 03;
 }
 
-void toggleDiningTableLights(){
+void togglePaintingLights(){
   msgNode = centralHomeControl;
   msgContent = 11;
 }
 
-void setDiningTableLightsOn(){
+void setPaintingLightsOn(){
   msgNode = centralHomeControl;
   msgContent = 9;
 }
 
-void setDiningTableLightsOff(){
+void setPaintingLightsOff(){
   msgNode = centralHomeControl;
   msgContent = 10;
 }
@@ -167,7 +167,7 @@ void setSpeakerPowerOff(){
 void shutdownAll(){
   setMainLightsOff();
   chThdSleepMilliseconds(20);
-  setDiningTableLightsOff();
+  setPaintingLightsOff();
   chThdSleepMilliseconds(1000);
   setSpeakerPowerOff();
 }
@@ -186,11 +186,8 @@ void exitSleepMode(){
   setSpeakerPowerOn();
 }
 
-void toggleBedLights(){
-}
-
 void setPartyMode() {
-  setDiningTableLightsOn();
+  setPaintingLightsOn();
   chThdSleepMilliseconds(20);
   setMainLightsOff();
   chThdSleepMilliseconds(700);

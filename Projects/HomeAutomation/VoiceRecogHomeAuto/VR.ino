@@ -23,8 +23,6 @@ enum Group1
   G1_PAINTINGS = 5,
 };
 
-EasyVRBridge bridge;
-
 int8_t group, idx;
 
 static msg_t Thread2(void *arg) {
@@ -148,8 +146,8 @@ void action()
           // Do nothing here to stay in group 1
           break;
         case G1_PAINTINGS:
-          // write your action code here
-          // group = GROUP_X; <-- or jump to another group X for composite commands
+          togglePaintingLights();
+          group = GROUP_0;
           break;
       }
       break;
