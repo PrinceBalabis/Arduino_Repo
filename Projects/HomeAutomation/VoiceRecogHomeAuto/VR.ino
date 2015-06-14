@@ -4,23 +4,23 @@ EasyVR easyvr(port);
 //Groups and Commands
 enum Groups
 {
-  GROUP_0  = 0,
   GROUP_1  = 1,
-};
-
-enum Group0
-{
-  G0_JARVIS = 0,
+  GROUP_2  = 2,
 };
 
 enum Group1
 {
-  G1_ROOM = 0,
-  G1_SPEAKER = 1,
-  G1_IM_GOING_TO_BED = 2,
-  G1_IM_AWAKE = 3,
-  G1_JARVIS = 4,
-  G1_PAINTINGS = 5,
+  G1_FRIDAY = 0,
+};
+
+enum Group2
+{
+  G2_ROOM = 0,
+  G2_SPEAKER = 1,
+  G2_PAINTINGS = 2,
+  G2_IM_GOING_TO_BED = 3,
+  G2_IM_AWAKE = 4,
+  G2_FRIDAY = 5,
 };
 
 int8_t group, idx;
@@ -32,21 +32,22 @@ static msg_t Thread2(void *arg) {
     Serial.println("EasyVR not detected!");
     chThdSleepMilliseconds(1000);
   }
-  //  easyvr.changeBaudrate(38400); //Change baudrate to faster
-  //  port.begin(38400); //Change baudrate to faster
-
-  easyvr.setPinOutput(EasyVR::IO1, LOW);
   Serial.println("EasyVR detected!");
+  easyvr.changeBaudrate(38400); //Change baudrate to faster
+  easyvr.setPinOutput(EasyVR::IO1, LOW);
   easyvr.setTimeout(10);
   easyvr.setLanguage(0);
+  easyvr.setMicDistance(3);
+  easyvr.setLevel(1);
+  easyvr.setKnob(1);
 
-  group = EasyVR::TRIGGER; //<-- start group (customize)
+  group = GROUP_1; //<-- start group (customize)
 
   while (1) {
 
-    if (group == GROUP_0)
+    if (group == GROUP_1)
       easyvr.setPinOutput(EasyVR::IO1, LOW); // LED off (listening for code word)
-    else if (group == GROUP_1)
+    else if (group == GROUP_2)
       easyvr.setPinOutput(EasyVR::IO1, HIGH); // LED on (listening for command)
 
     Serial.print("Say a command in Group ");
@@ -82,7 +83,6 @@ static msg_t Thread2(void *arg) {
       }
       else
         Serial.println();
-      easyvr.playSound(0, EasyVR::VOL_FULL);
       // perform some action
       action();
     }
@@ -90,16 +90,18 @@ static msg_t Thread2(void *arg) {
     {
       if (easyvr.isTimeout()) {
         Serial.println("Timed out, try again...");
-        group = EasyVR::TRIGGER; //<-- start group (customize)
+        group = GROUP_1; //<-- start group (customize)
       }
       int16_t err = easyvr.getError();
       if (err >= 0)
       {
         Serial.print("Error ");
         Serial.println(err, HEX);
-        group = EasyVR::TRIGGER; //<-- start group (customize)
-        easyvr.playSound(0, EasyVR::VOL_FULL);
-        easyvr.playSound(0, EasyVR::VOL_FULL);
+        if (group == GROUP_2)
+          easyvr.playSound(3, EasyVR::VOL_DOUBLE);
+        group = GROUP_1; //<-- start group (customize)
+        easyvr.setLevel(5); //Make the trigger word harder to pick up
+        easyvr.setKnob(4); //Make the trigger word harder to pick up
       }
     }
 
@@ -113,41 +115,50 @@ void action()
 {
   switch (group)
   {
-    case GROUP_0:
-      switch (idx)
-      {
-        case G0_JARVIS:
-          // write your action code here
-          // group = GROUP_X; <-- or jump to another group X for composite commands
-          group = GROUP_1;
-          break;
-      }
-      break;
     case GROUP_1:
       switch (idx)
       {
-        case G1_ROOM:
+        case G1_FRIDAY:
+          // write your action code here
+          // group = GROUP_X; <-- or jump to another group X for composite commands
+          easyvr.playSound(2, EasyVR::VOL_DOUBLE);
+          group = GROUP_2;
+          easyvr.setLevel(1); //Make the actions easier to pick up
+          easyvr.setKnob(1); //Make the actions easier to pick up
+          break;
+      }
+      break;
+    case GROUP_2:
+      switch (idx)
+      {
+        case G2_ROOM:
+          easyvr.playSound(1, EasyVR::VOL_DOUBLE);
           toggleMainLights();
-          group = GROUP_0;
+          group = GROUP_1;
           break;
-        case G1_SPEAKER:
+        case G2_SPEAKER:
+          easyvr.playSound(1, EasyVR::VOL_DOUBLE);
           toggleSpeakerPower();
-          group = GROUP_0;
+          group = GROUP_1;
           break;
-        case G1_IM_GOING_TO_BED:
+        case G2_IM_GOING_TO_BED:
+          easyvr.playSound(4, EasyVR::VOL_DOUBLE);
           enterSleepMode();
-          group = GROUP_0;
+          group = GROUP_1;
           break;
-        case G1_IM_AWAKE:
+        case G2_IM_AWAKE:
+          easyvr.playSound(5, EasyVR::VOL_DOUBLE);
           exitSleepMode();
-          group = GROUP_0;
+          group = GROUP_1;
           break;
-        case G1_JARVIS:
+        case G2_FRIDAY:
           // Do nothing here to stay in group 1
+          easyvr.playSound(2, EasyVR::VOL_DOUBLE);
           break;
-        case G1_PAINTINGS:
+        case G2_PAINTINGS:
+          easyvr.playSound(1, EasyVR::VOL_DOUBLE);
           togglePaintingLights();
-          group = GROUP_0;
+          group = GROUP_1;
           break;
       }
       break;

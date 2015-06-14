@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------------
 // RF24 Mesh Node Thread
 
-RF24 radio(8,9); // CE & CSN pins
+RF24 radio(8, 9); // CE & CSN pins
 RF24Network network(radio);
 
 /**
  *  RF24 thread
  **/
-static msg_t Thread1(void *arg) 
+static msg_t Thread1(void *arg)
 {
   chThdSleepMilliseconds(5000);
   Serial.println(F("Started rf24 thread"));
@@ -18,22 +18,22 @@ static msg_t Thread1(void *arg)
 
   initTweaks(); // Run RF24 tweaks
 
-    while (1) {
+  while (1) {
     network.update(); // Check the network regularly
 
-    if(msgNode == -1 )
+    if (msgNode == -1 )
     {
 
       int32_t msgReceived;
       readMessage(&msgReceived);
 
       // Put code in this if-statement which should occur when a message is received
-      if(msgReceived != -1){
+      if (msgReceived != -1) {
         msgContent = msgReceived;
         Serial.println(F("Received Data"));
       }
-    } 
-    else if(msgNode >= 0)
+    }
+    else if (msgNode >= 0)
     {
       Serial.println(F("MESSAGE SEND PROGRAM"));
       Serial.print(F("nodeID OF RECEIVER: "));
@@ -49,16 +49,16 @@ static msg_t Thread1(void *arg)
       bool sendDone = false;
 
       // Will try to keep send message untill receiver gets it
-      while(!msgSent && !timeout){
+      while (!msgSent && !timeout) {
         msgSent = sendMessage(msgNode, msgContent);
         if (msgSent)
         {
           Serial.println(F("PARENT PICKED UP MESSAGE"));
-        } 
-        else if (millis() - started_waiting_at > timeoutTime ){
+        }
+        else if (millis() - started_waiting_at > timeoutTime ) {
           timeout = true;
         }
-        else if(!msgSent){
+        else if (!msgSent) {
           Serial.println(F("ERROR!: Failed to send message to parent. retrying..."));
           chThdSleepMilliseconds(20);
         }
@@ -82,14 +82,14 @@ static msg_t Thread1(void *arg)
 uint8_t sendMessage(uint16_t msgReceiver, int32_t msgContent)
 {
   // Set receiver of message
-  RF24NetworkHeader header(msgReceiver); 
+  RF24NetworkHeader header(msgReceiver);
 
   // Sends message
   bool sendDone = network.write(header, &msgContent, sizeof(msgContent));
 
-  if(sendDone){
+  if (sendDone) {
     return 1;
-  } 
+  }
   else {
     return 0;
   }
@@ -99,8 +99,8 @@ uint8_t sendMessage(uint16_t msgReceiver, int32_t msgContent)
  *  readMessage
  *  This function reads the message and stores it to the variable sent in parameter
  */
-void readMessage(int32_t *pmsgReceived){
-  if (network.available()){
+void readMessage(int32_t *pmsgReceived) {
+  if (network.available()) {
     RF24NetworkHeader header;
     network.read(header, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
   }
@@ -113,58 +113,58 @@ void readMessage(int32_t *pmsgReceived){
  *  initTweaks
  *  Runs commands to tweak the radio communication according to settings in config.h
  */
-void initTweaks(void){
+void initTweaks(void) {
   radio.setRetries(retryDelay, retryTimes); // Set delay between retries & # of retires for a "radio.write" command
   radio.setPALevel(powerAmplifierLevel); // Set power amplifier to highest
   radio.setDataRate(dataRate); // Set data rate to 250kpbs
 }
 
-void toggleMainLights(){
+void toggleMainLights() {
   msgNode = mainLights;
   msgContent = 01;
 }
 
-void setMainLightsOn(){
+void setMainLightsOn() {
   msgNode = mainLights;
   msgContent = 02;
 }
 
-void setMainLightsOff(){
+void setMainLightsOff() {
   msgNode = mainLights;
   msgContent = 03;
 }
 
-void togglePaintingLights(){
+void togglePaintingLights() {
   msgNode = centralHomeControl;
   msgContent = 11;
 }
 
-void setPaintingLightsOn(){
+void setPaintingLightsOn() {
   msgNode = centralHomeControl;
   msgContent = 9;
 }
 
-void setPaintingLightsOff(){
+void setPaintingLightsOff() {
   msgNode = centralHomeControl;
   msgContent = 10;
 }
 
-void toggleSpeakerPower(){
+void toggleSpeakerPower() {
   msgNode = centralHomeControl;
   msgContent = 01;
 }
 
-void setSpeakerPowerOn(){
+void setSpeakerPowerOn() {
   msgNode = centralHomeControl;
   msgContent = 02;
 }
 
-void setSpeakerPowerOff(){
+void setSpeakerPowerOff() {
   msgNode = centralHomeControl;
   msgContent = 03;
 }
 
-void shutdownAll(){
+void shutdownAll() {
   setMainLightsOff();
   chThdSleepMilliseconds(20);
   setPaintingLightsOff();
@@ -172,15 +172,15 @@ void shutdownAll(){
   setSpeakerPowerOff();
 }
 
-void enterSleepMode(){
+void enterSleepMode() {
   shutdownAll();
 }
 
-void leavingApartment(){
+void leavingApartment() {
   shutdownAll();
 }
 
-void exitSleepMode(){
+void exitSleepMode() {
   setMainLightsOn();
   chThdSleepMilliseconds(20);
   setSpeakerPowerOn();

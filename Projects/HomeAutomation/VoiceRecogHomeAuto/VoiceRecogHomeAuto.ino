@@ -21,17 +21,17 @@ void setup() {
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
-  while(1);
+  while (1);
 }
 //------------------------------------------------------------------------------
 // main thread runs at NORMALPRIO
 void mainThread() {
 
   chThdCreateStatic(waThread1, sizeof(waThread1),
-  NORMALPRIO + 2, Thread1, NULL);
+                    NORMALPRIO + 2, Thread1, NULL);
 
   chThdCreateStatic(waThread2, sizeof(waThread2),
-  NORMALPRIO + 1, Thread2, NULL);
+                    NORMALPRIO + 1, Thread2, NULL);
 
   // increment counter
   while (1);
