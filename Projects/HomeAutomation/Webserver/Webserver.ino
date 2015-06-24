@@ -88,14 +88,14 @@ void loop() {
             client.println("<HEAD>");
             client.println("<meta name='apple-mobile-web-app-capable' content='yes' />");
             client.println("<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />");
-            client.println("<link rel='stylesheet' type='text/css' href='http://randomnerdtutorials.com/ethernetcss.css' />");
-            client.println("<TITLE>Random Nerd Tutorials Project</TITLE>");
+            client.println("<link rel='stylesheet' type='text/css' href='http://82.196.5.54/princehomecontrol/arduinowebservercss.css' />");
+            client.println("<TITLE>Prince Home Center</TITLE>");
             client.println("</HEAD>");
             client.println("<BODY>");
-            client.println("<H1>Random Nerd Tutorials Project</H1>");
+            client.println("<H1>Prince Home Center</H1>");
             client.println("<hr />");
             client.println("<br />");
-            client.println("<H2>Arduino with Ethernet Shield</H2>");
+            client.println("<H2>Lights</H2>");
             client.println("<br />");
             client.println("<a href=\"/?button1on\"\">Turn On LED</a>");
             client.println("<a href=\"/?button1off\"\">Turn Off LED</a><br />");
@@ -103,7 +103,7 @@ void loop() {
             client.println("<br />");
             client.println("<a href=\"/?button2on\"\">Rotate Left</a>");
             client.println("<a href=\"/?button2off\"\">Rotate Right</a><br />");
-            client.println("<p>Created by Rui Santos. Visit http://randomnerdtutorials.com for more projects!</p>");
+            //client.println("<p>Home control center by Prince</p>");
             client.println("<br />");
             client.println("</BODY>");
             client.println("</HTML>");
