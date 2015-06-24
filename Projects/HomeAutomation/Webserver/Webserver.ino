@@ -78,7 +78,7 @@ void loop() {
               Serial.println(F("*** Entered apartment ***"));
             }
           } else { // What happens when a client which is not GeoHopper connects - like webbrowser
-            Serial.print(F("Using web browser"));
+            Serial.println(F("Using web browser"));
             Serial.println(F("Sending response"));
             // send a standard http response header
             client.println("HTTP/1.1 200 OK"); //send new page
@@ -107,17 +107,17 @@ void loop() {
             client.println("<br />");
             client.println("</BODY>");
             client.println("</HTML>");
-
+            
             //controls the Arduino if you press the buttons
-            if (getRequest.indexOf("?button1on") > 0) {
+            if (getRequest.indexOf(" /?button1on") > 0) {
               digitalWrite(led, HIGH);
               Serial.println(F("On button"));
-            } else if (getRequest.indexOf("?button1off") > 0) {
+            } else if (getRequest.indexOf(" /?button1off") > 0) {
               digitalWrite(led, LOW);
               Serial.println(F("Off button"));
-            } else if (getRequest.indexOf("?button2on") > 0) {
+            } else if (getRequest.indexOf(" /?button2on") > 0) {
               Serial.println(F("Rotate left button"));
-            } else if (getRequest.indexOf("?button2off") > 0) {
+            } else if (getRequest.indexOf(" /?button2off") > 0) {
               Serial.println(F("Rotate right button"));
             }
             //clearing string for next read
