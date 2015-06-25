@@ -29,7 +29,7 @@ IPAddress myDns(8, 8, 8, 8); // google puble dns
 
 EthernetServer server(4050);
 
-int led = 73;
+const int led = 13;
 String getRequest;
 
 void setup() {
@@ -75,8 +75,10 @@ void loop() {
             Serial.println(F("GeoHopper iBeacon POST Request"));
             if (postRequest.indexOf("LocationExit") > 0) { // If the POST request says youve exited the apartment
               Serial.println(F("*** Exited apartment ***"));
+              digitalWrite(led, LOW);
             } else if (postRequest.indexOf("LocationEnter") > 0) { //If the POST request says youve entered the apartment
               Serial.println(F("*** Entered apartment ***"));
+              digitalWrite(led, HIGH);
             }
           } else { // What happens when a client which is not GeoHopper connects - like webbrowser
             Serial.println(F("Using web browser"));
