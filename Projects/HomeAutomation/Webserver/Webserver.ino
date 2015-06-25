@@ -69,12 +69,13 @@ void loop() {
           {
             postRequest += (char)client.read();
           }
+          //Serial.println(postRequest);
 
           if (postRequest.length() > 0) {
             Serial.println(F("GeoHopper iBeacon POST Request"));
             if (postRequest.indexOf("LocationExit") > 0) { // If the POST request says youve exited the apartment
               Serial.println(F("*** Exited apartment ***"));
-            } else if (postRequest.indexOf("LocationEntered") > 0) { //If the POST request says youve entered the apartment
+            } else if (postRequest.indexOf("LocationEnter") > 0) { //If the POST request says youve entered the apartment
               Serial.println(F("*** Entered apartment ***"));
             }
           } else { // What happens when a client which is not GeoHopper connects - like webbrowser
@@ -107,7 +108,7 @@ void loop() {
             client.println("<br />");
             client.println("</BODY>");
             client.println("</HTML>");
-            
+
             //controls the Arduino if you press the buttons
             if (getRequest.indexOf(" /?button1on") > 0) {
               digitalWrite(led, HIGH);
