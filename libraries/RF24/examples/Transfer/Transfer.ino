@@ -33,7 +33,7 @@ bool TX=1,RX=0,role=0;
 
 void setup(void) {
 
-  Serial.begin(57600);
+  Serial.begin(115200);
   printf_begin();
 
   radio.begin();                           // Setup and configure rf radio
@@ -41,8 +41,9 @@ void setup(void) {
   radio.setPALevel(RF24_PA_MAX);
   radio.setDataRate(RF24_1MBPS);
   radio.setAutoAck(1);                     // Ensure autoACK is enabled
-  radio.setRetries(2,15);                   // Optionally, increase the delay between retries & # of retries
-  radio.setCRCLength(RF24_CRC_8); 
+  radio.setRetries(2,15);                  // Optionally, increase the delay between retries & # of retries
+  
+  radio.setCRCLength(RF24_CRC_8);          // Use 8-bit CRC for performance
   radio.openWritingPipe(pipes[0]);
   radio.openReadingPipe(1,pipes[1]);
   
@@ -98,8 +99,8 @@ void loop(void){
    float numBytes = cycles*32;
    float rate = numBytes / (stopTime - startTime);
     
-   Serial.print("Transfer complete at "); Serial.print(rate); printf(" KB/s \n\r");
-   Serial.print(counter); Serial.print(" of "); Serial.print(cycles); printf(" Packets Failed to Send\n\r");
+   Serial.print("Transfer complete at "); Serial.print(rate); Serial.println(" KB/s");
+   Serial.print(counter); Serial.print(" of "); Serial.print(cycles); Serial.println(" Packets Failed to Send");
    counter = 0;   
     
    }
@@ -113,10 +114,12 @@ if(role == RX){
      }
    if(millis() - rxTimer > 1000){
      rxTimer = millis();     
-     float numBytes = (counter*32)/1000.0;
+     unsigned long numBytes = counter*32;
      Serial.print("Rate: ");
-     Serial.print(numBytes);
-     printf("KB/s \n Payload Count: %d \n\r", counter);
+     //Prevent dividing into 0, which will cause issues over a period of time
+     Serial.println(numBytes > 0 ? numBytes/1000.0:0);
+     Serial.print("Payload Count: ");
+     Serial.println(counter);
      counter = 0;
    }
   }
