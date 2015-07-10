@@ -4,9 +4,9 @@
 
 #include "HomeNetworkAbilities.h"
 
- // uint8_t HomeNetwork::toggleMainLights(void) {
- // 	return write(mainLights, 01);
- // }
+ uint8_t HomeNetworkAbilities::toggleMainLights(void) {
+ 	return write(mainLights, 01);
+ }
 
 // uint8_t HomeNetworkAbilities::setMainLightsOn() {
 //   msgNode = mainLights;

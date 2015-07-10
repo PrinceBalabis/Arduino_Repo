@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include "HomeNetworkNodes.h"
 #include "RF24Network.h"
+#include "HomeNetwork.h"
+
 
 class HomeNetworkAbilities
 {
