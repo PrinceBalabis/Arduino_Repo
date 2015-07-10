@@ -3,9 +3,8 @@
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
-#include "..\..\Projects\HomeAutomation\1_NRF24-HomeNetwork\GlobalHomeNetworkHeaders\homeNetworkNodes.h"
-#include "..\..\Projects\HomeAutomation\1_NRF24-HomeNetwork\GlobalHomeNetworkHeaders\homeNetworkConfig.h"
-#include "..\..\Projects\HomeAutomation\1_NRF24-HomeNetwork\GlobalHomeNetworkHeaders\homeNetworkMethods.h"
+#include <C:\Users\Prince\Documents\GitHub\Arduino_Training\libraries\HomeNetwork\HomeNetworkNodes.h>
+#include <C:\Users\Prince\Documents\GitHub\Arduino_Training\libraries\HomeNetwork\HomeNetworkConfig.h>
 #include "config.h"
 
 // Data to share

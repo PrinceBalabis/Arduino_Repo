@@ -3,9 +3,8 @@
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
-#include "..\..\Projects\HomeAutomation\1_NRF24-HomeNetwork\GlobalHomeNetworkHeaders\HomeNetwork.h"
+#include <HomeNetwork.h>
 #include "config.h"
-
 
 // Data to share
 volatile int msgNode = -1;
