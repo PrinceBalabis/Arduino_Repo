@@ -2,10 +2,10 @@ static msg_t Thread2(void *arg) {
   chThdSleepMilliseconds(4000);
 
   while (1) {
-    Serial.println(F("MESSAGE SEND PROGRAM"));
+    //Serial.println(F("MESSAGE SEND PROGRAM"));
 
 //    uint8_t msgSent = homeNetwork.toggleMainLights();
-    homeNetwork.toggleMainLights();
+    //homeNetwork.toggleMainLights();
 //    if (msgSent) {
 //      Serial.println(F("PARENT PICKED UP MESSAGE"));
 //    } else if (!msgSent) {
