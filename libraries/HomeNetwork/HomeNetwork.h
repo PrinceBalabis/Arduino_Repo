@@ -4,8 +4,15 @@
 /*
   HomeNetwork.h - Library for Prince Home Automation & IOT network of RF24 nodes
 */
-#include "HomeNetworkAbilities.h"
-
+#include <SPI.h>
+#include "RF24.h"
+#include "HomeNetworkConfig.h"
+#include <stddef.h>
+#include <stdint.h>
+#include "HomeNetworkNodes.h"
+#include "RF24Network.h"
+#include "HomeNetwork.h"
+  
 class RF24;
 class RF24Network;
 
@@ -18,6 +25,22 @@ class HomeNetwork
 	bool available(void);
 	uint8_t write(uint16_t msgReceiver, int32_t msgContent);
 	void read(int32_t *pmsgReceived);
+
+	// Add new home commands here!
+	uint8_t toggleMainLights(void);
+	// uint8_t setMainLightsOn();
+	// uint8_t setMainLightsOff();
+	// uint8_t togglePaintingLights();
+	// uint8_t setPaintingLightsOn();
+	// uint8_t setPaintingLightsOff();
+	// uint8_t toggleSpeakerPower();
+	// uint8_t setSpeakerPowerOn();
+	// uint8_t setSpeakerPowerOff();
+	// uint8_t shutdownAll();
+	// uint8_t enterSleepMode();
+	// uint8_t leavingApartment();
+	// uint8_t exitSleepMode();
+	// uint8_t setPartyMode();
 
   private:
   	RF24& radio;

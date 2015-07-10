@@ -77,3 +77,75 @@ void HomeNetwork::read(int32_t *pmsgReceived) {
     *pmsgReceived = -1;
   }
 }
+
+ uint8_t HomeNetwork::toggleMainLights(void) {
+  return write(mainLights, 01);
+ }
+
+// uint8_t HomeNetwork::setMainLightsOn() {
+//   msgNode = mainLights;
+//   msgContent = 02;
+// }
+
+// uint8_t HomeNetwork::setMainLightsOff() {
+//   msgNode = mainLights;
+//   msgContent = 03;
+// }
+
+// uint8_t HomeNetwork::togglePaintingLights() {
+//   msgNode = centralHomeControl;
+//   msgContent = 11;
+// }
+
+// uint8_t HomeNetwork::setPaintingLightsOn() {
+//   msgNode = centralHomeControl;
+//   msgContent = 9;
+// }
+
+// uint8_t HomeNetwork::setPaintingLightsOff() {
+//   msgNode = centralHomeControl;
+//   msgContent = 10;
+// }
+
+// uint8_t HomeNetwork::toggleSpeakerPower() {
+//   msgNode = centralHomeControl;
+//   msgContent = 01;
+// }
+
+// uint8_t HomeNetwork::setSpeakerPowerOn() {
+//   msgNode = centralHomeControl;
+//   msgContent = 02;
+// }
+
+// uint8_t HomeNetwork::setSpeakerPowerOff() {
+//   msgNode = centralHomeControl;
+//   msgContent = 03;
+// }
+
+// uint8_t HomeNetwork::shutdownAll() {
+//   setMainLightsOff();
+//   setPaintingLightsOff();
+//   setSpeakerPowerOff();
+// }
+
+// uint8_t HomeNetwork::enterSleepMode() {
+//   shutdownAll();
+// }
+
+// uint8_t HomeNetwork::leavingApartment() {
+//   shutdownAll();
+// }
+
+// uint8_t HomeNetwork::exitSleepMode() {
+//   setMainLightsOn();
+//   setSpeakerPowerOn();
+// }
+
+// uint8_t HomeNetwork::setPartyMode() {
+//   setPaintingLightsOn();
+//   setMainLightsOff();
+//   chThdSleepMilliseconds(20);
+//   setSpeakerPowerOn();
+// }
+
+
