@@ -13,7 +13,7 @@ static msg_t Thread1(void *arg)
 
   SPI.begin(); // SPI is used by the RF24 module
   homeNetwork.begin(nodeID); // Run RF24 config for the customized Prince Home Automation and IOT Network
-  Serial.println(F("Started network"));
+  Serial.println(F("Started network\n"));
 
   while (1) {
     homeNetwork.update(); // Check the network regularly for the entire network to function properly
@@ -24,11 +24,11 @@ static msg_t Thread1(void *arg)
     // Put code in this if-statement which should occur when a message is received
     if (msgReceived != -1) {
       msgContent = msgReceived;
-      Serial.println(F("---------------Received Data-------------------"));
-      Serial.print(F("Raw Message sender: "));
+      Serial.print(F("---------------Received Data Raw------------------- \nRaw Message sender: "));
       Serial.println(msgSender);
       Serial.print(F("Raw Message content: "));
       Serial.println(msgContent);
+      Serial.println(F("-----------------------------------------------"));
     }
 
     chThdSleepMilliseconds(50);  //Give other thread some time to run

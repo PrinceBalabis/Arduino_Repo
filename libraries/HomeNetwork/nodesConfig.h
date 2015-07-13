@@ -2,6 +2,12 @@
 // We only have 5 talk/listen pipes,
 // so we can only have 5 nodes in this network
 
+//***********************Message types*******************************
+// 'Message type' is packet within the header of a message, it is read by
+// the receiver to understand what type of packet it is
+const unsigned char msgTypeAsk = 'A';
+const unsigned char msgTypeResponse = 'R';
+const unsigned char msgTypeCommand = 'C';
 
 //***********************Main Room Lights*******************************
  // This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)

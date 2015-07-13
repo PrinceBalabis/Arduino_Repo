@@ -14,7 +14,7 @@ static WORKING_AREA(waThread1, 64);
 static WORKING_AREA(waThread2, 64);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()

@@ -1,38 +1,37 @@
 static msg_t Thread2(void *arg) {
-  Serial.println(F("-------------------------------------------"));
-  Serial.println(F("Example SERVER for Prince Home Network"));
-  Serial.print(F("This node ID: "));
+  Serial.print(F("\n\n--------------------------------------------------------------- \nExample SERVER for Prince Home Network \nThis node ID: "));
   Serial.println(nodeID);
+
   chThdSleepMilliseconds(4000); // Give some time for HomeNetwork thread to start
 
   while (1) {
     // Wait for message to receive
-    Serial.println(F("-------------------------------------------"));
-    Serial.println(F("WAITING FOR MESSAGE"));
+    Serial.println(F("--------------Server Program Starting----------------- \nIdle and waiting for client"));
     while (msgContent == -1) {
       chThdSleepMilliseconds(50); // Check every 50ms if a message is received
     }
 
     if (msgContent == 12345) {
       // Send return-message back to client
-      Serial.println(F("MESSAGE SEND PROGRAM TO CLIENT"));
-      uint16_t msgReceiver = msgSender;
-      uint8_t msgSent = homeNetwork.write(msgReceiver, 67890);
+      int32_t responseMessage = 67890;
+      uint8_t msgSent = homeNetwork.write(msgSender, responseMessage, msgTypeResponse);
+      Serial.print("Client has a question \nSending response back: ");
+      Serial.println(responseMessage);
+
       if (msgSent) {
-        Serial.println(F("MESSAGE AWAY"));
+        Serial.println(F("Message sent"));
       } else if (!msgSent) {
         Serial.println(F("ERROR!: Failed to send message to parent."));
       } else if (msgSent == 2) {
-        Serial.println(F("FINALLY SENT MESSAGE AFTER SEVERAL RETRIES. BAD SIGNAL WITH PARENT!"));
+        Serial.println(F("OBS! FINALLY SENT MESSAGE AFTER SEVERAL RETRIES. BAD SIGNAL WITH PARENT!"));
       }
-
-
     }
-    
+
     //Clear variables to reset
     msgSender = -1;
     msgContent = -1;
-    
+    Serial.println(F("---------------Server Program Done-------------------\n"));
+
     chThdSleepMilliseconds(100); // Redo this send program every 200 ms
   }
 

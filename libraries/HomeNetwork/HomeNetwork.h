@@ -6,10 +6,10 @@
 */
 #include <SPI.h>
 #include "RF24.h"
-#include "HomeNetworkConfig.h"
+#include "radioConfig.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "HomeNetworkNodes.h"
+#include "nodesConfig.h"
 #include "RF24Network.h"
 #include "HomeNetwork.h"
 
@@ -23,7 +23,7 @@ class HomeNetwork
 	void begin(uint16_t nodeID);
 	void update(void);
 	bool available(void);
-	uint8_t write(uint16_t msgReceiver, int32_t msgContent);
+  uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
 	uint16_t read(int32_t *pmsgReceived);
 
 	// Add new home commands here!

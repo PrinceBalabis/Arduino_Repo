@@ -31,10 +31,10 @@ bool HomeNetwork::available(void)
 * write
 * This function sends the message to a receiver, both which are set in parameter
 **/
-uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent)
+uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
   // Set receiver of message
-  RF24NetworkHeader header(msgReceiver, 'A');
+  RF24NetworkHeader header(msgReceiver, msgType);
 
   // Send message to server, keep trying untill server confirms receiver gets the message
   bool msgSent = false;
@@ -80,9 +80,6 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived) {
     RF24NetworkHeader readHeader;
     network.read(readHeader, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
 
-Serial.print(F("test: "));
-    Serial.println(*pmsgReceived);
-
     return msgSender;
   }
   else {
@@ -95,15 +92,14 @@ uint8_t HomeNetwork::sendExampleDataToExampleServer(uint16_t *pmsgReceiver) {
   // Send the ID of the receiver of the message so the thread will later know
   // the responce came from the right node.
   *pmsgReceiver = exampleServer;
-  int32_t msgReceiver = 12345;
-  return write(*pmsgReceiver, msgReceiver);
+  return write(*pmsgReceiver, exampleData, msgTypeAsk);
 }
 
 uint8_t HomeNetwork::toggleMainLights(uint16_t *pmsgReceiver) {
   // Send the ID of the receiver of the message so the thread will later know
   // the responce came from the right node.
   *pmsgReceiver = mainLights;
-  return write(mainLights, toggleLights);
+  return write(mainLights, toggleLights, msgTypeCommand);
 }
 
 // uint8_t HomeNetwork::setMainLightsOn() {
