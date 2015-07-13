@@ -11,12 +11,11 @@ static msg_t Thread2(void *arg) {
       chThdSleepMilliseconds(50); // Check every 50ms if a message is received
     }
 
-    if (msgContent == 12345) {
+    if (msgContent == exampleData) {
       // Send return-message back to client
-      int32_t responseMessage = 67890;
-      uint8_t msgSent = homeNetwork.write(msgSender, responseMessage, msgTypeResponse);
+      uint8_t msgSent = homeNetwork.write(msgSender, exampleResponceData, msgTypeResponse);
       Serial.print("Client has a question \nSending response back: ");
-      Serial.println(responseMessage);
+      Serial.println(exampleResponceData);
 
       if (msgSent) {
         Serial.println(F("Message sent"));

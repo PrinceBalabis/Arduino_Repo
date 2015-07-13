@@ -58,23 +58,26 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
       return 0;
     }
     else if (!msgSent) {
-      //Failed to send mesage, retrying...
+      //Failed to send message, retrying...
       retried = true;
     }
   }
 }
+
+
 
 /**
 *  read
 *  This function reads the message and stores it to the variable sent in parameter
 * returns the senders ID.int
 */
-uint16_t HomeNetwork::read(int32_t *pmsgReceived) {
+uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   if (available()) {
     // Save sender node ID of received message
-     RF24NetworkHeader peekHeader;
-     network.peek(peekHeader);
-     uint16_t msgSender = peekHeader.from_node;
+    RF24NetworkHeader peekHeader;
+    network.peek(peekHeader);
+    uint16_t msgSender = peekHeader.from_node;
+    *pmsgType = peekHeader.type;
 
     // Save received message content
     RF24NetworkHeader readHeader;

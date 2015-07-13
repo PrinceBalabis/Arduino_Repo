@@ -24,7 +24,7 @@ class HomeNetwork
 	void update(void);
 	bool available(void);
   uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
-	uint16_t read(int32_t *pmsgReceived);
+  uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 
 	// Add new home commands here!
 	uint8_t sendExampleDataToExampleServer(uint16_t *pmsgReceiver);

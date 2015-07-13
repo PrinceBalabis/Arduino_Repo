@@ -18,15 +18,21 @@ static msg_t Thread1(void *arg)
   while (1) {
     homeNetwork.update(); // Check the network regularly for the entire network to function properly
 
+    int16_t msgSenderReceived;
     int32_t msgReceived;
-    msgSender = homeNetwork.read(&msgReceived);
+    unsigned char msgTypeReceived = 'Z';
+    msgSenderReceived = homeNetwork.read(&msgReceived, &msgTypeReceived);
 
     // Put code in this if-statement which should occur when a message is received
     if (msgReceived != -1) {
+      msgSender = msgSenderReceived;
       msgContent = msgReceived;
+      msgType = msgTypeReceived;
       Serial.print(F("---------------Received Data Raw------------------- \nRaw Message sender: "));
       Serial.println(msgSender);
-      Serial.print(F("Raw Message content: "));
+      Serial.println(F("Raw Type content: "));
+      Serial.write(msgType);
+      Serial.print(F("\nRaw Message content: "));
       Serial.println(msgContent);
       Serial.println(F("-----------------------------------------------"));
     }

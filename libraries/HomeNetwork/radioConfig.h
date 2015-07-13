@@ -2,7 +2,7 @@
 
 const unsigned int timeoutSendTime = 200; // Amount of time before trying to resend message again to node
 
-// Set delay between retries & # of retires for a "radio.write" command
+// Set delay between retries & # of retries for a "radio.write" command
 const uint8_t retryDelay = 5;
 const uint8_t retryTimes = 15;
 
