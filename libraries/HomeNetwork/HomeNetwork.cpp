@@ -94,7 +94,7 @@ Serial.print(F("test: "));
 uint8_t HomeNetwork::sendExampleDataToExampleServer(uint16_t *pmsgReceiver) {
   // Send the ID of the receiver of the message so the thread will later know
   // the responce came from the right node.
-  *pmsgReceiver = 03;
+  *pmsgReceiver = exampleServer;
   int32_t msgReceiver = 12345;
   return write(*pmsgReceiver, msgReceiver);
 }

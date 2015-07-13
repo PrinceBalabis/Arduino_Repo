@@ -22,11 +22,11 @@ const uint16_t defaultNode = 31;
 
 //Testing nodes
 //***********************homeNetworkExampleServer*******************************
-const uint16_t homeNetworkExampleServer = 11; // Used for example/testing. This node is second child of centralHomeControl-node
+const uint16_t exampleServer = 0; // Used for example/testing. This node is second child of centralHomeControl-node
 
 // Commands to offer
 const int32_t exampleData = 12345;
 
 //****************************************************************************
 
-const uint16_t homeNetworkExampleClient = 21; // Used for example/testing. This node is third child of centralHomeControl-node
+const uint16_t exampleClient = 1; // Used for example/testing. This node is third child of centralHomeControl-node
