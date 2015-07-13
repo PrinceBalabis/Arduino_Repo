@@ -6,7 +6,7 @@ const unsigned int timeoutSendTime = 200; // Amount of time before trying to res
 const uint8_t retryDelay = 5;
 const uint8_t retryTimes = 15;
 
-const uint8_t powerAmplifierLevel = RF24_PA_MAX;  // Set power amplifier to highest
+const uint8_t powerAmplifierLevel = RF24_PA_HIGH;  // Set power amplifier to highest
 const rf24_datarate_e dataRate = RF24_250KBPS;  // Set data rate to 250kpbs(other settings: RF24_1MBPS, RF24_2MBPS)
 
-const uint8_t channel = 90; // Channel 90
+const uint8_t channel = 40; // Channel 90

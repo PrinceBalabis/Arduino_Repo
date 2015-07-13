@@ -7,9 +7,8 @@
 #include "config.h"
 
 // Variables for data to share between threads
-bool dataBusy = false; // Used to make sure the shared variables are not used concurrently by two threads
-volatile int msgNode = -1;
-volatile int msgContent = -1;
+volatile uint16_t msgSender = -1;
+volatile int32_t msgContent = -1;
 
 static WORKING_AREA(waThread1, 64);
 static WORKING_AREA(waThread2, 64);
@@ -27,7 +26,7 @@ void mainThread() {
 
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 3, Thread1, NULL);
 
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
+  //chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
 
   while (1);
 }

@@ -12,7 +12,7 @@
 #include "HomeNetworkNodes.h"
 #include "RF24Network.h"
 #include "HomeNetwork.h"
-  
+
 class RF24;
 class RF24Network;
 
@@ -24,10 +24,11 @@ class HomeNetwork
 	void update(void);
 	bool available(void);
 	uint8_t write(uint16_t msgReceiver, int32_t msgContent);
-	void read(int32_t *pmsgReceived);
+	uint16_t read(int32_t *pmsgReceived);
 
 	// Add new home commands here!
-	uint8_t toggleMainLights(void);
+	uint8_t sendExampleDataToExampleServer(uint16_t *pmsgReceiver);
+	uint8_t toggleMainLights(uint16_t *pmsgReceiver);
 	// uint8_t setMainLightsOn();
 	// uint8_t setMainLightsOff();
 	// uint8_t togglePaintingLights();

@@ -1,40 +1,40 @@
 /**
- *  HomeNetwork.cpp
- */
+*  HomeNetwork.cpp
+*/
 
 #include "HomeNetwork.h"
 
- HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network ): radio(_radio), network(_network) 
- {
- }
-
- void HomeNetwork::begin(uint16_t nodeID)
- {
- 	radio.begin(); // Initialize radio
- 	network.begin(channel, nodeID); // Start mesh Network
- 	radio.setRetries(retryDelay, retryTimes);
- 	radio.setPALevel(powerAmplifierLevel);
- 	radio.setDataRate(dataRate);
- }
-
-void HomeNetwork::update(void) 
+HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network ): radio(_radio), network(_network)
 {
-	network.update();
 }
 
-bool HomeNetwork::available(void) 
+void HomeNetwork::begin(uint16_t nodeID)
 {
-	return network.available();
+  radio.begin(); // Initialize radio
+  network.begin(channel, nodeID); // Start mesh Network
+  radio.setRetries(retryDelay, retryTimes);
+  radio.setPALevel(powerAmplifierLevel);
+  radio.setDataRate(dataRate);
+}
+
+void HomeNetwork::update(void)
+{
+  network.update();
+}
+
+bool HomeNetwork::available(void)
+{
+  return network.available();
 }
 
 /**
- * write
- * This function sends the message to a receiver, both which are set in parameter
- **/
+* write
+* This function sends the message to a receiver, both which are set in parameter
+**/
 uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent)
 {
-	// Set receiver of message
-	RF24NetworkHeader header(msgReceiver);
+  // Set receiver of message
+  RF24NetworkHeader header(msgReceiver, 'A');
 
   // Send message to server, keep trying untill server confirms receiver gets the message
   bool msgSent = false;
@@ -43,7 +43,7 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent)
   bool sendDone = false;
   bool retried = false;
 
-  // Will try to keep send message untill receiver gets it
+  // Will try to keep send message until receiver gets it
   while (!msgSent && !timeout) {
     msgSent = network.write(header, &msgContent, sizeof(msgContent));
     if (msgSent)
@@ -58,29 +58,53 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent)
       return 0;
     }
     else if (!msgSent) {
-    	//Failed to send mesage, retrying...
-    	retried = true;
+      //Failed to send mesage, retrying...
+      retried = true;
     }
   }
 }
 
 /**
- *  read
- *  This function reads the message and stores it to the variable sent in parameter
- */
-void HomeNetwork::read(int32_t *pmsgReceived) {
+*  read
+*  This function reads the message and stores it to the variable sent in parameter
+* returns the senders ID.int
+*/
+uint16_t HomeNetwork::read(int32_t *pmsgReceived) {
   if (available()) {
-    RF24NetworkHeader header;
-    network.read(header, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
+    // Save sender node ID of received message
+     RF24NetworkHeader peekHeader;
+     network.peek(peekHeader);
+     uint16_t msgSender = peekHeader.from_node;
+
+    // Save received message content
+    RF24NetworkHeader readHeader;
+    network.read(readHeader, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
+
+Serial.print(F("test: "));
+    Serial.println(*pmsgReceived);
+
+    return msgSender;
   }
   else {
     *pmsgReceived = -1;
+    return -1;
   }
 }
 
- uint8_t HomeNetwork::toggleMainLights(void) {
-  return write(mainLights, 01);
- }
+uint8_t HomeNetwork::sendExampleDataToExampleServer(uint16_t *pmsgReceiver) {
+  // Send the ID of the receiver of the message so the thread will later know
+  // the responce came from the right node.
+  *pmsgReceiver = 03;
+  int32_t msgReceiver = 12345;
+  return write(*pmsgReceiver, msgReceiver);
+}
+
+uint8_t HomeNetwork::toggleMainLights(uint16_t *pmsgReceiver) {
+  // Send the ID of the receiver of the message so the thread will later know
+  // the responce came from the right node.
+  *pmsgReceiver = mainLights;
+  return write(mainLights, toggleLights);
+}
 
 // uint8_t HomeNetwork::setMainLightsOn() {
 //   msgNode = mainLights;
@@ -147,5 +171,3 @@ void HomeNetwork::read(int32_t *pmsgReceived) {
 //   chThdSleepMilliseconds(20);
 //   setSpeakerPowerOn();
 // }
-
-
