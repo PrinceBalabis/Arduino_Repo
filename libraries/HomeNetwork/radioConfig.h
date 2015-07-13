@@ -1,6 +1,7 @@
 // Tweaks optimized for compatability, reliability and driftsecurity for home IOT network
 
 const unsigned int timeoutSendTime = 200; // Amount of time before trying to resend message again to node
+const unsigned int autoUpdateTime = 50; // How often the network is updated
 
 // Set delay between retries & # of retries for a "radio.write" command
 const uint8_t retryDelay = 5;

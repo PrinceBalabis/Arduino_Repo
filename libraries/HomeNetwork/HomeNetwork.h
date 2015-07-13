@@ -12,6 +12,7 @@
 #include "nodesConfig.h"
 #include "RF24Network.h"
 #include "HomeNetwork.h"
+#include <ChibiOS_AVR.h>
 
 class RF24;
 class RF24Network;
@@ -21,13 +22,15 @@ class HomeNetwork
   public:
 	HomeNetwork(RF24& _radio, RF24Network& _network);
 	void begin(uint16_t nodeID);
-	void update(void);
+  void autoUpdate(void (* pmsgReceivedF)());
 	bool available(void);
   uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
+  uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgReceived);
+
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 
 	// Add new home commands here!
-	uint8_t sendExampleDataToExampleServer(uint16_t *pmsgReceiver);
+  uint8_t askExampleDataToExampleServer(uint16_t *pmsgReceiver, int32_t *pmsgResponse);
 	uint8_t toggleMainLights(uint16_t *pmsgReceiver);
 	// uint8_t setMainLightsOn();
 	// uint8_t setMainLightsOff();

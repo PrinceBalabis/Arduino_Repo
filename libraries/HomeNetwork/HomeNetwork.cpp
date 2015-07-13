@@ -17,14 +17,15 @@ void HomeNetwork::begin(uint16_t nodeID)
   radio.setDataRate(dataRate);
 }
 
-void HomeNetwork::update(void)
+void HomeNetwork::autoUpdate(void (* pmsgReceivedF)())
 {
-  network.update();
-}
-
-bool HomeNetwork::available(void)
-{
-  return network.available();
+  while(1)
+  {
+    network.update(); // Check the network regularly for the entire network to function properly
+    if(network.available())
+    pmsgReceivedF();
+    chThdSleepMilliseconds(autoUpdateTime);  //Give other threads some time to run
+  }
 }
 
 /**
@@ -59,12 +60,35 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
     }
     else if (!msgSent) {
       //Failed to send message, retrying...
+      chThdSleepMilliseconds(20);
       retried = true;
     }
   }
 }
 
-
+/**
+* writeQuestion
+* This function sends the message to a receiver, both which are set in parameter
+* Gets a responce back
+**/
+uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce)
+{
+  bool retried = false;
+  uint8_t msgSent = write(msgReceiver, msgContent, msgTypeAsk);
+  if(msgSent == 1 || msgSent == 2){
+    int16_t msgSenderReceived;
+    int32_t msgReceived;
+    unsigned char msgTypeReceived = 'Z';
+    while (msgSenderReceived != msgReceiver || msgTypeReceived != msgTypeResponse) {
+      msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+      chThdSleepMilliseconds(20); // Check every 25ms if message is received
+    }
+    *pmsgResponce =  msgReceived;
+    return 1;
+  } else if(!msgSent){
+    return 0;
+  }
+}
 
 /**
 *  read
@@ -72,7 +96,7 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 * returns the senders ID.int
 */
 uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
-  if (available()) {
+  if (network.available()) {
     // Save sender node ID of received message
     RF24NetworkHeader peekHeader;
     network.peek(peekHeader);
@@ -91,11 +115,11 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   }
 }
 
-uint8_t HomeNetwork::sendExampleDataToExampleServer(uint16_t *pmsgReceiver) {
+uint8_t HomeNetwork::askExampleDataToExampleServer(uint16_t *pmsgReceiver, int32_t *pmsgResponse) {
   // Send the ID of the receiver of the message so the thread will later know
   // the responce came from the right node.
   *pmsgReceiver = exampleServer;
-  return write(*pmsgReceiver, exampleData, msgTypeAsk);
+  return writeQuestion(*pmsgReceiver, exampleData, pmsgResponse);
 }
 
 uint8_t HomeNetwork::toggleMainLights(uint16_t *pmsgReceiver) {

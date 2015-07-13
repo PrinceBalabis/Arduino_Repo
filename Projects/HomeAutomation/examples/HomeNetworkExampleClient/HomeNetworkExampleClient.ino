@@ -6,10 +6,10 @@
 #include <HomeNetwork.h>
 #include "config.h"
 
-// Variables for data to share between threads
-volatile uint16_t msgSender = -1;
-volatile int32_t msgContent = -1;
-volatile unsigned char msgType = 'Z';
+//// Variables for data to share between threads
+//volatile uint16_t msgSender = -1;
+//volatile int32_t msgContent = -1;
+//volatile unsigned char msgType = 'Z';
 
 static WORKING_AREA(waThread1, 64);
 static WORKING_AREA(waThread2, 64);
