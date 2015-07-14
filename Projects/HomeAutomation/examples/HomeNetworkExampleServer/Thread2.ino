@@ -1,21 +1,24 @@
+/**
+ *  Thread2
+ *  Idles until a message is received from a client.
+ **/
 static msg_t Thread2(void *arg) {
   Serial.print(F("\n\n--------------------------------------------------------------- \nExample SERVER for Prince Home Network \nThis node ID: "));
   Serial.println(nodeID);
-
-  chThdSleepMilliseconds(1500); // Give some time for HomeNetwork thread to start
+  chThdSleepMilliseconds(3000); // Give some time for HomeNetwork thread to start
 
   while (1) {
     // Wait for message to receive
     Serial.println(F("-------------STARTING: Server Program----------------- \nIdle and waiting for client"));
+    
     while (msgContent == -1) {
       chThdSleepMilliseconds(50); // Check every 50ms if a message is received
     }
-
-    if (msgContent == exampleData) {
+    if (msgContent == cmdExampleCommand) {
       // Send return-message back to client
-      uint8_t msgSent = homeNetwork.write(msgSender, exampleResponceData, msgTypeResponse);
+      uint8_t msgSent = homeNetwork.write(msgSender, cmdExampleResponceData, msgTypeResponse);
       Serial.print("Client has a question \nSending response back: ");
-      Serial.println(exampleResponceData);
+      Serial.println(cmdExampleResponceData);
 
       if (msgSent) {
         Serial.println(F("Message sent"));

@@ -1,3 +1,11 @@
+/**
+ *  Prince Home Network IOT Example Client
+ *  Start Server first before starting the Client!!!!!
+ *  This library needs following peripherals:
+ *    - SPI
+ *    - ChibiOS
+ **/
+
 #include <Wire.h>
 #include <ChibiOS_AVR.h>
 #include <RF24Network.h>

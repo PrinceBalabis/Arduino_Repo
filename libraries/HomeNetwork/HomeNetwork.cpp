@@ -11,26 +11,28 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network ): radio(_radio), 
 void HomeNetwork::begin(uint16_t nodeID)
 {
   radio.begin(); // Initialize radio
-  network.begin(channel, nodeID); // Start mesh Network
-  radio.setRetries(retryDelay, retryTimes);
-  radio.setPALevel(powerAmplifierLevel);
-  radio.setDataRate(dataRate);
+  network.begin(homeNetwork_channel, nodeID); // Start mesh Network
+  radio.setRetries(homeNetwork_retryDelay, homeNetwork_retryTimes);
+  radio.setPALevel(homeNetwork_powerAmplifierLevel);
+  radio.setDataRate(homeNetwork_dataRate);
+  network.txTimeout = 200;
 }
 
 void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(int16_t,unsigned char,int32_t))
 {
   while(1)
   {
-    network.update(); // Check the network regularly for the entire network to function properly
-    if(network.available())
-    {
-      int16_t msgSenderReceived;
-      int32_t msgReceived;
-      unsigned char msgTypeReceived;
-      msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
+    if(!autoUpdatePaused){
+      network.update(); // Check the network regularly for the entire network to function properly
+      if(network.available())
+      {
+        int32_t msgReceived;
+        unsigned char msgTypeReceived;
+        int16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+        pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
+      }
     }
-    chThdSleepMilliseconds(autoUpdateTime);  //Give other threads some time to run
+    chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
 }
 
@@ -52,47 +54,66 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 
   // Will try to keep send message until receiver gets it
   while (!msgSent && !timeout) {
+    Serial.print("BEFORE WRITE ");
     msgSent = network.write(header, &msgContent, sizeof(msgContent));
+    Serial.print("AFTER WRITE ");
     if (msgSent)
     {
+      Serial.print("sent");
       return 1;
     }
     else if(msgSent && retried){
+      Serial.print("sent RETRIED");
       return 2;
     }
-    else if (millis() - started_waiting_at > timeoutSendTime ) {
+    else if (millis() - started_waiting_at > homeNetwork_timeoutSendTime ) {
       timeout = true;
+      Serial.print("FAIL");
       return 0;
     }
     else if (!msgSent) {
       //Failed to send message, retrying...
+      Serial.print("RETY");
+
       chThdSleepMilliseconds(20);
       retried = true;
     }
   }
+  Serial.print("mmmmmmmmmmmmmmmmmmmmmmmmmmmm ");
 }
 
 /**
 * writeQuestion
 * This function sends the message to a receiver, both which are set in parameter
-* Gets a responce back
+* Gets a response back
 **/
 uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce)
 {
-  bool retried = false;
+  autoUpdatePaused = true; // Pause listening for messages
   uint8_t msgSent = write(msgReceiver, msgContent, msgTypeAsk);
   if(msgSent == 1 || msgSent == 2){
     int16_t msgSenderReceived;
     int32_t msgReceived;
     unsigned char msgTypeReceived = 'Z';
+
+    // Send message to server, keep trying untill server confirms receiver gets the message
+    unsigned long started_waiting_at = millis();
+
+    // Will wait a while
     while (msgSenderReceived != msgReceiver || msgTypeReceived != msgTypeResponse) {
       network.update(); // Check the network regularly for the entire network to function properly
       msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      chThdSleepMilliseconds(1); // Check every 25ms if message is received
+      if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime ) {
+        autoUpdatePaused = false; // Continue listening for messages
+        return 0;
+      }
+      chThdSleepMilliseconds(1); // Check every 1ms if message is received
     }
     *pmsgResponce = msgReceived;
-    return 1;
+    autoUpdatePaused = false; // Continue listening for messages
+    return msgSent;
   } else if(!msgSent){
+    autoUpdatePaused = false; // Continue listening for messages
     return 0;
   }
 }
@@ -100,10 +121,11 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
 /**
 *  read
 *  This function reads the message and stores it to the variable sent in parameter
-* returns the senders ID.int
+* returns the senders ID.int - returns -1 if read was unsuccesful
 */
 uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   if (network.available()) {
+    Serial.println(F("NETWORK AVAILBABLE"));
     // Save sender node ID of received message
     RF24NetworkHeader peekHeader;
     network.peek(peekHeader);
@@ -122,18 +144,12 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   }
 }
 
-uint8_t HomeNetwork::askExampleDataToExampleServer(uint16_t *pmsgReceiver, int32_t *pmsgResponse) {
-  // Send the ID of the receiver of the message so the thread will later know
-  // the responce came from the right node.
-  *pmsgReceiver = exampleServer;
-  return writeQuestion(exampleServer, exampleData, pmsgResponse);
+uint8_t HomeNetwork::askExampleDataToExampleServer(int32_t *pmsgResponse) {
+  return writeQuestion(nodeExampleServer, cmdExampleCommand, pmsgResponse);
 }
 
-uint8_t HomeNetwork::toggleMainLights(uint16_t *pmsgReceiver) {
-  // Send the ID of the receiver of the message so the thread will later know
-  // the responce came from the right node.
-  *pmsgReceiver = mainLights;
-  return write(mainLights, toggleLights, msgTypeCommand);
+uint8_t HomeNetwork::toggleMainLights() {
+  return write(nodeMainLights, cmdToggleLights, msgTypeCommand);
 }
 
 // uint8_t HomeNetwork::setMainLightsOn() {

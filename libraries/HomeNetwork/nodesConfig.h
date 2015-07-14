@@ -10,27 +10,27 @@ static const unsigned char msgTypeResponse = 'R';
 static const unsigned char msgTypeCommand = 'C';
 
 //***********************Main Room Lights************************************************************
- // This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
-static const uint16_t mainLights = 0;
+// This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
+static const uint16_t nodeMainLights = 0;
 
 // Commands to offer
-static const int toggleLights = 1;
+static const int cmdToggleLights = 1;
 
 //***************************************************************************************************
-static const uint16_t centralHomeControl = 1;
-static const uint16_t webServer = 2;
-static const uint16_t bedSwitch = 3;
-static const uint16_t raspberryPi = 4;
-static const uint16_t voiceRecog = 5;
+static const uint16_t cmdCentralHomeControl = 1;
+static const uint16_t cmdWebServer = 2;
+static const uint16_t cmdBedSwitch = 3;
+static const uint16_t cmdRaspberryPi = 4;
+static const uint16_t cmdVoiceRecog = 5;
 
 //Default node
-static const uint16_t defaultNode = 31;
+static const uint16_t nodeDefaultID = 31;
 
 //Testing nodes
 //***********************homeNetworkExampleServer****************************************************
-static const uint16_t exampleServer = 0; // Used for example/testing. This node is second child of centralHomeControl-node
-static const uint16_t exampleClient = 1; // Used for example/testing. This node is third child of centralHomeControl-node
+static const uint16_t nodeExampleServer = 0; // Used for example/testing. This node is second child of centralHomeControl-node
+static const uint16_t nodeExampleClient = 1; // Used for example/testing. This node is third child of centralHomeControl-node
 
 // Commands to offer
-static const int32_t exampleData = 12345;
-static const int32_t exampleResponceData = 67890;
+static const int32_t cmdExampleCommand = 12345;
+static const int32_t cmdExampleResponceData = 67890;
