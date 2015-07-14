@@ -49,6 +49,7 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
   bool msgSent = false;
   unsigned long started_waiting_at = millis();
   bool timeout = false;
+
   bool sendDone = false;
   bool retried = false;
 
@@ -125,7 +126,6 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
 */
 uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   if (network.available()) {
-    Serial.println(F("NETWORK AVAILBABLE"));
     // Save sender node ID of received message
     RF24NetworkHeader peekHeader;
     network.peek(peekHeader);

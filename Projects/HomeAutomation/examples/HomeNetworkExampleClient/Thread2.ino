@@ -3,8 +3,8 @@
  *  Asks a question to server every few seconds
  **/
 static msg_t Thread2(void *arg) {
-  Serial.print(F("\n\n--------------------------------------------------------------- \nExample CLIENT for Prince Home Network \nThis node ID: "));
-  Serial.println(nodeID);
+  Serial.println(F("\n\n--------------------------------------------------------------- \nExample CLIENT for Prince Home Network"));
+
   chThdSleepMilliseconds(4000); // Give some time for HomeNetwork thread to start
 
   while (1) {

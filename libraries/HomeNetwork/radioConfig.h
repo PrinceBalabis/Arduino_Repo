@@ -2,7 +2,7 @@
 // Tweak however you want though
 
 const unsigned int homeNetwork_timeoutSendTime = 200; // Amount of time before trying to resend message again to node
-const unsigned int homeNetwork_timeoutAnswerTime = 1000; // Amount of time to wait until given up waiting of answer to question
+const unsigned int homeNetwork_timeoutAnswerTime = 2000; // Amount of time to wait until given up waiting of answer to question
 const unsigned int homeNetwork_autoUpdateTime = 20; // How often the network is updated
 
 // Set delay between retries & # of retries for a "radio.write" command

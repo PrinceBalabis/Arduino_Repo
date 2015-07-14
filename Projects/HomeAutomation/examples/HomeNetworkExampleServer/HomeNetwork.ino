@@ -1,6 +1,6 @@
 /**
  *  Prince Home Network IOT Example Server
- *  
+ *
  **/
 RF24 radio(8, 9); // CE & CSN pins
 RF24Network network(radio);
@@ -15,9 +15,11 @@ static msg_t Thread1(void *arg)
 
   SPI.begin(); // SPI is used by the RF24 module
   homeNetwork.begin(nodeID); // Run RF24 config for the customized Prince Home Automation and IOT Network
-  Serial.println(F("Started network\n"));
+  Serial.print(F("Started network \nThis node ID: "));
+  Serial.println(nodeID);
+  Serial.println();
 
-  // The thread stops at this function, this function has a loop which keeps the network 
+  // The thread stops at this function, this function has a loop which keeps the network
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
   homeNetwork.autoUpdate(&homeNetworkMessageReceived);
 

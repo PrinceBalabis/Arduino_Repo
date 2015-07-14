@@ -6,7 +6,8 @@
 #include <HomeNetwork.h>
 #include "config.h"
 
- //Variables for data to share between threads
+//Variables for data to share between threads
+volatile bool msgReceived = 0;
 volatile uint16_t msgSender = -1;
 volatile int32_t msgContent = -1;
 volatile unsigned char msgType = 'Z';
@@ -19,7 +20,7 @@ void setup() {
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
-  
+
   while (1);
 }
 
