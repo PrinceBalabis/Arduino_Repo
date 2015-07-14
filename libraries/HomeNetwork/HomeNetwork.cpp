@@ -17,13 +17,19 @@ void HomeNetwork::begin(uint16_t nodeID)
   radio.setDataRate(dataRate);
 }
 
-void HomeNetwork::autoUpdate(void (* pmsgReceivedF)())
+void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(int16_t,unsigned char,int32_t))
 {
   while(1)
   {
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
-    pmsgReceivedF();
+    {
+      int16_t msgSenderReceived;
+      int32_t msgReceived;
+      unsigned char msgTypeReceived;
+      msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+      pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
+    }
     chThdSleepMilliseconds(autoUpdateTime);  //Give other threads some time to run
   }
 }

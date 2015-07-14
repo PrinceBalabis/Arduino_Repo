@@ -34,25 +34,15 @@ static msg_t Thread2(void *arg) {
  * homeNetworkMessageReceived()
  * This function is executed automatically by the HomeNetwork Library when a message is received.
  */
-void homeNetworkMessageReceived() {
-  int16_t msgSenderReceived;
-  int32_t msgReceived;
-  unsigned char msgTypeReceived;
-  msgSenderReceived = homeNetwork.read(&msgReceived, &msgTypeReceived);
-
+void homeNetworkMessageReceived(int16_t _msgSender, unsigned char _msgType, int32_t _msgReceived) {
   // Put code in this if-statement which should occur when a message is received
   // All this Example Client does is print out data received from server
-  if (msgReceived != -1) {
     Serial.print(F("-------------Received Data Raw----------------- \nRaw Message sender: "));
-//    Serial.println(msgSender);
-    Serial.println(msgSenderReceived);
+    Serial.println(_msgSender);
     Serial.print(F("Raw Type content: "));
-//    Serial.write(msgType);
-    Serial.write(msgTypeReceived);
+    Serial.write(_msgType);
     Serial.print(F("\nRaw Message content: "));
-//    Serial.println(msgContent);
-    Serial.println(msgReceived);
+    Serial.println(_msgReceived);
     Serial.println(F("-----------------------------------------------"));
-  }
 }
 

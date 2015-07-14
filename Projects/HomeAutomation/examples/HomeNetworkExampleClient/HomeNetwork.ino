@@ -18,7 +18,7 @@ static msg_t Thread1(void *arg)
   // The thread stops at this function, this function has a loop which keeps the network 
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
   homeNetwork.autoUpdate(&homeNetworkMessageReceived);
-
+  
   return 0;
 }
 
