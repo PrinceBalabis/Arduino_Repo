@@ -9,7 +9,7 @@ HomeNetwork homeNetwork(radio, network);
  **/
 static msg_t Thread1(void *arg)
 {
-  chThdSleepMilliseconds(3000); // If this thread starts too fast, the Arduino will crash!
+  chThdSleepMilliseconds(700); // If this thread starts too fast, the Arduino will crash!
 
   SPI.begin(); // SPI is used by the RF24 module
   homeNetwork.begin(nodeID); // Run RF24 config for the customized Prince Home Automation and IOT Network

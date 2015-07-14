@@ -25,9 +25,8 @@ class HomeNetwork
   void autoUpdate(void (* pmsgReceivedF)());
 	bool available(void);
   uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
-  uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgReceived);
-
-  uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
+  uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
+    uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 
 	// Add new home commands here!
   uint8_t askExampleDataToExampleServer(uint16_t *pmsgReceiver, int32_t *pmsgResponse);

@@ -1,11 +1,11 @@
 static msg_t Thread2(void *arg) {
   Serial.print(F("\n\n--------------------------------------------------------------- \nExample CLIENT for Prince Home Network \nThis node ID: "));
   Serial.println(nodeID);
-  chThdSleepMilliseconds(4500); // Give some time for HomeNetwork thread to start
+  chThdSleepMilliseconds(1700); // Give some time for HomeNetwork thread to start
 
   while (1) {
     // Send message
-    Serial.println(F("-------------Message Send Program Starting------------------"));
+    Serial.println(F("-------------STARTING: Message Send Program-----------------"));
 
     uint16_t msgReceiver;
     int32_t msgResponse;
@@ -22,7 +22,7 @@ static msg_t Thread2(void *arg) {
 //    //Clear variables to reset
 //    msgSender = -1;
 //    msgContent = -1;
-    Serial.println(F("---------------Message Send Program Done-------------------"));
+    Serial.println(F("---------------DONE: Message Send Program-------------------"));
 
     chThdSleepMilliseconds(4000); // Redo this send program every 4 seconds
   }
@@ -30,21 +30,23 @@ static msg_t Thread2(void *arg) {
   return 0;
 }
 
+/**
+ * homeNetworkMessageReceived()
+ * This function is executed automatically by the HomeNetwork Library when a message is received.
+ */
 void homeNetworkMessageReceived() {
   int16_t msgSenderReceived;
   int32_t msgReceived;
-  unsigned char msgTypeReceived = 'Z';
+  unsigned char msgTypeReceived;
   msgSenderReceived = homeNetwork.read(&msgReceived, &msgTypeReceived);
 
   // Put code in this if-statement which should occur when a message is received
+  // All this Example Client does is print out data received from server
   if (msgReceived != -1) {
-//    msgSender = msgSenderReceived;
-//    msgContent = msgReceived;
-//    msgType = msgTypeReceived;
-    Serial.print(F("---------------Received Data Raw------------------- \nRaw Message sender: "));
+    Serial.print(F("-------------Received Data Raw----------------- \nRaw Message sender: "));
 //    Serial.println(msgSender);
     Serial.println(msgSenderReceived);
-    Serial.println(F("Raw Type content: "));
+    Serial.print(F("Raw Type content: "));
 //    Serial.write(msgType);
     Serial.write(msgTypeReceived);
     Serial.print(F("\nRaw Message content: "));

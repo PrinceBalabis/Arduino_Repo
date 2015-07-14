@@ -80,10 +80,11 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
     int32_t msgReceived;
     unsigned char msgTypeReceived = 'Z';
     while (msgSenderReceived != msgReceiver || msgTypeReceived != msgTypeResponse) {
+      network.update(); // Check the network regularly for the entire network to function properly
       msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      chThdSleepMilliseconds(20); // Check every 25ms if message is received
+      chThdSleepMilliseconds(1); // Check every 25ms if message is received
     }
-    *pmsgResponce =  msgReceived;
+    *pmsgResponce = msgReceived;
     return 1;
   } else if(!msgSent){
     return 0;
@@ -119,7 +120,7 @@ uint8_t HomeNetwork::askExampleDataToExampleServer(uint16_t *pmsgReceiver, int32
   // Send the ID of the receiver of the message so the thread will later know
   // the responce came from the right node.
   *pmsgReceiver = exampleServer;
-  return writeQuestion(*pmsgReceiver, exampleData, pmsgResponse);
+  return writeQuestion(exampleServer, exampleData, pmsgResponse);
 }
 
 uint8_t HomeNetwork::toggleMainLights(uint16_t *pmsgReceiver) {
