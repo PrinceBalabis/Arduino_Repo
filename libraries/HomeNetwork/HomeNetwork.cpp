@@ -22,15 +22,18 @@ void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32
 {
 
   while (1) {
-    if(!autoUpdatePaused){
-      network.update(); // Check the network regularly for the entire network to function properly
-      if(network.available())
-      {
-        int32_t msgReceived;
-        unsigned char msgTypeReceived;
-        uint16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-        pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
-      }
+    while(autoUpdatePaused){
+      autoUpdatePauseExecuted = true;
+      chThdSleepMilliseconds(100);  //Give other threads some time to run
+    }
+    autoUpdatePauseExecuted = false;
+    network.update(); // Check the network regularly for the entire network to function properly
+    if(network.available())
+    {
+      int32_t msgReceived;
+      unsigned char msgTypeReceived;
+      uint16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+      pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
     }
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
@@ -42,8 +45,6 @@ void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32
 **/
 uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
-  autoUpdatePaused = true; // Pause listening for messages
-  chThdSleepMilliseconds(100); // Needed for stability, give autoupdate time to pause
 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
@@ -51,7 +52,6 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
   // Send message to server, keep trying untill server confirms receiver gets the message
   bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
 
-  autoUpdatePaused = false; // Continue listening for messages
   if (msgSent) {
     return 1;
   }
@@ -68,7 +68,9 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse)
 {
   autoUpdatePaused = true; // Pause listening for messages
-  chThdSleepMilliseconds(200); // Needed for stability, give autoupdate time to pause
+  while(!autoUpdatePauseExecuted){
+    chThdSleepMilliseconds(5); // Needed for stability, give autoupdate time to pause
+  }
 
   // Send question, will retry until succeed or timeout
   uint16_t msgSenderReceived = -1;
@@ -83,11 +85,8 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
     if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
       questionTimeOut = true;
     }
-    chThdSleepMilliseconds(20); // Send every few ms
+    chThdSleepMilliseconds(40); // Send every few ms
   }
-  Serial.print(".");
-  Serial.print(questionSent);
-  Serial.print(".");
 
   // Wait for answer, will wait untill received or timeout
   bool answerTimeout = false;
@@ -106,7 +105,7 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
       if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
         answerTimeout = true;
       }
-      chThdSleepMilliseconds(20); // Check every few ms if message is received
+      chThdSleepMilliseconds(40); // Check every few ms if message is received
     }
 
     *pmsgResponse = msgReceived; // Save answer to variable

@@ -48,6 +48,7 @@ public:
 private:
   RF24& radio;
   RF24Network& network;
-  bool autoUpdatePaused = false;
+  volatile bool autoUpdatePaused = false;
+  volatile bool autoUpdatePauseExecuted = false;
 };
 #endif

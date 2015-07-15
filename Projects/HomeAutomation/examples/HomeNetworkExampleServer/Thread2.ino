@@ -11,7 +11,7 @@ static msg_t Thread2(void *arg) {
   while (1) {
     // Wait for message to receive
     while (msgReceived == false) {
-      chThdSleepMilliseconds(20); // Check every few ms if a message is received
+      chThdSleepMilliseconds(40); // Check every few ms if a message is received
     }
     Serial.print(count++);
     if (msgContent == cmdExampleCommand) {
