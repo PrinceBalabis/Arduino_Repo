@@ -9,22 +9,20 @@ static msg_t Thread2(void *arg) {
   int count = 0;
 
   while (1) {
-    // Wait for message to receive
-    while (msgReceived == false) {
-      chThdSleepMilliseconds(40); // Check every few ms if a message is received
-    }
-    Serial.print(count++);
-    if (msgContent == cmdExampleCommand) {
-      // Send return-message back to client
-      uint8_t msgSent = homeNetwork.write(msgSender, cmdExampleResponceData, msgTypeResponse);
-      if (msgSent) {
-        Serial.println(F(":Responded"));
-      } else if (!msgSent) {
-        Serial.println(F(":Timeout!"));
+    if (msgReceived) {
+      Serial.print(count++);
+      if (msgContent == cmdExampleCommand) {
+        // Send return-message back to client
+        uint8_t msgSent = homeNetwork.write(msgSender, cmdExampleResponceData, msgTypeResponse);
+        if (msgSent) {
+          Serial.println(F(":Responded"));
+        } else if (!msgSent) {
+          Serial.println(F(":Timeout!"));
+        }
       }
+      msgReceived = 0;
     }
-
-    msgReceived = 0;
+    chThdSleepMilliseconds(40); // Check every few ms if a message is received
   }
 
   return 0;
