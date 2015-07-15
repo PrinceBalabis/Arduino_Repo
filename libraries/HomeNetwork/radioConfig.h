@@ -1,8 +1,8 @@
 // Tweaks optimized for compatability, reliability and driftsecurity for Prince home IOT network
 // Tweak however you want though
 
-const unsigned int homeNetwork_timeoutSendTime = 200; // Amount of time before trying to resend message again to node
-const unsigned int homeNetwork_timeoutAnswerTime = 400; // Amount of time to wait until given up waiting of answer to question
+const unsigned int homeNetwork_timeoutSendTime = 5000; // Amount of time before trying to resend message again to node
+const unsigned int homeNetwork_timeoutAnswerTime = 5000; // Amount of time to wait until given up waiting of answer to question
 const unsigned int homeNetwork_autoUpdateTime = 20; // How often the network is updated
 
 // Set delay between retries & # of retries for a "radio.write" command

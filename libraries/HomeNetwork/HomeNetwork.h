@@ -22,7 +22,7 @@ class HomeNetwork
 public:
   HomeNetwork(RF24& _radio, RF24Network& _network);
   void begin(uint16_t nodeID);
-  void update(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t));
+  void autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t));
   bool available(void);
   uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);

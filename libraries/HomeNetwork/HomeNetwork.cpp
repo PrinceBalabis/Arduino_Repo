@@ -18,20 +18,22 @@ void HomeNetwork::begin(uint16_t nodeID)
   network.txTimeout = 200;
 }
 
-void HomeNetwork::update(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t))
+void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
-  if(!autoUpdatePaused){
-    network.update(); // Check the network regularly for the entire network to function properly
-    if(network.available())
-    {
-      int32_t msgReceived;
-      unsigned char msgTypeReceived;
-      uint16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
-      Serial.println(F("sdfgsdfgsdfgdfg"));
+
+  while (1) {
+    if(!autoUpdatePaused){
+      network.update(); // Check the network regularly for the entire network to function properly
+      if(network.available())
+      {
+        int32_t msgReceived;
+        unsigned char msgTypeReceived;
+        uint16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+        pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
+      }
     }
+    chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
-  chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
 }
 
 /**
@@ -66,30 +68,55 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse)
 {
   autoUpdatePaused = true; // Pause listening for messages
-  bool answerTimeout = false;
+  chThdSleepMilliseconds(200); // Needed for stability, give autoupdate time to pause
+
+  // Send question, will retry until succeed or timeout
   uint16_t msgSenderReceived = -1;
   int32_t msgReceived = 0;
   unsigned char msgTypeReceived = 'Z';
-  chThdSleepMilliseconds(200); // Needed for stability, give autoupdate time to pause
-  write(msgReceiver, msgContent, msgTypeAsk); // Send question
-
-  //How long to wait for the answer
+  bool questionSent = false;
   unsigned long started_waiting_at = millis();
-
-  while ((msgSenderReceived != msgReceiver || msgTypeReceived != msgTypeResponse) && !answerTimeout) {
+  bool questionTimeOut = false;
+  while (!questionSent && !questionTimeOut) {
     network.update(); // Check the network regularly for the entire network to function properly
-    if(network.available())
-    {
-      msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+    questionSent = write(msgReceiver, msgContent, msgTypeAsk); // Send question
+    if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
+      questionTimeOut = true;
     }
-    if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
-      answerTimeout = true;
-    }
-    chThdSleepMilliseconds(20); // Check every few ms if message is received
+    chThdSleepMilliseconds(20); // Send every few ms
   }
-  *pmsgResponse = msgReceived;
+  Serial.print(".");
+  Serial.print(questionSent);
+  Serial.print(".");
+
+  // Wait for answer, will wait untill received or timeout
+  bool answerTimeout = false;
+
+  // Only wait for answer if question was sent
+  if(questionSent){
+    //How long to wait for the answer
+    started_waiting_at = millis();
+
+    while ((msgSenderReceived != msgReceiver || msgTypeReceived != msgTypeResponse) && !answerTimeout) {
+      network.update(); // Check the network regularly for the entire network to function properly
+      if(network.available())
+      {
+        msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+      }
+      if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
+        answerTimeout = true;
+      }
+      chThdSleepMilliseconds(20); // Check every few ms if message is received
+    }
+
+    *pmsgResponse = msgReceived; // Save answer to variable
+  }
   autoUpdatePaused = false; // Continue listening for messages
-  return !answerTimeout;
+
+  if(questionSent && !answerTimeout)
+  return 1;
+  else
+  return 0;
 }
 
 /**
