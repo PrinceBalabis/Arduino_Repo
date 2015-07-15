@@ -12,7 +12,7 @@ static msg_t Thread2(void *arg) {
     // Send message
     Serial.print(count++);
     int32_t msgResponse;
-    uint8_t msgSent = homeNetwork.askExampleDataToExampleServer(&msgResponse);
+    bool msgSent = homeNetwork.askExampleDataToExampleServer(&msgResponse);
     if (msgSent == 1) {
       Serial.println(F(":Received"));
     } else if (msgSent == 0) {

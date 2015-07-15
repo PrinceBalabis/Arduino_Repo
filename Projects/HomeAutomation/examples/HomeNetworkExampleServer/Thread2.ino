@@ -13,7 +13,7 @@ static msg_t Thread2(void *arg) {
       Serial.print(count++);
       if (msgContent == cmdExampleCommand) {
         // Send return-message back to client
-        uint8_t msgSent = homeNetwork.write(msgSender, cmdExampleResponceData, msgTypeResponse);
+        bool msgSent = homeNetwork.responseExampleDataToClient(msgSender, cmdExampleResponceData);
         if (msgSent) {
           Serial.println(F(":Responded"));
         } else if (!msgSent) {
@@ -39,11 +39,11 @@ void homeNetworkMessageReceived(uint16_t _msgSender, unsigned char _msgType, int
   msgContent = _msgReceived;
   msgReceived = true;
   //  Serial.print(F("-------------Received Data Raw----------------- \nRaw Message sender: "));
-  //  Serial.println(_msgSender);
+  //  Serial.println(msgSender);
   //  Serial.print(F("Raw Type content: "));
-  //  Serial.write(_msgType);
+  //  Serial.write(msgType);
   //  Serial.print(F("\nRaw Message content: "));
-  //  Serial.println(_msgReceived);
+  //  Serial.println(msgContent);
   //  Serial.println(F("-----------------------------------------------"));
 }
 

@@ -24,7 +24,7 @@ void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32
   while (1) {
     while(autoUpdatePaused){
       autoUpdatePauseExecuted = true;
-      chThdSleepMilliseconds(100);  //Give other threads some time to run
+      chThdSleepMilliseconds(50);  //Give other threads some time to run
     }
     autoUpdatePauseExecuted = false;
     network.update(); // Check the network regularly for the entire network to function properly
@@ -43,7 +43,7 @@ void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32
 * write
 * This function sends the message to a receiver, both which are set in parameter
 **/
-uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
+bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
 
   // Set receiver of message
@@ -65,11 +65,11 @@ uint8_t HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 * This function sends the message to a receiver, both which are set in parameter
 * Gets a response back
 **/
-uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse)
+bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse)
 {
   autoUpdatePaused = true; // Pause listening for messages
   while(!autoUpdatePauseExecuted){
-    chThdSleepMilliseconds(5); // Needed for stability, give autoupdate time to pause
+    chThdSleepMilliseconds(2); // Needed for stability, give autoupdate time to pause
   }
 
   // Send question, will retry until succeed or timeout
@@ -85,7 +85,7 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
     if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
       questionTimeOut = true;
     }
-    chThdSleepMilliseconds(40); // Send every few ms
+    chThdSleepMilliseconds(2); // Send every few ms
   }
 
   // Wait for answer, will wait untill received or timeout
@@ -105,7 +105,7 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
       if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
         answerTimeout = true;
       }
-      chThdSleepMilliseconds(40); // Check every few ms if message is received
+      chThdSleepMilliseconds(2); // Check every few ms if message is received
     }
 
     *pmsgResponse = msgReceived; // Save answer to variable
@@ -124,7 +124,6 @@ uint8_t HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int
 * returns the senders ID.int - returns -1 if read was unsuccesful
 */
 uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
-  if (network.available()) {
     // Save sender node ID of received message
     RF24NetworkHeader peekHeader;
     network.peek(peekHeader);
@@ -136,18 +135,17 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
     network.read(readHeader, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
 
     return msgSender;
-  }
-  else {
-    *pmsgReceived = -1;
-    return -1;
-  }
 }
 
-uint8_t HomeNetwork::askExampleDataToExampleServer(int32_t *pmsgResponse) {
+bool HomeNetwork::askExampleDataToExampleServer(int32_t *pmsgResponse) {
   return writeQuestion(nodeExampleServer, cmdExampleCommand, pmsgResponse);
 }
 
-uint8_t HomeNetwork::toggleMainLights() {
+bool HomeNetwork::responseExampleDataToClient(uint16_t _msgSender, int32_t _cmdExampleResponceData) {
+  return write(_msgSender, _cmdExampleResponceData, msgTypeResponse);
+}
+
+bool HomeNetwork::toggleMainLights() {
   return write(nodeMainLights, cmdToggleLights, msgTypeCommand);
 }
 

@@ -18,11 +18,11 @@ public:
   HomeNetwork(RF24& _radio, RF24Network& _network);
   void begin(uint16_t nodeID);
   void autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t));
-  uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
 
   // Add new home commands here!
-  uint8_t askExampleDataToExampleServer(int32_t *pmsgResponse);
-  uint8_t toggleMainLights();
+  bool askExampleDataToExampleServer(int32_t *pmsgResponse);
+  bool responseExampleDataToClient(uint16_t _msgSender, int32_t _cmdExampleResponceData);
+  bool toggleMainLights();
   // uint8_t setMainLightsOn();
   // uint8_t setMainLightsOff();
   // uint8_t togglePaintingLights();
@@ -48,19 +48,20 @@ private:
 
   const unsigned int homeNetwork_timeoutSendTime = 10000; // Amount of time before trying to resend message again to node
   const unsigned int homeNetwork_timeoutAnswerTime = 10000; // Amount of time to wait until given up waiting of answer to question
-  const unsigned int homeNetwork_autoUpdateTime = 50; // How often the network is updated
+  const unsigned int homeNetwork_autoUpdateTime = 20; // How often the network is updated
 
   // Set delay between retries & # of retries for a "radio.write" command
-  const uint8_t homeNetwork_retryDelay = 3;
-  const uint8_t homeNetwork_retryTimes = 20;
+  const uint8_t homeNetwork_retryDelay = 1;
+  const uint8_t homeNetwork_retryTimes = 50;
 
   const uint8_t homeNetwork_powerAmplifierLevel = RF24_PA_MAX;  // Set power amplifier to highest
   const rf24_datarate_e homeNetwork_dataRate = RF24_2MBPS;  // Set data rate to 250kpbs(other settings: RF24_250KBPS, RF24_1MBPS, RF24_2MBPS)
 
-  const uint8_t homeNetwork_channel = 90; // Default Home network is using channel 90
+  const uint8_t homeNetwork_channel = 90; // Default Home network is using channel 90, dont know other channels though
 
-
-  uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
+  // Local communication functions
+  bool write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
+  bool writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 
 };
