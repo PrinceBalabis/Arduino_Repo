@@ -18,10 +18,7 @@ public:
   HomeNetwork(RF24& _radio, RF24Network& _network);
   void begin(uint16_t nodeID);
   void autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t));
-  bool available(void);
   uint8_t write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
-  uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
-  uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 
   // Add new home commands here!
   uint8_t askExampleDataToExampleServer(int32_t *pmsgResponse);
@@ -54,13 +51,17 @@ private:
   const unsigned int homeNetwork_autoUpdateTime = 50; // How often the network is updated
 
   // Set delay between retries & # of retries for a "radio.write" command
-  const uint8_t homeNetwork_retryDelay = 4;
+  const uint8_t homeNetwork_retryDelay = 3;
   const uint8_t homeNetwork_retryTimes = 20;
 
   const uint8_t homeNetwork_powerAmplifierLevel = RF24_PA_MAX;  // Set power amplifier to highest
   const rf24_datarate_e homeNetwork_dataRate = RF24_2MBPS;  // Set data rate to 250kpbs(other settings: RF24_250KBPS, RF24_1MBPS, RF24_2MBPS)
 
   const uint8_t homeNetwork_channel = 90; // Default Home network is using channel 90
+
+
+  uint8_t writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
+  uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 
 };
 #endif
