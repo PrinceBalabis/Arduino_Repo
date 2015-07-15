@@ -4,20 +4,19 @@
  **/
 
 static msg_t Thread2(void *arg) {
-  chThdSleepMilliseconds(2100); // Give some time for HomeNetwork thread to start
+  chThdSleepMilliseconds(3000); // Give some time for HomeNetwork thread to start
 
-  int count = 0;
+  //uint32_t count = 0;
 
   while (1) {
     if (msgReceived) {
-      Serial.print(count++);
       if (msgContent == cmdExampleCommand) {
         // Send return-message back to client
         bool msgSent = homeNetwork.responseExampleDataToClient(msgSender, cmdExampleResponceData);
         if (msgSent) {
-          Serial.println(F(":Responded"));
+          Serial.println(F("Responded"));
         } else if (!msgSent) {
-          Serial.println(F(":Timeout!"));
+          Serial.println(F("Timeout"));
         }
       }
       msgReceived = 0;

@@ -5,10 +5,7 @@
  *    - SPI
  *    - ChibiOS
  *    
- *    WARNING: Too much serial can make the ask question unstable because of the delay!
  **/
-
-#include <Wire.h>
 #include <ChibiOS_AVR.h>
 #include <RF24Network.h>
 #include <RF24.h>
@@ -16,20 +13,17 @@
 #include <HomeNetwork.h>
 #include "config.h"
 
-static WORKING_AREA(waThread1, 124);
-static WORKING_AREA(waThread2, 124);
-
 void setup() {
-  Serial.begin(9600);
-  // wait for USB Serial
-  while (!Serial) {}
-  delay(1000);
+  Serial.begin(115200);
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
   
-  while (1);
+  while(1);
 }
+
+static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(waThread2, 64);
 
 void mainThread() {
 
@@ -37,7 +31,7 @@ void mainThread() {
 
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
 
-  while (1);
+  while(1);
 }
 
 void loop() {

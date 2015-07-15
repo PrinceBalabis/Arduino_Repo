@@ -15,7 +15,7 @@ void HomeNetwork::begin(uint16_t nodeID)
   radio.setRetries(homeNetwork_retryDelay, homeNetwork_retryTimes);
   radio.setPALevel(homeNetwork_powerAmplifierLevel);
   radio.setDataRate(homeNetwork_dataRate);
-  network.txTimeout = 200;
+  network.txTimeout = 400;
 }
 
 void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t))
@@ -71,7 +71,6 @@ bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_
   while(!autoUpdatePauseExecuted){
     chThdSleepMilliseconds(2); // Needed for stability, give autoupdate time to pause
   }
-
   // Send question, will retry until succeed or timeout
   uint16_t msgSenderReceived = -1;
   int32_t msgReceived = 0;

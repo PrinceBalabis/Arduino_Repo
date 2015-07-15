@@ -554,4 +554,3 @@ private:
  */
 
 #endif // __RF24NETWORK_H__
-
