@@ -4,6 +4,8 @@
  *  This library needs following peripherals:
  *    - SPI
  *    - ChibiOS
+ *    
+ *    WARNING: Too much serial can make the ask question unstable because of the delay!
  **/
 
 #include <Wire.h>
@@ -14,11 +16,14 @@
 #include <HomeNetwork.h>
 #include "config.h"
 
-static WORKING_AREA(waThread1, 64);
-static WORKING_AREA(waThread2, 64);
+static WORKING_AREA(waThread1, 124);
+static WORKING_AREA(waThread2, 124);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  // wait for USB Serial
+  while (!Serial) {}
+  delay(1000);
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
