@@ -18,7 +18,7 @@ static msg_t Thread2(void *arg) {
     } else if (msgSent == 0) {
       Serial.println(F(":Timeout!"));
     }
-    chThdSleepMilliseconds(1000); // Redo this send program every moments
+    chThdSleepMilliseconds(100); // Redo this send program every moments
   }
   return 0;
 }
