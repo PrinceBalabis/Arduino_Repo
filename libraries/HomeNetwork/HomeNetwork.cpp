@@ -14,7 +14,6 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork& _hom
 static WORKING_AREA(homeNetworkThread, 64);
 static msg_t HomeNetworkThread(void *arg)
 {
-  Serial.println(F("STARTED THREAD"));
   chThdSleepMilliseconds(2000); // If this thread starts too fast, the Arduino will crash!
 
   SPI.begin(); // SPI is used by the RF24 module
@@ -28,9 +27,14 @@ static msg_t HomeNetworkThread(void *arg)
   return 0;
 }
 
-void HomeNetwork::begin(uint16_t nodeID)
+void HomeNetwork::begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent)
 {
-  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, NULL);
+  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, &homeNetwork);
+  pmsgReceived = _pmsgReceived;
+  pmsgSender = _pmsgSender;
+  pmsgType = _pmsgType;
+  pmsgContent = _pmsgContent;
+
   radio.begin(); // Initialize radio
   network.begin(homeNetwork_channel, nodeID); // Start mesh Network
   radio.setRetries(homeNetwork_retryDelay, homeNetwork_retryTimes);
@@ -41,7 +45,6 @@ void HomeNetwork::begin(uint16_t nodeID)
 
 void HomeNetwork::autoUpdate()
 {
-
   while (1) {
     while(autoUpdatePaused){
       autoUpdatePauseExecuted = true;
@@ -51,9 +54,8 @@ void HomeNetwork::autoUpdate()
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
     {
-      int32_t msgReceived;
-      unsigned char msgTypeReceived;
-      uint16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+       *pmsgSender = read(pmsgContent, pmsgType);
+       *pmsgReceived = true;
     }
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }

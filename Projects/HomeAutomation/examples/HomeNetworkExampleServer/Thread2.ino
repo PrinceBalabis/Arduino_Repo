@@ -24,23 +24,3 @@ static msg_t Thread2(void *arg) {
 
   return 0;
 }
-
-/**
- * homeNetworkMessageReceived()
- * This function is executed automatically by the HomeNetwork Library when a message is received.
- */
-void homeNetworkMessageReceived(uint16_t _msgSender, unsigned char _msgType, int32_t _msgReceived) {
-  // Save received data to global variables to be used by other threads
-  msgSender = _msgSender;
-  msgType = _msgType;
-  msgContent = _msgReceived;
-  msgReceived = true;
-  //  Serial.print(F("-------------Received Data Raw----------------- \nRaw Message sender: "));
-  //  Serial.println(msgSender);
-  //  Serial.print(F("Raw Type content: "));
-  //  Serial.write(msgType);
-  //  Serial.print(F("\nRaw Message content: "));
-  //  Serial.println(msgContent);
-  //  Serial.println(F("-----------------------------------------------"));
-}
-

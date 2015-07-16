@@ -20,7 +20,7 @@ class HomeNetwork
 {
 public:
   HomeNetwork(RF24& _radio, RF24Network& _network, HomeNetwork& _homeNetwork);
-  void begin(uint16_t nodeId);
+  void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
   void autoUpdate();
 
   // Add new home commands here!
@@ -45,6 +45,10 @@ private:
   RF24& radio;
   RF24Network& network;
   HomeNetwork& homeNetwork;
+  bool* pmsgReceived;
+  uint16_t* pmsgSender;
+  unsigned char* pmsgType;
+  int32_t* pmsgContent;
 
   volatile bool autoUpdatePaused = false;
   volatile bool autoUpdatePauseExecuted = false;
@@ -69,6 +73,5 @@ private:
   bool write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   bool writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
-
 };
 #endif
