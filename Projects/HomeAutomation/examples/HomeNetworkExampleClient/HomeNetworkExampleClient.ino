@@ -22,12 +22,12 @@ void setup() {
   while(1);
 }
 
-static WORKING_AREA(waThread1, 64);
+static WORKING_AREA(homeNetworkThread, 64);
 static WORKING_AREA(waThread2, 64);
 
 void mainThread() {
 
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 3, Thread1, NULL);
+  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, NULL);
 
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
 

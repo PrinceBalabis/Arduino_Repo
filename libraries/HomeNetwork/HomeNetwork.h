@@ -8,6 +8,10 @@ HomeNetwork.h - Library for Prince Home Automation & IOT network of RF24 nodes
 #include "RF24Network.h"
 #include "nodesConfig.h"
 #include <ChibiOS_AVR.h>
+#include "Arduino.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 class RF24;
 class RF24Network;
@@ -15,9 +19,9 @@ class RF24Network;
 class HomeNetwork
 {
 public:
-  HomeNetwork(RF24& _radio, RF24Network& _network);
-  void begin(uint16_t nodeID);
-  void autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t));
+  HomeNetwork(RF24& _radio, RF24Network& _network, HomeNetwork& _homeNetwork);
+  void begin(uint16_t nodeId);
+  void autoUpdate();
 
   // Add new home commands here!
   bool askExampleDataToExampleServer(int32_t *pmsgResponse);
@@ -40,6 +44,8 @@ public:
 private:
   RF24& radio;
   RF24Network& network;
+  HomeNetwork& homeNetwork;
+
   volatile bool autoUpdatePaused = false;
   volatile bool autoUpdatePauseExecuted = false;
 

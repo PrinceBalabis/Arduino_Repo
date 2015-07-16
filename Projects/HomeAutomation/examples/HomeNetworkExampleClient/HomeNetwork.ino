@@ -8,7 +8,7 @@ HomeNetwork homeNetwork(radio, network);
 /**
  *  Thread for the Home Network
  **/
-static msg_t Thread1(void *arg)
+static msg_t HomeNetworkThread(void *arg)
 {
   chThdSleepMilliseconds(4000); // If this thread starts too fast, the Arduino will crash!
 

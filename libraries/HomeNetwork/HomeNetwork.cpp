@@ -4,12 +4,33 @@
 
 #include "HomeNetwork.h"
 
-HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network ): radio(_radio), network(_network)
+HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork& _homeNetwork): radio(_radio), network(_network), homeNetwork(_homeNetwork)
 {
+}
+
+/**
+*  Thread for the Home Network
+**/
+static WORKING_AREA(homeNetworkThread, 64);
+static msg_t HomeNetworkThread(void *arg)
+{
+  Serial.println(F("STARTED THREAD"));
+  chThdSleepMilliseconds(2000); // If this thread starts too fast, the Arduino will crash!
+
+  SPI.begin(); // SPI is used by the RF24 module
+  HomeNetwork homeNetwork = *((HomeNetwork*)arg);
+
+  // The thread stops at this function, this function has a loop which keeps the network
+  // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
+  // This function has to run on a thread or else home network wont work.
+  homeNetwork.autoUpdate();
+
+  return 0;
 }
 
 void HomeNetwork::begin(uint16_t nodeID)
 {
+  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, NULL);
   radio.begin(); // Initialize radio
   network.begin(homeNetwork_channel, nodeID); // Start mesh Network
   radio.setRetries(homeNetwork_retryDelay, homeNetwork_retryTimes);
@@ -18,7 +39,7 @@ void HomeNetwork::begin(uint16_t nodeID)
   network.txTimeout = 400;
 }
 
-void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t))
+void HomeNetwork::autoUpdate()
 {
 
   while (1) {
@@ -33,7 +54,6 @@ void HomeNetwork::autoUpdate(void (* pmsgReceivedF)(uint16_t,unsigned char,int32
       int32_t msgReceived;
       unsigned char msgTypeReceived;
       uint16_t msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      pmsgReceivedF(msgSenderReceived, msgTypeReceived, msgReceived);
     }
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
@@ -123,17 +143,17 @@ bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_
 * returns the senders ID.int - returns -1 if read was unsuccesful
 */
 uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
-    // Save sender node ID of received message
-    RF24NetworkHeader peekHeader;
-    network.peek(peekHeader);
-    uint16_t msgSender = peekHeader.from_node;
-    *pmsgType = peekHeader.type;
+  // Save sender node ID of received message
+  RF24NetworkHeader peekHeader;
+  network.peek(peekHeader);
+  uint16_t msgSender = peekHeader.from_node;
+  *pmsgType = peekHeader.type;
 
-    // Save received message content
-    RF24NetworkHeader readHeader;
-    network.read(readHeader, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
+  // Save received message content
+  RF24NetworkHeader readHeader;
+  network.read(readHeader, pmsgReceived, sizeof(int32_t)); // Read message and store to msgReceived variable
 
-    return msgSender;
+  return msgSender;
 }
 
 bool HomeNetwork::askExampleDataToExampleServer(int32_t *pmsgResponse) {
