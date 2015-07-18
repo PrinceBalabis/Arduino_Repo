@@ -14,7 +14,7 @@ int32_t msgContent = -1;
 
 RF24 radio(8, 9); // CE & CSN pins
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, homeNetwork);
+HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
   Serial.begin(115200);

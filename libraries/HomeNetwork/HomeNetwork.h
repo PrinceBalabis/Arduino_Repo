@@ -19,7 +19,7 @@ class RF24Network;
 class HomeNetwork
 {
 public:
-  HomeNetwork(RF24& _radio, RF24Network& _network, HomeNetwork& _homeNetwork);
+  HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
   void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
   void autoUpdate();
 
@@ -44,18 +44,17 @@ public:
 private:
   RF24& radio;
   RF24Network& network;
-  HomeNetwork& homeNetwork;
+  HomeNetwork* homeNetwork;
   bool* pmsgReceived;
   uint16_t* pmsgSender;
   unsigned char* pmsgType;
   int32_t* pmsgContent;
 
-  volatile bool autoUpdatePaused = false;
-  volatile bool autoUpdatePauseExecuted = false;
+  bool autoUpdatePaused = false;
+  bool autoUpdatePauseExecuted = false;
 
   // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
   // Tweak however you want though
-
   const unsigned int homeNetwork_timeoutSendTime = 10000; // Amount of time before trying to resend message again to node
   const unsigned int homeNetwork_timeoutAnswerTime = 10000; // Amount of time to wait until given up waiting of answer to question
   const unsigned int homeNetwork_autoUpdateTime = 20; // How often the network is updated

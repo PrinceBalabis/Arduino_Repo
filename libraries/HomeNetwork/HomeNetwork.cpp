@@ -4,7 +4,7 @@
 
 #include "HomeNetwork.h"
 
-HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork& _homeNetwork): radio(_radio), network(_network), homeNetwork(_homeNetwork)
+HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork): radio(_radio), network(_network), homeNetwork(_homeNetwork)
 {
 }
 
@@ -12,24 +12,24 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork& _hom
 *  Thread for the Home Network
 **/
 static WORKING_AREA(homeNetworkThread, 64);
-static msg_t HomeNetworkThread(void *arg)
+static msg_t HomeNetworkThread(void *_homeNetwork)
 {
   chThdSleepMilliseconds(2000); // If this thread starts too fast, the Arduino will crash!
 
   SPI.begin(); // SPI is used by the RF24 module
-  HomeNetwork homeNetwork = *((HomeNetwork*)arg);
+  HomeNetwork* homeNetwork = ((HomeNetwork*)_homeNetwork);
 
   // The thread stops at this function, this function has a loop which keeps the network
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
   // This function has to run on a thread or else home network wont work.
-  homeNetwork.autoUpdate();
+  homeNetwork->autoUpdate();
 
   return 0;
 }
 
 void HomeNetwork::begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent)
 {
-  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, &homeNetwork);
+  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, homeNetwork);
   pmsgReceived = _pmsgReceived;
   pmsgSender = _pmsgSender;
   pmsgType = _pmsgType;
@@ -54,8 +54,8 @@ void HomeNetwork::autoUpdate()
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
     {
-       *pmsgSender = read(pmsgContent, pmsgType);
-       *pmsgReceived = true;
+      *pmsgSender = read(pmsgContent, pmsgType);
+      *pmsgReceived = true;
     }
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
@@ -90,9 +90,11 @@ bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char 
 bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse)
 {
   autoUpdatePaused = true; // Pause listening for messages
+
   while(!autoUpdatePauseExecuted){
     chThdSleepMilliseconds(2); // Needed for stability, give autoupdate time to pause
   }
+
   // Send question, will retry until succeed or timeout
   uint16_t msgSenderReceived = -1;
   int32_t msgReceived = 0;
