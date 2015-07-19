@@ -5,9 +5,9 @@
 //***********************Message types**************************************************************
 // 'Message type' is packet within the header of a message, it is read by
 // the receiver to understand what type of packet it is
-static const unsigned char msgTypeAsk = 'A';
-static const unsigned char msgTypeResponse = 'R';
-static const unsigned char msgTypeCommand = 'C';
+static const unsigned char typeAsk = 'A';
+static const unsigned char typeResponse = 'R';
+static const unsigned char typeCommand = 'C';
 
 //***********************Main Room Lights************************************************************
 // This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
@@ -28,9 +28,9 @@ static const uint16_t nodeDefaultID = 31;
 
 //Testing nodes
 //***********************homeNetworkExampleServer****************************************************
-static const uint16_t nodeExampleServer = 0; // Used for example/testing. This node is second child of centralHomeControl-node
-static const uint16_t nodeExampleClient = 1; // Used for example/testing. This node is third child of centralHomeControl-node
+static const uint16_t nodeExampleA = 0; // Used for example/testing. This node is second child of centralHomeControl-node
+static const uint16_t nodeExampleB = 1; // Used for example/testing. This node is third child of centralHomeControl-node
 
 // Commands to offer
-static const int32_t cmdExampleCommand = 12345;
-static const int32_t cmdExampleResponceData = 67890;
+static const int32_t cmdExampleAskCommand = 12345;
+static const int32_t cmdExampleResponseData = 67890;

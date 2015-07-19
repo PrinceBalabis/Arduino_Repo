@@ -21,8 +21,9 @@ public:
   void autoUpdate();
 
   // Add new home commands here!
-  bool askExampleDataToExampleServer(int32_t *pmsgResponse);
-  bool responseExampleDataToClient(uint16_t _msgSender, int32_t _cmdExampleResponceData);
+  bool respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData);
+  bool askExampleDataA(int32_t *pmsgResponse);
+  bool askExampleDataB(int32_t *pmsgResponse);
   bool toggleMainLights();
   // uint8_t setMainLightsOn();
   // uint8_t setMainLightsOff();
@@ -52,8 +53,8 @@ private:
 
   // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
   // Tweak however you want though
-  const unsigned int homeNetwork_timeoutSendTime = 10000; // Amount of time before trying to resend message again to node
-  const unsigned int homeNetwork_timeoutAnswerTime = 10000; // Amount of time to wait until given up waiting of answer to question
+  const unsigned int homeNetwork_timeoutSendTime = 5000; // Amount of time before trying to resend message again to node
+  const unsigned int homeNetwork_timeoutAnswerTime = 5000; // Amount of time to wait until given up waiting of answer to question
   const unsigned int homeNetwork_autoUpdateTime = 20; // How often the network is updated
 
   // Set delay between retries & # of retries for a "radio.write" command
@@ -66,8 +67,8 @@ private:
   const uint8_t homeNetwork_channel = 90; // Default Home network is using channel 90, dont know other channels though
 
   // Local communication functions
-  bool write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
-  bool writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponce);
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
+  bool write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
+  bool writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
 };
 #endif

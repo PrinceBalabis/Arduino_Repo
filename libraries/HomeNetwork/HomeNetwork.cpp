@@ -84,8 +84,7 @@ bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char 
 * This function sends the message to a receiver, both which are set in parameter
 * Gets a response back
 **/
-bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse)
-{
+bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
   autoUpdatePaused = true; // Pause listening for messages
 
   while(!autoUpdatePauseExecuted){
@@ -101,7 +100,7 @@ bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_
   bool questionTimeOut = false;
   while (!questionSent && !questionTimeOut) {
     network.update(); // Check the network regularly for the entire network to function properly
-    questionSent = write(msgReceiver, msgContent, msgTypeAsk); // Send question
+    questionSent = write(msgReceiver, msgContent, typeAsk); // Send question
     if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
       questionTimeOut = true;
     }
@@ -116,7 +115,7 @@ bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_
     //How long to wait for the answer
     started_waiting_at = millis();
 
-    while ((msgSenderReceived != msgReceiver || msgTypeReceived != msgTypeResponse) && !answerTimeout) {
+    while ((msgSenderReceived != msgReceiver || msgTypeReceived != typeResponse) && !answerTimeout) {
       network.update(); // Check the network regularly for the entire network to function properly
       if(network.available())
       {
@@ -157,16 +156,20 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   return msgSender;
 }
 
-bool HomeNetwork::askExampleDataToExampleServer(int32_t *pmsgResponse) {
-  return writeQuestion(nodeExampleServer, cmdExampleCommand, pmsgResponse);
+bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData) {
+  return write(_msgSender, _cmdExampleResponceData, typeResponse);
 }
 
-bool HomeNetwork::responseExampleDataToClient(uint16_t _msgSender, int32_t _cmdExampleResponceData) {
-  return write(_msgSender, _cmdExampleResponceData, msgTypeResponse);
+bool HomeNetwork::askExampleDataA(int32_t *pmsgResponse) {
+  return writeQuestion(nodeExampleA, cmdExampleAskCommand, pmsgResponse);
+}
+
+bool HomeNetwork::askExampleDataB(int32_t *pmsgResponse) {
+  return writeQuestion(nodeExampleB, cmdExampleAskCommand, pmsgResponse);
 }
 
 bool HomeNetwork::toggleMainLights() {
-  return write(nodeMainLights, cmdToggleLights, msgTypeCommand);
+  return write(nodeMainLights, cmdToggleLights, typeCommand);
 }
 
 // uint8_t HomeNetwork::setMainLightsOn() {
