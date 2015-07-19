@@ -73,7 +73,7 @@ static msg_t KeypadThread(void *arg) {
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
   keypad.setDebounceTime(1); //Time untill a new key is accepted
-  int previousState = 0;
+  int lastState = 0;
   unsigned long previousTimer = 0;
 
   while (1) {
@@ -84,8 +84,8 @@ static msg_t KeypadThread(void *arg) {
     if (state == RELEASED ) {
       keyName = 0; // Clear keyName if no button is pressed, this is to fix bug in library
 
-      if (previousState != RELEASED) { // Runs just once after a button is released
-        previousState = RELEASED;
+      if (lastState != RELEASED) { // Runs just once after a button is released
+        lastState = RELEASED;
         previousTimer = 0;
         setPCPowerSwitch(FALSE);
         Serial.println(F("No key is pressed, running cleanup"));
@@ -94,7 +94,7 @@ static msg_t KeypadThread(void *arg) {
     // This runs when a key is pressed
     else if (state != RELEASED)
     {
-      previousState = state;
+      lastState = state;
     }
     // The different commands for the buttons
     if (nBPowerButton == keyName && state == PRESSED) // Run once
@@ -142,22 +142,22 @@ static msg_t KeypadThread(void *arg) {
  *  This function is an event which only runs when the key state is changed
  **/
 void keypadEvent(KeypadEvent key) {
-  switch (keypad.getState()) {
-
-    case PRESSED:
-      Serial.println(F("PRESSED"));
-      state = PRESSED;
-      break;
-
-    case HOLD:
-      state = HOLD;
-      break;
-
-    case RELEASED:
-      Serial.println(F("RELEASED"));
-      state = RELEASED;
-      break;
-  }
+  //  switch (keypad.getState()) {
+  state = keypad.getState();
+  //    case PRESSED:
+  //      Serial.println(F("PRESSED"));
+  //      state = PRESSED;
+  //      break;
+  //
+  //    case HOLD:
+  //      state = HOLD;
+  //      break;
+  //
+  //    case RELEASED:
+  //      Serial.println(F("RELEASED"));
+  //      state = RELEASED;
+  //      break;
+  //  }
 }
 
 
