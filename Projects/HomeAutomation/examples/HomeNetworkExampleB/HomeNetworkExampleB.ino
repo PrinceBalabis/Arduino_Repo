@@ -34,13 +34,15 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(waThread2, 64);
+static WORKING_AREA(hMListenThread, 64);
+static WORKING_AREA(exampleSendThread, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
-
+  chThdCreateStatic(hMListenThread, sizeof(hMListenThread), NORMALPRIO + 2, HMListenThread, NULL);
+  chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 2, ExampleSendThread, NULL);
+  
   while (1);
 }
 

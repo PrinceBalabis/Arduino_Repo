@@ -1,14 +1,15 @@
 /**
- *  Thread2
- *  Asks a question to server every few seconds
+ *  ExampleSendThread
+ *  Sends a messeger to Node A every few moments
  **/
 
-static msg_t Thread2(void *arg) {
-  Serial.println(F("Thread2 begin"));
+static msg_t ExampleSendThread(void *arg) {
+  Serial.println(F("ExampleSendThread begin"));
 
   uint32_t count = 0;
 
   while (1) {
+    chThdSleepMilliseconds(1943); // Redo this send program every few moments, give enough time for other threads to run
 
     // Ask question to ExampleNodeA
     Serial.print(count++);
@@ -20,7 +21,7 @@ static msg_t Thread2(void *arg) {
       Serial.println(F(":Timeout!"));
     }
 
-    chThdSleepMilliseconds(1); // Redo this send program every few moments, give enough time for other threads to run
+
   }
   return 0;
 }
