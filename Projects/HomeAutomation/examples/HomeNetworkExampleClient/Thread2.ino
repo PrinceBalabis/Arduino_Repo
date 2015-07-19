@@ -4,8 +4,8 @@
  **/
 
 static msg_t Thread2(void *arg) {
-  chThdSleepMilliseconds(5000); // Give some time for HomeNetwork thread to start
-  Serial.println(F("thread2 begin"));
+  chThdSleepMilliseconds(homeNetworkInitiateDelay); // Give some time for HomeNetwork thread to start
+  Serial.println(F("Thread2 begin"));
 
   uint32_t count = 0;
 
@@ -13,7 +13,7 @@ static msg_t Thread2(void *arg) {
 
     // Ask question to server demo
     Serial.print(count++);
-    
+
     int32_t msgResponse;
     bool msgSent = homeNetwork.askExampleDataToExampleServer(&msgResponse);
     if (msgSent == 1) {
