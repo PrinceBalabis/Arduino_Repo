@@ -17,7 +17,11 @@
 #include <Keypad.h>
 #include <NewRemoteTransmitter.h>
 #include <HomeNetwork.h>
-#include "config.h" // config file
+#include "config.h"
+
+RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
+RF24Network network(radio);
+HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 //Variables which stores the received values from other nodes
 //Regularly check msgReceived variable if a message is received in thread
@@ -25,14 +29,6 @@ bool msgReceived = false;
 uint16_t msgSender = -1;
 unsigned char msgType = 'Z';
 int32_t msgContent = -1;
-
-RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
-RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, &homeNetwork);
-
-static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(keypadThread, 64);
-static WORKING_AREA(waThread3, 64);
 
 void setup() {
   Serial.begin(115200);
@@ -45,31 +41,21 @@ void setup() {
   while (1);
 }
 
+static WORKING_AREA(hNListenThread, 64);
+static WORKING_AREA(keypadThread, 64);
+static WORKING_AREA(commandExecutioner, 64);
+
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
 
-  // keypad listening thread
+  // Keypad listening thread
   chThdCreateStatic(keypadThread, sizeof(keypadThread), NORMALPRIO + 1, KeypadThread, NULL);
 
   // CommandExecutioner thread which executes commands
-  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO + 2, Thread3, NULL);
+  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
 }
 
 void loop() {
   // not used
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

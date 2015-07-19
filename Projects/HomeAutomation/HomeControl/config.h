@@ -23,7 +23,7 @@ const uint8_t homeNetworkCSNPin = 9;
 //Tweaks
 const uint16_t homeNetworkCheckMessageDelay = 40; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 
-// Commands this node has to offer
+// Commands this node has to offer to other nodes
 const int32_t speakerPowerToggle = 1;
 const int32_t speakerPowerOn = 2;
 const int32_t speakerPowerOff = 3;
