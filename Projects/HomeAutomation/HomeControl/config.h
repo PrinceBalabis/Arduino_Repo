@@ -1,6 +1,6 @@
 /*
 *  This is the config file.
- *  Here you can configure Buttons assigns, IR codes, 
+ *  Here you can configure Buttons assigns, IR codes,
  *  RF24 codes & component pins.
  *  Also you can enable/disable serial
  */
@@ -77,7 +77,7 @@ const uint8_t lightDiningTable = 1;
  */
 
 //940 nm IR LED with a resistor to pin 3
- 
+
 // PC Power pin pin
 const int pcPowerPin = 7;
 

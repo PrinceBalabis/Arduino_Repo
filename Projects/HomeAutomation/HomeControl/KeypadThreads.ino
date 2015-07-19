@@ -71,7 +71,6 @@ static msg_t KeypadUpdaterThread(void *arg) {
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
   keypad.setDebounceTime(1); //Time until a new key is accepted
-  unsigned long previousTimer = 0;
 
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
@@ -83,44 +82,33 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
 static msg_t KeypadCommandThread(void *arg)
 {
+
+  uint8_t lastKeyPressed = 0;
+
   while (1) {
     // Wait for signal from KeypadEvent, it sends a signal whenever keypad status changes
     chSemWait(&cmdKeypadSem);
 
-    // This runs all the time when no key is pressed
+    // Here are commands to run when a key is released
     if (state == RELEASED )
     {
-      if (pcPowerButton == keyName)
+      if (pcPowerButton == lastKeyPressed)
       {
         executeCommand = pcPowerButton;
 
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
-      keyName = 0; // Clear keyName if no button is pressed, this is to fix bug in library
+      lastKeyPressed = 0; // Clear last key saved
     }
 
     // Here are commands to run once when pressed
     else if (state == PRESSED )
     {
-      if (nBPowerButton == keyName) // Run once
-      {
-        //toggleSpeakerPower();
-      }
-      else if (nBMuteButton == keyName) // Run once
-      {
-        //toggleSpeakerMuteCommand();
-      }
-      else if (lightDiningTableButton == keyName)
-      {
-        executeCommand = lightDiningTableButton;
-
-        // Signal CommandExecutionerThread to run command
-        chSemSignal(&cmdExSem);
-      }
-      else if (lightMainButton == keyName)
+      if (lightMainButton == keyName)
       {
         executeCommand = lightMainButton;
+        lastKeyPressed = lightMainButton;
 
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
@@ -128,6 +116,7 @@ static msg_t KeypadCommandThread(void *arg)
       else if (pcPowerButton == keyName)
       {
         executeCommand = pcPowerButton;
+        lastKeyPressed = pcPowerButton;
 
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
@@ -135,14 +124,7 @@ static msg_t KeypadCommandThread(void *arg)
     }
     // Commands to run while holding
     while (state == HOLD) {
-      if (nBUpVolButton == keyName) // "While holding"
-      {
-        //sendSpeakerUpVolCommand(previousTimer);
-      }
-      else if (nBDownVolButton == keyName) // "While holding"
-      {
-        //sendSpeakerDownVolCommand(previousTimer);
-      }
+
       chThdSleepMilliseconds(5);
     }
   }

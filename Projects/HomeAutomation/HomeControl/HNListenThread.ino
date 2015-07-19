@@ -2,7 +2,7 @@
  *  HMListenThread
  *  Idles until a message is received from a client.
  **/
- 
+
 
 
 static msg_t HNListenThread(void *arg) {
