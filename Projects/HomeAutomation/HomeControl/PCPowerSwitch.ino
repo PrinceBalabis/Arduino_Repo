@@ -4,15 +4,15 @@ void pcPowerSetup()
   digitalWrite(pcPowerPin, LOW);
 }
 
-void setPCPowerSwitch(boolean state) 
+void togglePCPowerSwitch() 
 {
-  if(state){
-    digitalWrite(pcPowerPin, HIGH);
-    Serial.println(F("Holding PC power button"));
-  } 
-  else {
+  if(digitalRead(pcPowerPin)){
     digitalWrite(pcPowerPin, LOW);
     Serial.println(F("Released PC power button"));
+  } 
+  else {
+    digitalWrite(pcPowerPin, HIGH);
+    Serial.println(F("Holding PC power button"));
   }
 }
 

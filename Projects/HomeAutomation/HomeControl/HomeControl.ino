@@ -42,15 +42,17 @@ void setup() {
 }
 
 static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(keypadThread, 64);
+static WORKING_AREA(keypadCommandThread, 64);
+static WORKING_AREA(keypadUpdaterThread, 64);
 static WORKING_AREA(commandExecutioner, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
 
-  // Keypad listening thread
-  chThdCreateStatic(keypadThread, sizeof(keypadThread), NORMALPRIO + 1, KeypadThread, NULL);
+  // Keypad threads
+  chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);
+  chThdCreateStatic(keypadCommandThread, sizeof(keypadCommandThread), NORMALPRIO + 1, KeypadCommandThread, NULL);
 
   // CommandExecutioner thread which executes commands
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
