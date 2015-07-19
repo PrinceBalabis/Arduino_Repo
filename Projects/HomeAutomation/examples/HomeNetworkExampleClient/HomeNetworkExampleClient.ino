@@ -6,7 +6,7 @@
  *    - ChibiOS
  *
  **/
- 
+
 #include <ChibiOS_AVR.h>
 #include <RF24Network.h>
 #include <RF24.h>
@@ -37,7 +37,7 @@ void setup() {
 static WORKING_AREA(waThread2, 64);
 
 void mainThread() {
-
+  SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
 

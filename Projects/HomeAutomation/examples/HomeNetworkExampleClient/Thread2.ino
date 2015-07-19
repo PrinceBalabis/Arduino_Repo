@@ -4,7 +4,6 @@
  **/
 
 static msg_t Thread2(void *arg) {
-  chThdSleepMilliseconds(homeNetworkInitiateDelay); // Give some time for HomeNetwork thread to start
   Serial.println(F("Thread2 begin"));
 
   uint32_t count = 0;

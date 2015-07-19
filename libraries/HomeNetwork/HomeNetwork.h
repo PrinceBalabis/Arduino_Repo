@@ -4,14 +4,11 @@
 /*
 HomeNetwork.h - Library for Prince Home Automation & IOT network of RF24 nodes
 */
+#include <ChibiOS_AVR.h>
 #include "RF24.h"
 #include "RF24Network.h"
 #include "nodesConfig.h"
-#include <ChibiOS_AVR.h>
-#include "Arduino.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+
 
 class RF24;
 class RF24Network;

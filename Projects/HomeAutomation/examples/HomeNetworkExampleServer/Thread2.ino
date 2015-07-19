@@ -4,7 +4,6 @@
  **/
 
 static msg_t Thread2(void *arg) {
-  chThdSleepMilliseconds(homeNetworkInitiateDelay); // Give some time for HomeNetwork thread to start
   Serial.println(F("Thread2 begin"));
 
   while (1) {
@@ -22,6 +21,5 @@ static msg_t Thread2(void *arg) {
     }
     chThdSleepMilliseconds(homeNetworkCheckMessageDelay); // Check every few ms if a message is received
   }
-
   return 0;
 }

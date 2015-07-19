@@ -28,7 +28,7 @@ void setup() {
 static WORKING_AREA(waThread, 64);
 
 void mainThread() {
-
+  SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdCreateStatic(waThread, sizeof(waThread), NORMALPRIO + 2, Thread2, NULL);
 

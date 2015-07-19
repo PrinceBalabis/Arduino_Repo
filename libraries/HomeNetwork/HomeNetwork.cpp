@@ -14,9 +14,6 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _hom
 static WORKING_AREA(homeNetworkThread, 64);
 static msg_t HomeNetworkThread(void *_homeNetwork)
 {
-  chThdSleepMilliseconds(2000); // If this thread starts too fast, the Arduino will crash!
-
-  SPI.begin(); // SPI is used by the RF24 module
   HomeNetwork* homeNetwork = ((HomeNetwork*)_homeNetwork);
 
   // The thread stops at this function, this function has a loop which keeps the network
