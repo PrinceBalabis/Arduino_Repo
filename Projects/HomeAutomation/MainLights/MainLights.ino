@@ -19,24 +19,31 @@ HomeNetwork homeNetwork(radio, network, &homeNetwork);
 void setup() {
   Serial.begin(115200);
 
-  chBegin(mainThread);
+  initLights();
+
+  chBegin(chSetup);
   // chBegin never returns, main thread continues with mainThread()
 
   while (1);
 }
 
-static WORKING_AREA(hMListenThread, 64);
-static WORKING_AREA(exampleSendThread, 64);
+static WORKING_AREA(wallSwitchThread, 64);
+static WORKING_AREA(hNListenThread, 64);
 
-void mainThread() {
+void chSetup() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
-  chThdCreateStatic(hMListenThread, sizeof(hMListenThread), NORMALPRIO + 2, HMListenThread, NULL);
-  chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 2, ExampleSendThread, NULL);
 
-  while (1);
+  chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
+
+  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+
 }
 
 void loop() {
   // not used
 }
+
+
+
+

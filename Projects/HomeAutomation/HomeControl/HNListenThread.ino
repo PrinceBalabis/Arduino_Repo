@@ -3,10 +3,10 @@
  *  Idles until a message is received from a client.
  **/
 
-static msg_t HMListenThread(void *arg) {
+static msg_t HNListenThread(void *arg) {
   Serial.print(F("HMListenThread begin, NodeID: "));
   Serial.println(nodeID);
- 
+
   while (1) {
     if (msgReceived) { // Check message if a new message is received
       bool msgSent = false;

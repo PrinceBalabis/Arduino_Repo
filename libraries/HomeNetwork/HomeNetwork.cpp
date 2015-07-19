@@ -68,9 +68,9 @@ bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
 
+
   // Send message to server, keep trying untill server confirms receiver gets the message
   bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
-
   if (msgSent) {
     return 1;
   }
@@ -156,10 +156,6 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   return msgSender;
 }
 
-bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData) {
-  return write(_msgSender, _cmdExampleResponceData, typeResponse);
-}
-
 bool HomeNetwork::askExampleDataA(int32_t *pmsgResponse) {
   return writeQuestion(nodeExampleA, cmdExampleAskCommand, pmsgResponse);
 }
@@ -168,19 +164,27 @@ bool HomeNetwork::askExampleDataB(int32_t *pmsgResponse) {
   return writeQuestion(nodeExampleB, cmdExampleAskCommand, pmsgResponse);
 }
 
+bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData) {
+  return write(_msgSender, _cmdExampleResponceData, typeResponse);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 bool HomeNetwork::toggleMainLights() {
   return write(nodeMainLights, cmdToggleLights, typeCommand);
 }
 
-// uint8_t HomeNetwork::setMainLightsOn() {
-//   msgNode = mainLights;
-//   msgContent = 02;
-// }
+bool HomeNetwork::setMainLightsOn() {
+  return write(nodeMainLights, cmdSetLightsOn, typeCommand);
+}
 
-// uint8_t HomeNetwork::setMainLightsOff() {
-//   msgNode = mainLights;
-//   msgContent = 03;
-// }
+bool HomeNetwork::setMainLightsOff() {
+  return write(nodeMainLights, cmdSetLightsOff, typeCommand);
+}
+
+bool HomeNetwork::askMainLightsStatus(int32_t *pmsgResponse) {
+  return writeQuestion(nodeMainLights, cmdGetLightsStatus, pmsgResponse);
+}
 
 // uint8_t HomeNetwork::togglePaintingLights() {
 //   msgNode = centralHomeControl;

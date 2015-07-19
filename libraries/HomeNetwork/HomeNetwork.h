@@ -22,11 +22,11 @@ public:
 
   // Add new home commands here!
   bool respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData);
-  bool askExampleDataA(int32_t *pmsgResponse);
-  bool askExampleDataB(int32_t *pmsgResponse);
+
   bool toggleMainLights();
-  // uint8_t setMainLightsOn();
-  // uint8_t setMainLightsOff();
+  bool setMainLightsOn();
+  bool setMainLightsOff();
+  bool askMainLightsStatus(int32_t *pmsgResponse);
   // uint8_t togglePaintingLights();
   // uint8_t setPaintingLightsOn();
   // uint8_t setPaintingLightsOff();
@@ -38,6 +38,10 @@ public:
   // uint8_t leavingApartment();
   // uint8_t exitSleepMode();
   // uint8_t setPartyMode();
+
+  // Example functions
+  bool askExampleDataA(int32_t *pmsgResponse);
+  bool askExampleDataB(int32_t *pmsgResponse);
 
 private:
   RF24& radio;
