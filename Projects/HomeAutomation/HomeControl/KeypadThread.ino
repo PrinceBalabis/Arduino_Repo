@@ -115,16 +115,22 @@ static msg_t KeypadThread(void *arg) {
     }
     else if (pcPowerButton == keyName && state == PRESSED )
     {
-      setPCPowerSwitch(TRUE);
+      executeCommand = pcPowerButton;
+
+      // Signal CommandExecutionerThread to run command
+      chSemSignal(&cmdExSem);
     }
     else if (lightDiningTableButton == keyName && state == PRESSED )
     {
-      toggleDiningTableSwitch();
+      executeCommand = lightDiningTableButton;
+
+      // Signal CommandExecutionerThread to run command
+      chSemSignal(&cmdExSem);
     }
     else if (lightMainButton == keyName && state == PRESSED)
     {
       executeCommand = lightMainButton;
-      
+
       // Signal CommandExecutionerThread to run command
       chSemSignal(&cmdExSem);
     }

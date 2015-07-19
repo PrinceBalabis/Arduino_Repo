@@ -18,8 +18,14 @@ static msg_t CommandExecutioner(void *arg)
     chSemWait(&cmdExSem);
 
     switch (executeCommand) {
+      case pcPowerButton:
+        setPCPowerSwitch(TRUE);
+        break;
       case lightMainButton:
         homeNetwork.toggleMainLights();
+        break;
+      case lightDiningTableButton:
+        toggleDiningTableSwitch();
         break;
     }
   }
