@@ -130,6 +130,14 @@ static msg_t KeypadCommandThread(void *arg)
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
+      else if (speakerPowerButton == keyName)
+      {
+        executeCommand = speakerPowerButton;
+        lastKeyPressed = speakerPowerButton;
+
+        // Signal CommandExecutionerThread to run command
+        chSemSignal(&cmdExSem);
+      }
     }
     // Commands to run while holding
     while (state == HOLD) {

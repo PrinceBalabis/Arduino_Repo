@@ -25,11 +25,11 @@ static msg_t CommandExecutioner(void *arg)
       case paintingLightsButton:
         homeNetwork.togglePaintingLights();
         break;
-      case speakerPowerButton:
-        homeNetwork.toggleSpeakerPower();
-        break;
       case computerPowerButton:
         togglePCPowerSwitch();
+        break;
+      case speakerPowerButton:
+        homeNetwork.toggleSpeakerPower();
         break;
     }
   }
