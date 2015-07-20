@@ -20,7 +20,24 @@ static const int cmdToggleLights = 1;
 static const int cmdSetLightsOn = 2;
 static const int cmdSetLightsOff = 3;
 
-//***************************************************************************************************
+//***********************433MHz Controller************************************************************
+// This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
+
+static const uint16_t nodeRF433MHz = 021;
+
+// Ask
+static const int cmdGetPaintingLightsStatus = 1;
+static const int cmdGetSpeakerPowerStatus = 2;
+// Command
+static const int cmdSetPaintingLightsOn = 1;
+static const int cmdSetPaintingLightsOff = 2;
+static const int cmdTogglePaintingLights = 3;
+static const int cmdSetSpeakerPowerOn = 4;
+static const int cmdSetSpeakerPowerOff = 5;
+static const int cmdToggleSpeakerPower = 6;
+
+
+//***********************Other Nodes****************************************************************************
 static const uint16_t nodeHomeControl = 01;
 static const uint16_t nodeBedSwitch = 011;
 static const uint16_t nodeWebServer = 02;

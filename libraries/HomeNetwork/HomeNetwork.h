@@ -22,17 +22,19 @@ public:
 
   // Add new home commands here!
   bool respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData);
-
   bool toggleMainLights();
   bool setMainLightsOn();
   bool setMainLightsOff();
   bool askMainLightsStatus(int32_t *pmsgResponse);
-  // uint8_t togglePaintingLights();
-  // uint8_t setPaintingLightsOn();
-  // uint8_t setPaintingLightsOff();
-  // uint8_t toggleSpeakerPower();
-  // uint8_t setSpeakerPowerOn();
-  // uint8_t setSpeakerPowerOff();
+  bool togglePaintingLights();
+  bool setPaintingLightsOn();
+  bool setPaintingLightsOff();
+  bool askPaintingLightsStatus(int32_t *pmsgResponse);
+  bool toggleSpeakerPower();
+  bool setSpeakerPowerOn();
+  bool setSpeakerPowerOff();
+  bool askSpeakerStatus(int32_t *pmsgResponse);
+
   // uint8_t shutdownAll();
   // uint8_t enterSleepMode();
   // uint8_t leavingApartment();

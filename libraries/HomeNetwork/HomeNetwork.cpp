@@ -170,10 +170,6 @@ bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResp
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool HomeNetwork::toggleMainLights() {
-  return write(nodeMainLights, cmdToggleLights, typeCommand);
-}
-
 bool HomeNetwork::setMainLightsOn() {
   return write(nodeMainLights, cmdSetLightsOn, typeCommand);
 }
@@ -182,39 +178,48 @@ bool HomeNetwork::setMainLightsOff() {
   return write(nodeMainLights, cmdSetLightsOff, typeCommand);
 }
 
+bool HomeNetwork::toggleMainLights() {
+  return write(nodeMainLights, cmdToggleLights, typeCommand);
+}
+
 bool HomeNetwork::askMainLightsStatus(int32_t *pmsgResponse) {
   return writeQuestion(nodeMainLights, cmdGetLightsStatus, pmsgResponse);
 }
 
-// uint8_t HomeNetwork::togglePaintingLights() {
-//   msgNode = centralHomeControl;
-//   msgContent = 11;
-// }
 
-// uint8_t HomeNetwork::setPaintingLightsOn() {
-//   msgNode = centralHomeControl;
-//   msgContent = 9;
-// }
 
-// uint8_t HomeNetwork::setPaintingLightsOff() {
-//   msgNode = centralHomeControl;
-//   msgContent = 10;
-// }
+bool HomeNetwork::setPaintingLightsOn() {
+  return write(nodeRF433MHz, cmdSetPaintingLightsOn, typeCommand);
+}
 
-// uint8_t HomeNetwork::toggleSpeakerPower() {
-//   msgNode = centralHomeControl;
-//   msgContent = 01;
-// }
+bool HomeNetwork::setPaintingLightsOff() {
+  return write(nodeRF433MHz, cmdSetPaintingLightsOff, typeCommand);
+}
 
-// uint8_t HomeNetwork::setSpeakerPowerOn() {
-//   msgNode = centralHomeControl;
-//   msgContent = 02;
-// }
+bool HomeNetwork::togglePaintingLights() {
+  return write(nodeRF433MHz, cmdTogglePaintingLights, typeCommand);
+}
 
-// uint8_t HomeNetwork::setSpeakerPowerOff() {
-//   msgNode = centralHomeControl;
-//   msgContent = 03;
-// }
+bool HomeNetwork::askPaintingLightsStatus(int32_t *pmsgResponse) {
+  return writeQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, pmsgResponse);
+}
+
+
+bool HomeNetwork::setSpeakerPowerOn() {
+  return write(nodeRF433MHz, cmdSetSpeakerPowerOn, typeCommand);
+}
+
+bool HomeNetwork::setSpeakerPowerOff() {
+  return write(nodeRF433MHz, cmdSetSpeakerPowerOff, typeCommand);
+}
+
+bool HomeNetwork::toggleSpeakerPower() {
+  return write(nodeRF433MHz, cmdToggleSpeakerPower, typeCommand);
+}
+
+bool HomeNetwork::askSpeakerStatus(int32_t *pmsgResponse) {
+  return writeQuestion(nodeRF433MHz, cmdGetSpeakerPowerStatus, pmsgResponse);
+}
 
 // uint8_t HomeNetwork::shutdownAll() {
 //   setMainLightsOff();

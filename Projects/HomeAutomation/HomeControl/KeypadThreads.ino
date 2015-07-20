@@ -67,6 +67,7 @@ uint8_t getKeyName(char keycode) {
 }
 
 static msg_t KeypadUpdaterThread(void *arg) {
+  chThdSleepMilliseconds(3000); // Needs to wait for other threads to start or else Arduino might crash
   Serial.println(F("Keypad listener started"));
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
@@ -92,9 +93,9 @@ static msg_t KeypadCommandThread(void *arg)
     // Here are commands to run when a key is released
     if (state == RELEASED )
     {
-      if (pcPowerButton == lastKeyPressed)
+      if (computerPowerButton == lastKeyPressed)
       {
-        executeCommand = pcPowerButton;
+        executeCommand = computerPowerButton;
 
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
@@ -105,18 +106,26 @@ static msg_t KeypadCommandThread(void *arg)
     // Here are commands to run once when pressed
     else if (state == PRESSED )
     {
-      if (lightMainButton == keyName)
+      if (MainLightsButton == keyName)
       {
-        executeCommand = lightMainButton;
-        lastKeyPressed = lightMainButton;
+        executeCommand = MainLightsButton;
+        lastKeyPressed = MainLightsButton;
 
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
-      else if (pcPowerButton == keyName)
+      else if (paintingLightsButton == keyName)
       {
-        executeCommand = pcPowerButton;
-        lastKeyPressed = pcPowerButton;
+        executeCommand = paintingLightsButton;
+        lastKeyPressed = paintingLightsButton;
+
+        // Signal CommandExecutionerThread to run command
+        chSemSignal(&cmdExSem);
+      }
+      else if (computerPowerButton == keyName)
+      {
+        executeCommand = computerPowerButton;
+        lastKeyPressed = computerPowerButton;
 
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
