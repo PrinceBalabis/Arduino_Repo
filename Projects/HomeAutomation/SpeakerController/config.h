@@ -1,7 +1,7 @@
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
-const uint16_t nodeID = nodeRF433MHz;
+const uint16_t nodeID = nodeExampleA;
 
 //Hardware
 const uint8_t homeNetworkCEPin = 8;
@@ -10,18 +10,13 @@ const uint8_t homeNetworkCSNPin = 9;
 //Tweaks
 const uint16_t homeNetworkCheckMessageDelay = 40; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 
-/*
 *  ------------------------------------
- *  433 MHz Switches codes
+ *  IR Codes
  *  ------------------------------------
  */
-const uint8_t paintingLightsCode = 1;
-const uint8_t speakerCode = 2;
+// NEXTBASE IR codes
+const unsigned long speakerIRPower = 0xFFC23D;
+const unsigned long speakerIRMute = 0xFF02FD;
+const unsigned long speakerIRUpVolume = 0xFFF00F;
+const unsigned long speakerIRDownVolume = 0xFF708F;
 
-/*
-*  ------------------------------------
- *  EEPROM Addresses
- *  ------------------------------------
- */
-const uint8_t paintingLightsAddress = 0;
-const uint8_t speakerPowerSwitchAddress = 1;

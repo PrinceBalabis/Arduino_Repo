@@ -20,23 +20,23 @@ static msg_t HNListenThread(void *arg) {
           case cmdTogglePaintingLights:
             togglePaintingLights();
             break;
-          case cmdSetSpeakerPowerOn:
-            setSpeakerPowerOn();
+          case cmdSetSpeakerPowerSwitchOn:
+            setSpeakerPowerSwitchOn();
             break;
-          case cmdSetSpeakerPowerOff:
-            setSpeakerPowerOff();
+          case cmdSetSpeakerPowerSwitchOff:
+            setSpeakerPowerSwitchOff();
             break;
-          case cmdToggleSpeakerPower:
-            toggleSpeakerPower();
+          case cmdToggleSpeakerPowerSwitch:
+            toggleSpeakerPowerSwitch();
             break;
         }
       } else if (msgType == typeAsk) { // If its a question
         switch (msgContent) {
           case cmdGetPaintingLightsStatus:
-            homeNetwork.respondToQuestion(msgSender, cmdGetPaintingLightsStatus);
+            homeNetwork.respondToQuestion(msgSender, getPaintingLightStatus());
             break;
           case cmdGetSpeakerPowerStatus:
-            homeNetwork.respondToQuestion(msgSender, cmdGetSpeakerPowerStatus);
+            homeNetwork.respondToQuestion(msgSender, getSpeakerPowerSwitchStatus());
             break;
         }
       }

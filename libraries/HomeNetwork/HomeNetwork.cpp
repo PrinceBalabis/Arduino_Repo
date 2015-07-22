@@ -204,20 +204,19 @@ bool HomeNetwork::askPaintingLightsStatus(int32_t *pmsgResponse) {
   return writeQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, pmsgResponse);
 }
 
-
-bool HomeNetwork::setSpeakerPowerOn() {
-  return write(nodeRF433MHz, cmdSetSpeakerPowerOn, typeCommand);
+bool HomeNetwork::setSpeakerPowerSwitchOn() {
+  return write(nodeRF433MHz, cmdSetSpeakerPowerSwitchOn, typeCommand);
 }
 
-bool HomeNetwork::setSpeakerPowerOff() {
-  return write(nodeRF433MHz, cmdSetSpeakerPowerOff, typeCommand);
+bool HomeNetwork::setSpeakerPowerSwitchOff() {
+  return write(nodeRF433MHz, cmdSetSpeakerPowerSwitchOff, typeCommand);
 }
 
-bool HomeNetwork::toggleSpeakerPower() {
-  return write(nodeRF433MHz, cmdToggleSpeakerPower, typeCommand);
+bool HomeNetwork::toggleSpeakerPowerSwitch() {
+  return write(nodeRF433MHz, cmdToggleSpeakerPowerSwitch, typeCommand);
 }
 
-bool HomeNetwork::askSpeakerStatus(int32_t *pmsgResponse) {
+bool HomeNetwork::askSpeakerSwitchStatus(int32_t *pmsgResponse) {
   return writeQuestion(nodeRF433MHz, cmdGetSpeakerPowerStatus, pmsgResponse);
 }
 

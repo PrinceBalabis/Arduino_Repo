@@ -32,9 +32,9 @@ static const int cmdGetSpeakerPowerStatus = 2;
 static const int cmdSetPaintingLightsOn = 1;
 static const int cmdSetPaintingLightsOff = 2;
 static const int cmdTogglePaintingLights = 3;
-static const int cmdSetSpeakerPowerOn = 4;
-static const int cmdSetSpeakerPowerOff = 5;
-static const int cmdToggleSpeakerPower = 6;
+static const int cmdSetSpeakerPowerSwitchOn = 4;
+static const int cmdSetSpeakerPowerSwitchOff = 5;
+static const int cmdToggleSpeakerPowerSwitch = 6;
 
 
 //***********************Other Nodes****************************************************************************

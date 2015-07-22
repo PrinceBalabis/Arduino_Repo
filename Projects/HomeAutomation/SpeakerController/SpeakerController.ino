@@ -12,9 +12,8 @@
 #include <RF24.h>
 #include <SPI.h>
 #include <HomeNetwork.h>
-#include <NewRemoteTransmitter.h>
 #include "config.h"
-#include <EEPROM.h>
+#include <CIRremote.h>
 
 //Variables which stores the received values from other nodes
 //Regularly check msgReceived variable if a message is received in thread
@@ -30,8 +29,6 @@ HomeNetwork homeNetwork(radio, network, &homeNetwork);
 void setup() {
   Serial.begin(115200);
 
-  
-
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
 
@@ -45,6 +42,7 @@ void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+  chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 2, ExampleSendThread, NULL);
 
   while (1);
 }

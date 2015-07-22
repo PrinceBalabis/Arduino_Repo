@@ -30,10 +30,10 @@ public:
   bool setPaintingLightsOn();
   bool setPaintingLightsOff();
   bool askPaintingLightsStatus(int32_t *pmsgResponse);
-  bool toggleSpeakerPower();
-  bool setSpeakerPowerOn();
-  bool setSpeakerPowerOff();
-  bool askSpeakerStatus(int32_t *pmsgResponse);
+  bool toggleSpeakerPowerSwitch();
+  bool setSpeakerPowerSwitchOn();
+  bool setSpeakerPowerSwitchOff();
+  bool askSpeakerSwitchStatus(int32_t *pmsgResponse);
 
   // uint8_t shutdownAll();
   // uint8_t enterSleepMode();

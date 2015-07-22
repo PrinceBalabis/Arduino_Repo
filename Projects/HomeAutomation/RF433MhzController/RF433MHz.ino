@@ -1,38 +1,65 @@
 NewRemoteTransmitter transmitter(15303606, 7, 260, 4);
 
-boolean paintingLightsStatus = false;
-boolean speakerPowerStatus = false;
-
 //void setRemoteSwitch(uint8_t unit, boolean state){
 //  transmitter.sendUnit(unit, state);
 //}
 
-void setPaintingLightsOn(){
-  paintingLightsStatus = 1;
-  transmitter.sendUnit(paintingLightsCode, paintingLightsStatus);
+////////////////////////////////////////////////////////////////////////////////
+
+bool getPaintingLightStatus() {
+  return EEPROM.read(paintingLightsAddress);
 }
 
-void setPaintingLightsOff(){
-  paintingLightsStatus = 0;
-  transmitter.sendUnit(paintingLightsCode, paintingLightsStatus);
+void setPaintingLightStatus(bool status) {
+  EEPROM.write(paintingLightsAddress, status);
 }
 
-void togglePaintingLights(){
-  paintingLightsStatus = !paintingLightsStatus;
-  transmitter.sendUnit(paintingLightsCode, paintingLightsStatus);
+void setPaintingLightsOn() {
+  if (!getPaintingLightStatus()) {
+    transmitter.sendUnit(paintingLightsCode, true);
+    setPaintingLightStatus(true);
+  }
 }
 
-void setSpeakerPowerOn(){
-  speakerPowerStatus = 1;
-  transmitter.sendUnit(speakerCode, speakerPowerStatus);
+void setPaintingLightsOff() {
+  if (getPaintingLightStatus()) {
+    transmitter.sendUnit(paintingLightsCode, false);
+    setPaintingLightStatus(false);
+  }
 }
 
-void setSpeakerPowerOff(){
-  speakerPowerStatus = 0;
-  transmitter.sendUnit(speakerCode, speakerPowerStatus);
+void togglePaintingLights() {
+  bool tempStatus = !getPaintingLightStatus();
+  transmitter.sendUnit(paintingLightsCode, tempStatus);
+  setPaintingLightStatus(tempStatus);
 }
 
-void toggleSpeakerPower(){
-  speakerPowerStatus = !speakerPowerStatus;
-  transmitter.sendUnit(speakerCode, speakerPowerStatus);
+////////////////////////////////////////////////////////////////////////////////
+
+bool getSpeakerPowerSwitchStatus() {
+  return EEPROM.read(speakerPowerSwitchAddress);
+}
+
+bool setSpeakerPowerSwitchStatus(bool status) {
+  EEPROM.write(speakerPowerSwitchAddress, status);
+}
+
+void setSpeakerPowerSwitchOn() {
+  if (!getSpeakerPowerSwitchStatus()) {
+    transmitter.sendUnit(speakerCode, true);
+    setSpeakerPowerSwitchStatus(true);
+  }
+}
+
+void setSpeakerPowerSwitchOff() {
+  if (getSpeakerPowerSwitchStatus()) {
+    transmitter.sendUnit(speakerCode, false);
+    setSpeakerPowerSwitchStatus(false);
+  }
+}
+
+void toggleSpeakerPowerSwitch() {
+  bool speakerPowerSwitchStatus = !getSpeakerPowerSwitchStatus();
+  transmitter.sendUnit(speakerCode, speakerPowerSwitchStatus);
+  setSpeakerPowerSwitchStatus(speakerPowerSwitchStatus);
 }
