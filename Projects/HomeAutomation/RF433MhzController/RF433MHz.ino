@@ -1,4 +1,4 @@
-NewRemoteTransmitter transmitter(15303606, 7, 260, 4);
+NewRemoteTransmitter transmitter(15303606, 7, 260, 2);
 
 //void setRemoteSwitch(uint8_t unit, boolean state){
 //  transmitter.sendUnit(unit, state);
