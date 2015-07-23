@@ -29,16 +29,16 @@ const uint16_t homeNetworkCheckMessageDelay = 40; // How often to check for a ne
  *  ------------------------------------
  */
 // NextBase
-const uint8_t speakerPowerButton = 4;
+const uint8_t speakerPowerButton = 7;
 const uint8_t speakerUpVolButton = 3;
 const uint8_t speakerDownVolButton = 2;
 const uint8_t speakerMuteButton = 1;
-const uint8_t speakerModeButton = 5;
+const uint8_t speakerModeButton = 4;
 // Lights
-const uint8_t MainLightsButton = 8;
-const uint8_t paintingLightsButton = 7;
+const uint8_t MainLightsButton = 6;
+const uint8_t paintingLightsButton = 5;
 // Computer swtich
-const uint8_t computerPowerButton = 12;
+const uint8_t computerPowerButton = 8;
 /*
 
 /*

@@ -24,7 +24,7 @@ void sendSpeakerPowerOnCommand(void) {
   if (!getSpeakerPowerSwitchStatus())
   {
     homeNetwork.setSpeakerPowerSwitchOn();
-    chThdSleepMilliseconds(500); // Wait for 433 MHz controller to turn on speaker power switch
+    chThdSleepMilliseconds(1000); // Wait for 433 MHz controller to turn on speaker power switch
     sendSpeakerCommand(speakerIRPower); // Send IR power command
     Serial.println(F("Turning on speaker"));
   }
