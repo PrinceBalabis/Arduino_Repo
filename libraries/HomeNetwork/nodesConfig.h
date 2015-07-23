@@ -71,9 +71,7 @@ static const int cmdSetSpeakerModeLineIn = 11;
 static const uint16_t nodeWebServer = 02;
 static const uint16_t nodeRaspberryPi = 03;
 static const uint16_t nodeVoiceRecog = 04;
-
-//Default node
-static const uint16_t nodeDefaultID = 31;
+static const uint16_t nodePC = 02;
 
 //Testing nodes
 //***********************homeNetworkExampleServer****************************************************

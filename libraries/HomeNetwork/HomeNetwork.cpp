@@ -68,7 +68,6 @@ bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
 
-
   // Send message to server, keep trying untill server confirms receiver gets the message
   bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
   if (msgSent) {
