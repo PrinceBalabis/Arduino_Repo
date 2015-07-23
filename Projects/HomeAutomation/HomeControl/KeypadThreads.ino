@@ -67,7 +67,6 @@ uint8_t getKeyName(char keycode) {
 }
 
 static msg_t KeypadUpdaterThread(void *arg) {
-  chThdSleepMilliseconds(3000); // Needs to wait for other threads to start or else Arduino might crash
   Serial.println(F("Keypad listener started"));
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
@@ -83,8 +82,6 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
 static msg_t KeypadCommandThread(void *arg)
 {
-  chThdSleepMilliseconds(2500); // Needs to wait for other threads to start or else Arduino might crash
-
   uint8_t lastKeyPressed = 0;
 
   while (1) {

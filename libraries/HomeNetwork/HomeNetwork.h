@@ -26,6 +26,9 @@ public:
   bool setMainLightsOn();
   bool setMainLightsOff();
   bool askMainLightsStatus(int32_t *pmsgResponse);
+
+  bool setPCOn();
+
   bool togglePaintingLights();
   bool setPaintingLightsOn();
   bool setPaintingLightsOff();
@@ -34,6 +37,7 @@ public:
   bool setSpeakerPowerSwitchOn();
   bool setSpeakerPowerSwitchOff();
   bool askSpeakerSwitchStatus(int32_t *pmsgResponse);
+
   bool toggleSpeakerPower();
   bool setSpeakerPowerOn();
   bool setSpeakerPowerOff();

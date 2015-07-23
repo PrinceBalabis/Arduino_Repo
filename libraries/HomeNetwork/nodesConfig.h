@@ -26,6 +26,9 @@ static const int cmdSetLightsOff = 3;
 //First child of Main Room Lights node
 static const uint16_t nodeHomeControl = 01;
 
+// Command(message type: typeCommand)
+// Starts from 17 because buttons use 1-16
+static const int cmdSetPCOn = 17;
 
 //***********************433MHz Controller************************************************************
 //First child of Home Control

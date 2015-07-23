@@ -191,6 +191,10 @@ bool HomeNetwork::askMainLightsStatus(int32_t *pmsgResponse) {
 }
 
 
+bool HomeNetwork::setPCOn() {
+  return write(nodeHomeControl, cmdSetPCOn, typeCommand);
+}
+
 
 bool HomeNetwork::setPaintingLightsOn() {
   return write(nodeRF433MHz, cmdSetPaintingLightsOn, typeCommand);
@@ -207,8 +211,6 @@ bool HomeNetwork::togglePaintingLights() {
 bool HomeNetwork::askPaintingLightsStatus(int32_t *pmsgResponse) {
   return writeQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, pmsgResponse);
 }
-
-
 
 bool HomeNetwork::setSpeakerPowerSwitchOn() {
   return write(nodeRF433MHz, cmdSetSpeakerPowerSwitchOn, typeCommand);

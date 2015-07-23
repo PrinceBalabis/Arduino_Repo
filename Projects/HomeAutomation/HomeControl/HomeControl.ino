@@ -41,17 +41,24 @@ void setup() {
   while (1);
 }
 
+static WORKING_AREA(hNListenThread, 64);
 static WORKING_AREA(keypadCommandThread, 64);
 static WORKING_AREA(keypadUpdaterThread, 64);
 static WORKING_AREA(commandExecutioner, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
+  chThdSleepMilliseconds(1000);
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
+  chThdSleepMilliseconds(1000);
+  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+  chThdSleepMilliseconds(1000);
 
   // Keypad threads
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);
+  chThdSleepMilliseconds(1000);
   chThdCreateStatic(keypadCommandThread, sizeof(keypadCommandThread), NORMALPRIO + 1, KeypadCommandThread, NULL);
+  chThdSleepMilliseconds(1000);
 
   // CommandExecutioner thread which executes commands
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);

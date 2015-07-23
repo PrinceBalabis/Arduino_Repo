@@ -10,7 +10,6 @@ SEMAPHORE_DECL(cmdExSem, 0);
 
 static msg_t CommandExecutioner(void *arg)
 {
-  chThdSleepMilliseconds(2000); // Needs to wait for other threads to start or else Arduino might crash
   Serial.println(F("Started CommandExecutioner thread"));
 
   while (1)
@@ -19,6 +18,9 @@ static msg_t CommandExecutioner(void *arg)
     chSemWait(&cmdExSem);
 
     switch (executeCommand) {
+      case cmdSetPCOn:
+        setPCPowerSwitchOnMomentarily();
+        break;
       case MainLightsButton:
         homeNetwork.toggleMainLights();
         break;
