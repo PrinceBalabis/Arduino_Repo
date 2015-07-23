@@ -7,19 +7,28 @@ static msg_t ButtonThread(void *arg) {
   bool lastButtonStatus = 0;
 
   chThdSleepMilliseconds(1000);
+  Serial.println("Started BedSwitch");
 
   while (1) {
     buttonStatus = digitalRead(buttonPin);
-    
+
     if (buttonStatus && !lastButtonStatus) {
-      homeNetwork.toggleMainLights();
+
+      Serial.println("Pressed button..");
+      if (homeNetwork.askApartmentStatus()) {
+        homeNetwork.shutdownApartment();
+        Serial.println("Shut down apartment");
+      } else {
+        homeNetwork.startupApartment();
+        Serial.println("Started up apartment");
+      }
       lastButtonStatus = HIGH;
       chThdSleepMilliseconds(200);
     } else if (!buttonStatus) {
       lastButtonStatus = LOW;
     }
-    
-    chThdSleepMilliseconds(1);
+
+    chThdSleepMilliseconds(100);
   }
   return 0;
 }

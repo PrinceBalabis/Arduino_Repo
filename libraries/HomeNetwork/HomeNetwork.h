@@ -35,6 +35,8 @@ public:
   bool setSpeakerPowerSwitchOff();
   bool askSpeakerSwitchStatus(int32_t *pmsgResponse);
   bool toggleSpeakerPower();
+  bool setSpeakerPowerOn();
+  bool setSpeakerPowerOff();
   bool setSpeakerVolumeUp();
   bool setSpeakerVolumeDown();
   bool toggleSpeakerMute();
@@ -42,11 +44,9 @@ public:
   bool setSpeakerModePC();
   bool setSpeakerModeLineIn();
 
-  // uint8_t shutdownAll();
-  // uint8_t enterSleepMode();
-  // uint8_t leavingApartment();
-  // uint8_t exitSleepMode();
-  // uint8_t setPartyMode();
+  bool askApartmentStatus();
+  bool shutdownApartment();
+  bool startupApartment();
 
   // Example functions
   bool askExampleDataA(int32_t *pmsgResponse);

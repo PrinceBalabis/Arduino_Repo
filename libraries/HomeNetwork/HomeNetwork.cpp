@@ -208,6 +208,8 @@ bool HomeNetwork::askPaintingLightsStatus(int32_t *pmsgResponse) {
   return writeQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, pmsgResponse);
 }
 
+
+
 bool HomeNetwork::setSpeakerPowerSwitchOn() {
   return write(nodeRF433MHz, cmdSetSpeakerPowerSwitchOn, typeCommand);
 }
@@ -226,6 +228,14 @@ bool HomeNetwork::askSpeakerSwitchStatus(int32_t *pmsgResponse) {
 
 bool HomeNetwork::toggleSpeakerPower(){
   return write(nodeSpeaker, cmdToggleSpeakerPower, typeCommand);
+}
+
+bool HomeNetwork::setSpeakerPowerOn(){
+  return write(nodeSpeaker, cmdSetSpeakerPowerOn, typeCommand);
+}
+
+bool HomeNetwork::setSpeakerPowerOff(){
+  return write(nodeSpeaker, cmdSetSpeakerPowerOff, typeCommand);
 }
 
 bool HomeNetwork::setSpeakerVolumeUp(){
@@ -252,24 +262,33 @@ bool HomeNetwork::setSpeakerModeLineIn(){
   return write(nodeSpeaker, cmdSetSpeakerModeLineIn, typeCommand);
 }
 
-// uint8_t HomeNetwork::shutdownAll() {
-//   setMainLightsOff();
-//   setPaintingLightsOff();
-//   setSpeakerPowerOff();
-// }
+// Returns true if a source is on, returns false if all is off
+bool HomeNetwork::askApartmentStatus() {
+  // If speaker or main lights or painting lights are on, return true
+  int32_t mainLightStatus;
+  askMainLightsStatus(&mainLightStatus);
+  int32_t paintingLightsStatus;
+  askPaintingLightsStatus(&paintingLightsStatus);
+  int32_t speakerPowerSwitchStatus;
+  askSpeakerSwitchStatus(&speakerPowerSwitchStatus);
 
-// uint8_t HomeNetwork::enterSleepMode() {
-//   shutdownAll();
-// }
+  if(mainLightStatus || paintingLightsStatus || speakerPowerSwitchStatus){
+    return true;
+  } else {
+    return false;
+  }
+}
 
-// uint8_t HomeNetwork::leavingApartment() {
-//   shutdownAll();
-// }
+bool HomeNetwork::shutdownApartment() {
+  setMainLightsOff();
+  setPaintingLightsOff();
+  setSpeakerPowerOff();
+}
 
-// uint8_t HomeNetwork::exitSleepMode() {
-//   setMainLightsOn();
-//   setSpeakerPowerOn();
-// }
+bool HomeNetwork::startupApartment() {
+  setMainLightsOn();
+  setSpeakerPowerOn();
+}
 
 // uint8_t HomeNetwork::setPartyMode() {
 //   setPaintingLightsOn();

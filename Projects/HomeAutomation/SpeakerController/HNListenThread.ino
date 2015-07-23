@@ -17,6 +17,16 @@ static msg_t HNListenThread(void *arg) {
             // Signal CommandExecutionerThread to run command
             chSemSignal(&cmdExSem);
             break;
+          case cmdSetSpeakerPowerOn:
+            executeCommand = cmdSetSpeakerPowerOn;
+            // Signal CommandExecutionerThread to run command
+            chSemSignal(&cmdExSem);
+            break;
+          case cmdSetSpeakerPowerOff:
+            executeCommand = cmdSetSpeakerPowerOff;
+            // Signal CommandExecutionerThread to run command
+            chSemSignal(&cmdExSem);
+            break;
           case cmdToggleSpeakerMute:
             executeCommand = cmdToggleSpeakerMute;
             // Signal CommandExecutionerThread to run command
