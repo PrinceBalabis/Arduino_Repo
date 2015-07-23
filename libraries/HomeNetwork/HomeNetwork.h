@@ -35,6 +35,12 @@ public:
   bool setSpeakerPowerSwitchOff();
   bool askSpeakerSwitchStatus(int32_t *pmsgResponse);
   bool toggleSpeakerPower();
+  bool setSpeakerVolumeUp();
+  bool setSpeakerVolumeDown();
+  bool toggleSpeakerMute();
+  bool toggleSpeakerMode();
+  bool setSpeakerModePC();
+  bool setSpeakerModeLineIn();
 
   // uint8_t shutdownAll();
   // uint8_t enterSleepMode();

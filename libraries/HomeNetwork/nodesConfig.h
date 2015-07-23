@@ -48,14 +48,21 @@ static const uint16_t nodeBedSwitch = 021;
 
 
 //***********************Speaker Controller************************************************************
-//First child of 433MHz Controller
+//Third child of Home Control
 static const uint16_t nodeSpeaker = 031;
 
 // Command(message type: typeCommand)
 static const int cmdToggleSpeakerPower = 1;
 static const int cmdSetSpeakerPowerOn = 2;
 static const int cmdSetSpeakerPowerOff = 3;
-
+static const int cmdSetSpeakerVolumeUp = 4;
+static const int cmdSetSpeakerVolumeDown = 5;
+static const int cmdToggleSpeakerMute = 6;
+static const int cmdSetSpeakerMuteOn = 7;
+static const int cmdSetSpeakerMuteOff = 8;
+static const int cmdToggleSpeakerMode = 9;
+static const int cmdSetSpeakerModePC = 10;
+static const int cmdSetSpeakerModeLineIn = 11;
 
 //***********************Other Nodes****************************************************************************
 static const uint16_t nodeWebServer = 02;

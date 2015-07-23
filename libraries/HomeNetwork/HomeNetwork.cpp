@@ -228,6 +228,30 @@ bool HomeNetwork::toggleSpeakerPower(){
   return write(nodeSpeaker, cmdToggleSpeakerPower, typeCommand);
 }
 
+bool HomeNetwork::setSpeakerVolumeUp(){
+  return write(nodeSpeaker, cmdSetSpeakerVolumeUp, typeCommand);
+}
+
+bool HomeNetwork::setSpeakerVolumeDown(){
+  return write(nodeSpeaker, cmdSetSpeakerVolumeDown, typeCommand);
+}
+
+bool HomeNetwork::toggleSpeakerMute(){
+  return write(nodeSpeaker, cmdToggleSpeakerMute, typeCommand);
+}
+
+bool HomeNetwork::toggleSpeakerMode(){
+  return write(nodeSpeaker, cmdToggleSpeakerMode, typeCommand);
+}
+
+bool HomeNetwork::setSpeakerModePC(){
+  return write(nodeSpeaker, cmdSetSpeakerModePC, typeCommand);
+}
+
+bool HomeNetwork::setSpeakerModeLineIn(){
+  return write(nodeSpeaker, cmdSetSpeakerModeLineIn, typeCommand);
+}
+
 // uint8_t HomeNetwork::shutdownAll() {
 //   setMainLightsOff();
 //   setPaintingLightsOff();

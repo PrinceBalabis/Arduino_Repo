@@ -19,29 +19,32 @@ static msg_t CommandExecutioner(void *arg)
     chSemWait(&cmdExSem);
 
     switch (executeCommand) {
-      case MainLightsButton:
-        homeNetwork.toggleMainLights();
+      case cmdToggleSpeakerPower:
+        toggleSpeakerPower();
         break;
-      case paintingLightsButton:
-        homeNetwork.togglePaintingLights();
+      case cmdSetSpeakerPowerOn:
+        sendSpeakerPowerOnCommand();
         break;
-      case computerPowerButton:
-        togglePCPowerSwitch();
+      case cmdSetSpeakerPowerOff:
+        sendSpeakerPowerOffCommand();
         break;
-      case speakerPowerButton:
-        homeNetwork.toggleSpeakerPower();
+      case cmdToggleSpeakerMute:
+        toggleSpeakerMuteCommand();
         break;
-      case speakerUpVolButton:
-        homeNetwork.setSpeakerVolumeUp();
+      case cmdSetSpeakerMuteOn:
+        sendSpeakerMuteOnCommand();
         break;
-      case speakerDownVolButton:
-        homeNetwork.setSpeakerVolumeDown();
+      case cmdSetSpeakerMuteOff:
+        sendSpeakerMuteOffCommand();
         break;
-      case speakerMuteButton:
-        homeNetwork.toggleSpeakerMute();
+      case cmdSetSpeakerVolumeUp:
+        sendSpeakerUpVolCommand();
         break;
-      case speakerModeButton:
-        homeNetwork.toggleSpeakerMode();
+      case cmdSetSpeakerVolumeDown:
+        sendSpeakerDownVolCommand();
+        break;
+      case cmdToggleSpeakerMode:
+        toggleSpeakerModeCommand();
         break;
     }
   }

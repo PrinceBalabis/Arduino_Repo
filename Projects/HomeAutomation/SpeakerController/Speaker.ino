@@ -24,8 +24,8 @@ void sendSpeakerPowerOnCommand(void) {
   if (!getSpeakerPowerSwitchStatus())
   {
     homeNetwork.setSpeakerPowerSwitchOn();
-    chThdSleepMilliseconds(1000); // Wait for 433 MHz controller to turn on speaker power switch
-    sendSpeakerIRPowerCommand(); // Send IR power command
+    chThdSleepMilliseconds(500); // Wait for 433 MHz controller to turn on speaker power switch
+    sendSpeakerCommand(speakerIRPower); // Send IR power command
     Serial.println(F("Turning on speaker"));
   }
 }
@@ -39,43 +39,18 @@ void sendSpeakerPowerOffCommand(void) {
   }
 }
 
-void sendSpeakerIRPowerCommand(void)
+void sendSpeakerUpVolCommand(void)
 {
-  sendSpeakerCommand(speakerIRPower);
-}
-
-void sendSpeakerUpVolCommand(unsigned long previousTimer)
-{
-  unsigned long currentTimer = millis();
-  if ((currentTimer - previousTimer) >= 60) {
+  for (int i = 0; i < 2 ; i++)
     sendSpeakerCommand(speakerIRUpVolume);
-    previousTimer = currentTimer; // Save last time volume increase
-    Serial.println(F("Incremential increase of volume level"));
-  }
+  Serial.println(F("Increased volume level"));
 }
 
-void sendSpeakerUpVolCommandOnce(void)
+void sendSpeakerDownVolCommand(void)
 {
-  for (int i = 0; i < 15 ; i++)
-    sendSpeakerCommand(speakerIRUpVolume);
-  Serial.println(F("Increased volume level a bunch"));
-}
-
-void sendSpeakerDownVolCommand(unsigned long previousTimer)
-{
-  unsigned long currentTimer = millis();
-  if ((currentTimer - previousTimer) >= 60) {
+  for (int i = 0; i < 2 ; i++)
     sendSpeakerCommand(speakerIRDownVolume);
-    previousTimer = currentTimer; // Save last time volume decrease
-    Serial.println(F("Incremential drop of volume level"));
-  }
-}
-
-void sendSpeakerDownVolCommandOnce(void)
-{
-  for (int i = 0; i < 15 ; i++)
-    sendSpeakerCommand(speakerIRDownVolume);
-  Serial.println(F("Dropped volume level a bunch"));
+  Serial.println(F("Dropped volume level"));
 }
 
 void toggleSpeakerMuteCommand(void)
@@ -104,6 +79,53 @@ void sendSpeakerMuteOffCommand(void)
     speakerMuteStatus = 0;
     Serial.println(F("Sending mute command to speaker!"));
   }
+}
+
+void toggleSpeakerModeCommand(void)
+{
+  if (getSpeakerPowerSwitchStatus()) {
+    Serial.print(F("Toggling mode: "));
+    if (!getSpeakerModeStatus()) { // If its Line-In mode, toggle to PC
+      setSpeakerModePCCommand();
+    } else { // If its PC mode, toggle to Line-In
+      setSpeakerModeLineInCommand();
+    }
+  }
+}
+
+void setSpeakerModePCCommand(void)
+{
+  if (getSpeakerPowerSwitchStatus() && !getSpeakerModeStatus()) {
+    sendSpeakerCommand(speakerIRMode);
+    chThdSleepMilliseconds(200);
+    sendSpeakerCommand(speakerIRRight);
+    chThdSleepMilliseconds(200);
+    sendSpeakerCommand(speakerIROK);
+    setSpeakerModeStatus(1);
+    Serial.println(F("Set to PC Mode"));
+  }
+}
+
+void setSpeakerModeLineInCommand(void)
+{
+  if (getSpeakerPowerSwitchStatus() && getSpeakerModeStatus()) {
+    sendSpeakerCommand(speakerIRMode);
+    chThdSleepMilliseconds(200);
+    sendSpeakerCommand(speakerIRLeft);
+    chThdSleepMilliseconds(200);
+    sendSpeakerCommand(speakerIROK);
+    setSpeakerModeStatus(0);
+    Serial.println(F("Set to Line In Mode"));
+  }
+}
+
+// Will return 0 if Line in, 1 if PC
+bool getSpeakerModeStatus() {
+  return EEPROM.read(speakerModeAddress);
+}
+
+void setSpeakerModeStatus(bool status) {
+  EEPROM.write(speakerModeAddress, status);
 }
 
 

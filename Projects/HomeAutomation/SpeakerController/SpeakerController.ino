@@ -30,11 +30,15 @@ void setup() {
 }
 
 static WORKING_AREA(hNListenThread, 64);
+static WORKING_AREA(commandExecutioner, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+
+  // CommandExecutioner thread which executes commands
+  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
 
   while (1);
 }

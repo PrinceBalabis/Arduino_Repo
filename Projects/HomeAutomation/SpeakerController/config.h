@@ -8,7 +8,7 @@ const uint8_t homeNetworkCEPin = 8;
 const uint8_t homeNetworkCSNPin = 9;
 
 //Tweaks
-const uint16_t homeNetworkCheckMessageDelay = 40; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
+const uint16_t homeNetworkCheckMessageDelay = 100; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 
 /*  ------------------------------------
  *  IR Codes
@@ -19,5 +19,16 @@ const unsigned long speakerIRPower = 0xFFC23D;
 const unsigned long speakerIRMute = 0xFF02FD;
 const unsigned long speakerIRUpVolume = 0xFFF00F;
 const unsigned long speakerIRDownVolume = 0xFF708F;
+const unsigned long speakerIRMode = 0xFF40BF;
+const unsigned long speakerIRLeft = 0xFF22DD;
+const unsigned long speakerIRRight = 0xFF32CD;
+const unsigned long speakerIROK = 0xFF926D;
 
-//940 nm IR LED with a resistor to pin 3
+//Connect 940 nm IR LED with a resistor to pin 3
+
+/*
+*  ------------------------------------
+ *  EEPROM Addresses
+ *  ------------------------------------
+ */
+const uint8_t speakerModeAddress = 0;

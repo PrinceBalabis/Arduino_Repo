@@ -83,13 +83,18 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
 static msg_t KeypadCommandThread(void *arg)
 {
-chThdSleepMilliseconds(2500); // Needs to wait for other threads to start or else Arduino might crash
+  chThdSleepMilliseconds(2500); // Needs to wait for other threads to start or else Arduino might crash
 
   uint8_t lastKeyPressed = 0;
 
   while (1) {
     // Wait for signal from KeypadEvent, it sends a signal whenever keypad status changes
     chSemWait(&cmdKeypadSem);
+
+    // Store last key pressed
+    if (keyName != 0) {
+      lastKeyPressed = keyName;
+    }
 
     // Here are commands to run when a key is released
     if (state == RELEASED )
@@ -110,40 +115,57 @@ chThdSleepMilliseconds(2500); // Needs to wait for other threads to start or els
       if (MainLightsButton == keyName)
       {
         executeCommand = MainLightsButton;
-        lastKeyPressed = MainLightsButton;
-
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (paintingLightsButton == keyName)
       {
         executeCommand = paintingLightsButton;
-        lastKeyPressed = paintingLightsButton;
-
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (computerPowerButton == keyName)
       {
         executeCommand = computerPowerButton;
-        lastKeyPressed = computerPowerButton;
-
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (speakerPowerButton == keyName)
       {
         executeCommand = speakerPowerButton;
-        lastKeyPressed = speakerPowerButton;
-        
+        // Signal CommandExecutionerThread to run command
+        chSemSignal(&cmdExSem);
+      }
+      else if (speakerMuteButton == keyName)
+      {
+        executeCommand = speakerMuteButton;
+        // Signal CommandExecutionerThread to run command
+        chSemSignal(&cmdExSem);
+      }
+      else if (speakerModeButton == keyName)
+      {
+        executeCommand = speakerModeButton;
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
     }
     // Commands to run while holding
     while (state == HOLD) {
+      if (speakerUpVolButton == lastKeyPressed)
+      {
+        executeCommand = speakerUpVolButton;
 
-      chThdSleepMilliseconds(5);
+        // Signal CommandExecutionerThread to run command
+        chSemSignal(&cmdExSem);
+      }
+      else if (speakerDownVolButton == lastKeyPressed)
+      {
+        executeCommand = speakerDownVolButton;
+
+        // Signal CommandExecutionerThread to run command
+        chSemSignal(&cmdExSem);
+      }
+      chThdSleepMilliseconds(150);
     }
   }
   return 0;
