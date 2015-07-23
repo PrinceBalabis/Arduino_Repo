@@ -1,7 +1,7 @@
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
-const uint16_t nodeID = nodeExampleA;
+const uint16_t nodeID = nodeSpeaker;
 
 //Hardware
 const uint8_t homeNetworkCEPin = 8;
@@ -10,7 +10,7 @@ const uint8_t homeNetworkCSNPin = 9;
 //Tweaks
 const uint16_t homeNetworkCheckMessageDelay = 40; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 
-*  ------------------------------------
+/*  ------------------------------------
  *  IR Codes
  *  ------------------------------------
  */
@@ -20,3 +20,4 @@ const unsigned long speakerIRMute = 0xFF02FD;
 const unsigned long speakerIRUpVolume = 0xFFF00F;
 const unsigned long speakerIRDownVolume = 0xFF708F;
 
+//940 nm IR LED with a resistor to pin 3

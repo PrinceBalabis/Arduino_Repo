@@ -156,6 +156,10 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
   return msgSender;
 }
 
+bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
+  return write(_msgSender, _ResponseData, typeResponse);
+}
+
 bool HomeNetwork::askExampleDataA(int32_t *pmsgResponse) {
   return writeQuestion(nodeExampleA, cmdExampleAskCommand, pmsgResponse);
 }
@@ -164,9 +168,9 @@ bool HomeNetwork::askExampleDataB(int32_t *pmsgResponse) {
   return writeQuestion(nodeExampleB, cmdExampleAskCommand, pmsgResponse);
 }
 
-bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData) {
-  return write(_msgSender, _cmdExampleResponceData, typeResponse);
-}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,6 +222,10 @@ bool HomeNetwork::toggleSpeakerPowerSwitch() {
 
 bool HomeNetwork::askSpeakerSwitchStatus(int32_t *pmsgResponse) {
   return writeQuestion(nodeRF433MHz, cmdGetSpeakerPowerStatus, pmsgResponse);
+}
+
+bool HomeNetwork::toggleSpeakerPower(){
+  return write(nodeSpeaker, cmdToggleSpeakerPower, typeCommand);
 }
 
 // uint8_t HomeNetwork::shutdownAll() {

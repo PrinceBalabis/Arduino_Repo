@@ -19,9 +19,9 @@ public:
   HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
   void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
   void autoUpdate();
+  bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
   // Add new home commands here!
-  bool respondToQuestion(uint16_t _msgSender, int32_t _cmdExampleResponceData);
   bool toggleMainLights();
   bool setMainLightsOn();
   bool setMainLightsOff();
@@ -34,6 +34,7 @@ public:
   bool setSpeakerPowerSwitchOn();
   bool setSpeakerPowerSwitchOff();
   bool askSpeakerSwitchStatus(int32_t *pmsgResponse);
+  bool toggleSpeakerPower();
 
   // uint8_t shutdownAll();
   // uint8_t enterSleepMode();

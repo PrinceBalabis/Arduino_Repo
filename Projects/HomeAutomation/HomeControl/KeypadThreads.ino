@@ -83,6 +83,7 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
 static msg_t KeypadCommandThread(void *arg)
 {
+chThdSleepMilliseconds(2500); // Needs to wait for other threads to start or else Arduino might crash
 
   uint8_t lastKeyPressed = 0;
 
@@ -134,7 +135,7 @@ static msg_t KeypadCommandThread(void *arg)
       {
         executeCommand = speakerPowerButton;
         lastKeyPressed = speakerPowerButton;
-
+        
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }

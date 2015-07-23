@@ -39,23 +39,6 @@ const uint8_t paintingLightsButton = 7;
 // Computer swtich
 const uint8_t computerPowerButton = 12;
 /*
-*  ------------------------------------
- *  IR Codes
- *  ------------------------------------
- */
-// NEXTBASE IR codes
-const unsigned long nBIRPower = 0xFFC23D;
-const unsigned long nBIRMute = 0xFF02FD;
-const unsigned long nBIRUpVolume = 0xFFF00F;
-const unsigned long nBIRDownVolume = 0xFF708F;
-
-/*
-*  ------------------------------------
- *  433 MHz Switches codes
- *  ------------------------------------
- */
-const uint8_t speakerUnit = 2;
-const uint8_t lightDiningTable = 1;
 
 /*
 *  ------------------------------------
@@ -63,10 +46,6 @@ const uint8_t lightDiningTable = 1;
  *  ------------------------------------
  */
 
-//940 nm IR LED with a resistor to pin 3
-
 // PC Power pin pin
-const int pcPowerPin = 7;
+const int pcPowerPin = 6;
 
-// 433 MHz switch transmitter pin
-const int switch433TransmitterPin = 6;

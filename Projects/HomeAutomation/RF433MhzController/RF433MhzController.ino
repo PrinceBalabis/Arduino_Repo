@@ -30,8 +30,6 @@ HomeNetwork homeNetwork(radio, network, &homeNetwork);
 void setup() {
   Serial.begin(115200);
 
-  
-
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
 

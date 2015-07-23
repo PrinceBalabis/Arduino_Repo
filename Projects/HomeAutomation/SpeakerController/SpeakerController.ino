@@ -1,11 +1,4 @@
-/**
- *  Prince Home Network IOT Example Client
- *  Start Server first before starting the Client!!!!!
- *  This library needs following peripherals:
- *    - SPI
- *    - ChibiOS
- *
- **/
+//940 nm IR LED with a 39-100ohm resistor to pin 3
 
 #include <ChibiOS_AVR.h>
 #include <RF24Network.h>
@@ -14,6 +7,7 @@
 #include <HomeNetwork.h>
 #include "config.h"
 #include <CIRremote.h>
+#include <EEPROM.h>
 
 //Variables which stores the received values from other nodes
 //Regularly check msgReceived variable if a message is received in thread
@@ -36,13 +30,11 @@ void setup() {
 }
 
 static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(exampleSendThread, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
-  chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 2, ExampleSendThread, NULL);
 
   while (1);
 }

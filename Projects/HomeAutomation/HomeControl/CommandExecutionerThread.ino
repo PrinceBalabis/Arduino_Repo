@@ -33,4 +33,5 @@ static msg_t CommandExecutioner(void *arg)
         break;
     }
   }
+  return 0;
 }

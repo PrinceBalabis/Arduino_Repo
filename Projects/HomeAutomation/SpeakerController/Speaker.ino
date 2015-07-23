@@ -1,108 +1,113 @@
 // Instance of the IRsend class
 IRsend irsend;
-boolean speakerMuteState = 0;
-boolean speakerState = 0;
+boolean speakerMuteStatus = 0;
 
-void toggleSpeakerPower(void){
-  if(speakerState)
+bool getSpeakerPowerSwitchStatus() {
+  int32_t speakerPowerSwitchStatus = 0;
+  homeNetwork.askSpeakerSwitchStatus(&speakerPowerSwitchStatus);
+  return speakerPowerSwitchStatus;
+}
+
+void toggleSpeakerPower(void) {
+  Serial.print(F("Toggling speaker power: "));
+  if (getSpeakerPowerSwitchStatus())
   {
     sendSpeakerPowerOffCommand();
   }
   else
   {
     sendSpeakerPowerOnCommand();
-
   }
 }
 
-void sendSpeakerPowerOnCommand(void){
-  if(!speakerState)
+void sendSpeakerPowerOnCommand(void) {
+  if (!getSpeakerPowerSwitchStatus())
   {
-    setRemoteSwitch(2, true); // Toggle 433 MHz switch for speaker on
-    //chThdSleepMilliseconds(50); // Wait for 433 MHz switch to turn on speaker
+    homeNetwork.setSpeakerPowerSwitchOn();
+    chThdSleepMilliseconds(1000); // Wait for 433 MHz controller to turn on speaker power switch
     sendSpeakerIRPowerCommand(); // Send IR power command
-    speakerState = 1;
     Serial.println(F("Turning on speaker"));
   }
 }
 
-void sendSpeakerPowerOffCommand(void){
-  if(speakerState)
+void sendSpeakerPowerOffCommand(void) {
+  if (getSpeakerPowerSwitchStatus())
   {
-    setRemoteSwitch(2, false);
-    speakerState = 0;
-    speakerMuteState = 0;
+    homeNetwork.setSpeakerPowerSwitchOff();
+    speakerMuteStatus = 0;
     Serial.println(F("Turning off speaker"));
   }
 }
 
-void sendSpeakerIRPowerCommand(void) 
+void sendSpeakerIRPowerCommand(void)
 {
   sendSpeakerCommand(speakerIRPower);
 }
 
-void sendSpeakerUpVolCommand(unsigned long previousTimer) 
+void sendSpeakerUpVolCommand(unsigned long previousTimer)
 {
   unsigned long currentTimer = millis();
   if ((currentTimer - previousTimer) >= 60) {
     sendSpeakerCommand(speakerIRUpVolume);
     previousTimer = currentTimer; // Save last time volume increase
-    Serial.println(F("Sent nBIRUpVolume command"));
+    Serial.println(F("Incremential increase of volume level"));
   }
 }
 
-void sendSpeakerUpVolCommandOnce(void) 
+void sendSpeakerUpVolCommandOnce(void)
 {
-  for(int i = 0; i < 15 ; i++)
+  for (int i = 0; i < 15 ; i++)
     sendSpeakerCommand(speakerIRUpVolume);
-  Serial.println(F("Sent nBIRUpVolume command"));
+  Serial.println(F("Increased volume level a bunch"));
 }
 
-void sendSpeakerDownVolCommand(unsigned long previousTimer) 
+void sendSpeakerDownVolCommand(unsigned long previousTimer)
 {
   unsigned long currentTimer = millis();
   if ((currentTimer - previousTimer) >= 60) {
     sendSpeakerCommand(speakerIRDownVolume);
     previousTimer = currentTimer; // Save last time volume decrease
-    Serial.println(F("Sent nBIRDownVolume command once"));
+    Serial.println(F("Incremential drop of volume level"));
   }
 }
 
-void sendSpeakerDownVolCommandOnce(void) 
+void sendSpeakerDownVolCommandOnce(void)
 {
-  for(int i = 0; i < 15 ; i++)
+  for (int i = 0; i < 15 ; i++)
     sendSpeakerCommand(speakerIRDownVolume);
-  Serial.println(F("Sent nBIRDownVolume command once"));
+  Serial.println(F("Dropped volume level a bunch"));
 }
 
-void toggleSpeakerMuteCommand(void) 
+void toggleSpeakerMuteCommand(void)
 {
-  sendSpeakerCommand(speakerIRMute);
-  Serial.println(F("Sending mute command to speaker!"));
+  if (getSpeakerPowerSwitchStatus()) {
+    sendSpeakerCommand(speakerIRMute);
+    Serial.println(F("Toggling mute"));
+  }
 }
 
-void sendSpeakerMuteOnCommand(void) 
+void sendSpeakerMuteOnCommand(void)
 {
-  if(!speakerMuteState && speakerState) 
+  if (!speakerMuteStatus && getSpeakerPowerSwitchStatus())
   {
     sendSpeakerCommand(speakerIRMute);
-    speakerMuteState = 1;
+    speakerMuteStatus = 1;
+    Serial.println(F("Sent mute command to speaker"));
+  }
+}
+
+void sendSpeakerMuteOffCommand(void)
+{
+  if (speakerMuteStatus && getSpeakerPowerSwitchStatus())
+  {
+    sendSpeakerCommand(speakerIRMute);
+    speakerMuteStatus = 0;
     Serial.println(F("Sending mute command to speaker!"));
   }
 }
 
-void sendSpeakerMuteOffCommand(void) 
-{
-  if(speakerMuteState && speakerState) 
-  {
-    sendSpeakerCommand(speakerIRMute);
-    speakerMuteState = 0;
-    Serial.println(F("Sending mute command to speaker!"));
-  }
-}
 
-
-void sendSpeakerCommand(unsigned long command) 
+void sendSpeakerCommand(unsigned long command)
 {
   irsend.sendNEC(command, 32);
 }
