@@ -18,10 +18,14 @@ class HomeNetwork
 public:
   HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
   void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
+  void setTimeout(uint16_t _homeNetwork_timeoutSendTime, uint16_t _homeNetwork_timeoutAnswerTime);
   void autoUpdate();
   bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
-  // Add new home commands here!
+  /*
+  * Add new home commands here!
+  * return if message was successfully sent or not
+  */
   bool toggleMainLights();
   bool setMainLightsOn();
   bool setMainLightsOff();
@@ -70,13 +74,13 @@ private:
 
   // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
   // Tweak however you want though
-  const unsigned int homeNetwork_timeoutSendTime = 5000; // Amount of time before trying to resend message again to node
-  const unsigned int homeNetwork_timeoutAnswerTime = 5000; // Amount of time to wait until given up waiting of answer to question
-  const unsigned int homeNetwork_autoUpdateTime = 20; // How often the network is updated
+  uint16_t homeNetwork_timeoutSendTime = 2000; // Amount of time before trying to resend message again to node
+  uint16_t homeNetwork_timeoutAnswerTime = 2000; // Amount of time to wait until given up waiting of answer to question
+  uint16_t homeNetwork_autoUpdateTime = 50; // How often the network is updated
 
   // Set delay between retries & # of retries for a "radio.write" command
-  const uint8_t homeNetwork_retryDelay = 1;
-  const uint8_t homeNetwork_retryTimes = 50;
+  const uint8_t homeNetwork_retryDelay = 2;
+  const uint8_t homeNetwork_retryTimes = 25;
 
   const uint8_t homeNetwork_powerAmplifierLevel = RF24_PA_MAX;  // Set power amplifier to highest
   const rf24_datarate_e homeNetwork_dataRate = RF24_2MBPS;  // Set data rate to 250kpbs(other settings: RF24_250KBPS, RF24_1MBPS, RF24_2MBPS)

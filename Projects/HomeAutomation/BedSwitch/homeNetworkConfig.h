@@ -6,3 +6,4 @@ const uint16_t nodeID = nodeBedSwitch;
 //Hardware
 const uint8_t homeNetworkCEPin = 8;
 const uint8_t homeNetworkCSNPin = 9;
+

@@ -34,10 +34,15 @@ void HomeNetwork::begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSen
 
   radio.begin(); // Initialize radio
   network.begin(homeNetwork_channel, nodeID); // Start mesh Network
-  radio.setRetries(homeNetwork_retryDelay, homeNetwork_retryTimes);
   radio.setPALevel(homeNetwork_powerAmplifierLevel);
   radio.setDataRate(homeNetwork_dataRate);
   network.txTimeout = 400;
+}
+
+void HomeNetwork::setTimeout(uint16_t _homeNetwork_timeoutSendTime, uint16_t _homeNetwork_timeoutAnswerTime)
+{
+  homeNetwork_timeoutSendTime = _homeNetwork_timeoutSendTime;
+  homeNetwork_timeoutAnswerTime = _homeNetwork_timeoutAnswerTime;
 }
 
 void HomeNetwork::autoUpdate()
@@ -159,18 +164,6 @@ bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) 
   return write(_msgSender, _ResponseData, typeResponse);
 }
 
-bool HomeNetwork::askExampleDataA(int32_t *pmsgResponse) {
-  return writeQuestion(nodeExampleA, cmdExampleAskCommand, pmsgResponse);
-}
-
-bool HomeNetwork::askExampleDataB(int32_t *pmsgResponse) {
-  return writeQuestion(nodeExampleB, cmdExampleAskCommand, pmsgResponse);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool HomeNetwork::setMainLightsOn() {
@@ -265,13 +258,13 @@ bool HomeNetwork::setSpeakerModeLineIn(){
 
 // Returns true if a source is on, returns false if all is off
 bool HomeNetwork::askApartmentStatus() {
-  // If speaker or main lights or painting lights are on, return true
   int32_t mainLightStatus;
   askMainLightsStatus(&mainLightStatus);
   int32_t paintingLightsStatus;
   askPaintingLightsStatus(&paintingLightsStatus);
   int32_t speakerPowerSwitchStatus;
   askSpeakerSwitchStatus(&speakerPowerSwitchStatus);
+
 
   if(mainLightStatus || paintingLightsStatus || speakerPowerSwitchStatus){
     return true;

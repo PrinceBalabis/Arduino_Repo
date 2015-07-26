@@ -1,3 +1,12 @@
+/**
+ *  Prince Home Network IOT Example Client
+ *  Start Server first before starting the Client!!!!!
+ *  This library needs following peripherals:
+ *    - SPI
+ *    - ChibiOS
+ *
+ **/
+
 #include <ChibiOS_AVR.h>
 #include <RF24Network.h>
 #include <RF24.h>
@@ -21,17 +30,23 @@ void setup() {
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
+
   while (1);
 }
 
-static WORKING_AREA(buttonThread, 64);
+//static WORKING_AREA(hNListenThread, 64);
+//static WORKING_AREA(commandExecutioner, 64);
+static WORKING_AREA(exampleSendThread, 64);
 
 void mainThread() {
-  
   SPI.begin(); // SPI is used by homeNetwork
+//  chThdSleepMilliseconds(1000);
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
-
-  chThdCreateStatic(buttonThread, sizeof(buttonThread), NORMALPRIO + 2, ButtonThread, NULL);
+//  chThdSleepMilliseconds(1000);
+//  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+//  chThdSleepMilliseconds(1000);
+//  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
+  chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 2, ExampleSendThread, NULL);
 
   while (1);
 }
@@ -39,5 +54,3 @@ void mainThread() {
 void loop() {
   // not used
 }
-
-

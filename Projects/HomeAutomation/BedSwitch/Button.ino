@@ -6,7 +6,6 @@ static msg_t ButtonThread(void *arg) {
   bool buttonStatus = 0; // variable for reading the pushbutton status
   bool lastButtonStatus = 0;
 
-  chThdSleepMilliseconds(1000);
   Serial.println("Started BedSwitch");
 
   while (1) {

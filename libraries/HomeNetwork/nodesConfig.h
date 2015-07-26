@@ -68,16 +68,15 @@ static const int cmdSetSpeakerModePC = 10;
 static const int cmdSetSpeakerModeLineIn = 11;
 
 //***********************Other Nodes****************************************************************************
-static const uint16_t nodeWebServer = 02;
-static const uint16_t nodeRaspberryPi = 03;
-static const uint16_t nodeVoiceRecog = 04;
-static const uint16_t nodePC = 02;
+//static const uint16_t nodeNAS = 02;
+//static const uint16_t nodeRaspberryPi = 03;
+//static const uint16_t nodeVoiceRecog = 04;
+//static const uint16_t nodePC = 02;
 
-//Testing nodes
 //***********************homeNetworkExampleServer****************************************************
-static const uint16_t nodeExampleA = 041; // Used for example/testing. This node is second child of centralHomeControl-node
-static const uint16_t nodeExampleB = 051; // Used for example/testing. This node is third child of centralHomeControl-node
+//static const uint16_t nodeExampleA = 041; // Used for example/testing. This node is second child of centralHomeControl-node
+//static const uint16_t nodeExampleB = 051; // Used for example/testing. This node is third child of centralHomeControl-node
 
 // Commands to offer
-static const int32_t cmdExampleAskCommand = 12345;
-static const int32_t cmdExampleResponseData = 67890;
+//static const int32_t cmdExampleAskCommand = 12345;
+//static const int32_t cmdExampleResponseData = 67890;
