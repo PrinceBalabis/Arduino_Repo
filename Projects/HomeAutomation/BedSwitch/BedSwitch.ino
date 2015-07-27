@@ -14,7 +14,7 @@ uint16_t msgSender = -1;
 unsigned char msgType = 'Z';
 int32_t msgContent = -1;
 
-bool ledStatus = LOW;
+bool ledStatus = HIGH;
 
 RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
@@ -39,13 +39,13 @@ void mainThread() {
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdSleepMilliseconds(1000);
 
-  chThdCreateStatic(apartmentStatusLEDThread, sizeof(apartmentStatusLEDThread), NORMALPRIO + 1, ApartmentStatusLEDThread, NULL);
-  chThdSleepMilliseconds(1000);
-
   chThdCreateStatic(apartmentStatusUpdater, sizeof(apartmentStatusUpdater), NORMALPRIO + 1, ApartmentStatusUpdater, NULL);
   chThdSleepMilliseconds(1000);
 
   chThdCreateStatic(buttonThread, sizeof(buttonThread), NORMALPRIO + 2, ButtonThread, NULL);
+  chThdSleepMilliseconds(1000);
+
+  chThdCreateStatic(apartmentStatusLEDThread, sizeof(apartmentStatusLEDThread), NORMALPRIO + 1, ApartmentStatusLEDThread, NULL);
   chThdSleepMilliseconds(1000);
 
   Serial.println(F("BedSwitch has fully initialized!"));

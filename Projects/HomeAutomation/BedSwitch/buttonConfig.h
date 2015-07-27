@@ -1,2 +1,2 @@
-const uint16_t buttonReadUpdateTime = 100;
-const uint16_t buttonDebounceTime = 200;
+const uint16_t buttonReadUpdateTime = 50;
+const uint16_t buttonDebounceTime = 300;

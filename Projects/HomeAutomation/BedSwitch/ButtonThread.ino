@@ -12,8 +12,12 @@ static msg_t ButtonThread(void *arg) {
     buttonStatus = digitalRead(buttonPin);
 
     if (buttonStatus && !lastButtonStatus) {
-
       Serial.println("Pressed button..");
+
+      apartmentStatusUpdaterPaused = true; // Pause the apartment status polling
+      while (!apartmentStatusUpdaterPauseExecuted) // Wait for the pause to happen
+        chThdSleepMilliseconds(10);
+
       if (homeNetwork.askApartmentStatus()) {
         homeNetwork.shutdownApartment();
         setLED(LOW);
@@ -25,6 +29,9 @@ static msg_t ButtonThread(void *arg) {
       }
       lastButtonStatus = HIGH;
       chThdSleepMilliseconds(buttonDebounceTime);
+
+      apartmentStatusUpdaterPaused = false; // Resume the apartment status polling
+
     } else if (!buttonStatus) {
       lastButtonStatus = LOW;
     }

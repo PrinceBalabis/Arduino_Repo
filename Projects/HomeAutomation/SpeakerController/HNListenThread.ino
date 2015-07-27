@@ -12,7 +12,7 @@ static msg_t HNListenThread(void *arg) {
       homeNetwork.pauseAutoUpdate(true); // Pause network update in order to queue commands
 
       switch (msgType) {
-        case typeCommand:
+        case typeCommand: // If its a simple command
           switch (msgContent) {
             case cmdToggleSpeakerPower:
               executeCommand = cmdToggleSpeakerPower;
@@ -48,6 +48,7 @@ static msg_t HNListenThread(void *arg) {
           //Questions here
           break;
       }
+
       msgReceived = false; // Listen for new message
       homeNetwork.pauseAutoUpdate(false); // Resume network update in order to get queued commands
     }

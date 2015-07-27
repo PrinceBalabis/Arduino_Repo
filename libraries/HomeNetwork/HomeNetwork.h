@@ -80,7 +80,7 @@ private:
   uint16_t homeNetwork_timeoutAnswerTime = 1000; // Amount of time to wait until given up waiting of answer to question
   uint16_t homeNetwork_defaultTimeoutAnswerTime = 1000;
   uint16_t homeNetwork_autoUpdateTime = 50; // How often the network is updated
-  uint16_t homeNetwork_defaultAutoUpdateTime = 25;
+  uint16_t homeNetwork_defaultAutoUpdateTime = 50;
 
   // Set delay between retries & # of retries for a "radio.write" command
   const uint8_t homeNetwork_retryDelay = 2;

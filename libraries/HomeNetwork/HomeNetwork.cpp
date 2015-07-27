@@ -70,17 +70,26 @@ void HomeNetwork::pauseAutoUpdate(bool state)
 void HomeNetwork::autoUpdate()
 {
   while (1) {
+
+    // Get stuck in this loop while its ment to be paused
     while(autoUpdatePaused){
       autoUpdatePauseExecuted = true;
       chThdSleepMilliseconds(50);  //Give other threads some time to run
     }
-    autoUpdatePauseExecuted = false;
+
+    // Reset the auto update execute flag if its true
+    if(autoUpdatePauseExecuted) {
+      autoUpdatePauseExecuted = false;
+    }
+
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
     {
+      // Save message to global variables to be read by Sketch code
       *pmsgSender = read(pmsgContent, pmsgType);
       *pmsgReceived = true;
     }
+
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
 }
