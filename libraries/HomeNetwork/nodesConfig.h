@@ -47,7 +47,7 @@ static const int cmdToggleSpeakerPowerSwitch = 6;
 
 //***********************Bed Switch************************************************************
 //Second child of Home Control
-static const uint16_t nodeBedSwitch = 021;
+static const uint16_t nodeBedSwitch = 02;
 
 
 //***********************Speaker Controller************************************************************

@@ -255,11 +255,17 @@ bool HomeNetwork::setSpeakerPowerOff(){
 }
 
 bool HomeNetwork::setSpeakerVolumeUp(){
-  return write(nodeSpeaker, cmdSetSpeakerVolumeUp, typeCommand);
+  setTimeout(0,0); // Disable timeout and only retry once to remove input lag
+  bool sent = write(nodeSpeaker, cmdSetSpeakerVolumeUp, typeCommand);
+  setTimeout(-1,-1); // Reset to default
+  return sent;
 }
 
 bool HomeNetwork::setSpeakerVolumeDown(){
-  return write(nodeSpeaker, cmdSetSpeakerVolumeDown, typeCommand);
+  setTimeout(0,0); // Disable timeout and only retry once to remove input lag
+  bool sent = write(nodeSpeaker, cmdSetSpeakerVolumeDown, typeCommand);
+  setTimeout(-1,-1); // Reset to default
+  return sent;
 }
 
 bool HomeNetwork::toggleSpeakerMute(){

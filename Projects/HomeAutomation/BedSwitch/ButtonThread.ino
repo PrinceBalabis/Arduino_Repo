@@ -6,7 +6,7 @@ static msg_t ButtonThread(void *arg) {
   bool buttonStatus = 0; // variable for reading the pushbutton status
   bool lastButtonStatus = 0;
 
-  Serial.println("Started BedSwitch");
+  Serial.println(F("Started Button listener Thread"));
 
   while (1) {
     buttonStatus = digitalRead(buttonPin);
@@ -16,18 +16,20 @@ static msg_t ButtonThread(void *arg) {
       Serial.println("Pressed button..");
       if (homeNetwork.askApartmentStatus()) {
         homeNetwork.shutdownApartment();
+        setLED(LOW);
         Serial.println("Shut down apartment");
       } else {
         homeNetwork.startupApartment();
+        setLED(HIGH);
         Serial.println("Started up apartment");
       }
       lastButtonStatus = HIGH;
-      chThdSleepMilliseconds(200);
+      chThdSleepMilliseconds(buttonDebounceTime);
     } else if (!buttonStatus) {
       lastButtonStatus = LOW;
     }
 
-    chThdSleepMilliseconds(100);
+    chThdSleepMilliseconds(buttonReadUpdateTime);
   }
   return 0;
 }

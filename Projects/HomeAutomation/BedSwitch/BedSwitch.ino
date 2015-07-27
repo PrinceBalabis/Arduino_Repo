@@ -3,7 +3,9 @@
 #include <RF24.h>
 #include <SPI.h>
 #include <HomeNetwork.h>
-#include "config.h"
+#include "homeNetworkConfig.h"
+#include "apartmentStatusLEDConfig.h"
+#include "buttonConfig.h"
 
 //Variables which stores the received values from other nodes
 //Regularly check msgReceived variable if a message is received in thread
@@ -11,6 +13,8 @@ bool msgReceived = false;
 uint16_t msgSender = -1;
 unsigned char msgType = 'Z';
 int32_t msgContent = -1;
+
+bool ledStatus = LOW;
 
 RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
@@ -24,14 +28,27 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(buttonThread, 64);
+static WORKING_AREA(buttonThread, 124);
+static WORKING_AREA(apartmentStatusLEDThread, 124);
+static WORKING_AREA(apartmentStatusUpdater, 124);
 
 void mainThread() {
-  
   SPI.begin(); // SPI is used by homeNetwork
+  chThdSleepMilliseconds(1000);
+
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
+  chThdSleepMilliseconds(1000);
+
+  chThdCreateStatic(apartmentStatusLEDThread, sizeof(apartmentStatusLEDThread), NORMALPRIO + 1, ApartmentStatusLEDThread, NULL);
+  chThdSleepMilliseconds(1000);
+
+  chThdCreateStatic(apartmentStatusUpdater, sizeof(apartmentStatusUpdater), NORMALPRIO + 1, ApartmentStatusUpdater, NULL);
+  chThdSleepMilliseconds(1000);
 
   chThdCreateStatic(buttonThread, sizeof(buttonThread), NORMALPRIO + 2, ButtonThread, NULL);
+  chThdSleepMilliseconds(1000);
+
+  Serial.println(F("BedSwitch has fully initialized!"));
 
   while (1);
 }
