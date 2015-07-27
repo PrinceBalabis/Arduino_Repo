@@ -99,8 +99,6 @@ static msg_t KeypadCommandThread(void *arg)
       if (computerPowerButton == lastKeyPressed)
       {
         executeCommand = computerPowerButton;
-
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       lastKeyPressed = 0; // Clear last key saved
@@ -112,37 +110,31 @@ static msg_t KeypadCommandThread(void *arg)
       if (MainLightsButton == keyName)
       {
         executeCommand = MainLightsButton;
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (paintingLightsButton == keyName)
       {
         executeCommand = paintingLightsButton;
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (computerPowerButton == keyName)
       {
         executeCommand = computerPowerButton;
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (speakerPowerButton == keyName)
       {
         executeCommand = speakerPowerButton;
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (speakerMuteButton == keyName)
       {
         executeCommand = speakerMuteButton;
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (speakerModeButton == keyName)
       {
         executeCommand = speakerModeButton;
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
     }
@@ -151,15 +143,11 @@ static msg_t KeypadCommandThread(void *arg)
       if (speakerUpVolButton == lastKeyPressed)
       {
         executeCommand = speakerUpVolButton;
-
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       else if (speakerDownVolButton == lastKeyPressed)
       {
         executeCommand = speakerDownVolButton;
-
-        // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
       chThdSleepMilliseconds(keypadHoldUpdateTime);

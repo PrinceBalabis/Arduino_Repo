@@ -1,5 +1,5 @@
 /**
- *  HMListenThread
+ *  HNListenThread
  *  Idles until a message is received from a client.
  **/
 

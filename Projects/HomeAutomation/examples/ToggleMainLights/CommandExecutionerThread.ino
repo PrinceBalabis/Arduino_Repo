@@ -10,16 +10,18 @@ SEMAPHORE_DECL(cmdExSem, 0);
 
 static msg_t CommandExecutioner(void *arg)
 {
-  Serial.println(F("Started CommandExecutioner thread"));
+  Serial.println(F("Started CommandExecutioner thread, waiting for command to be executed"));
 
   while (1)
   {
-    // Wait for signal from either HNListenThread or Keypad Thread to run this loop
+    // Wait for signal to run
     chSemWait(&cmdExSem);
 
     switch (executeCommand) {
       case cmdToggleLights:
-        homeNetwork.toggleMainLights();
+        Serial.print(F("Toggle: "));
+        bool sent = homeNetwork.toggleMainLights();
+        Serial.println(sent);
         break;
     }
   }
