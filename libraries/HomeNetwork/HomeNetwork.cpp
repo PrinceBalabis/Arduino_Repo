@@ -295,12 +295,18 @@ bool HomeNetwork::setSpeakerModeLineIn(){
 
 // Returns true if a source is on, returns false if all is off
 bool HomeNetwork::askApartmentStatus() {
+
   int32_t mainLightStatus;
-  askMainLightsStatus(&mainLightStatus);
+  if(!askMainLightsStatus(&mainLightStatus))
+  mainLightStatus = 0;
+
   int32_t paintingLightsStatus;
-  askPaintingLightsStatus(&paintingLightsStatus);
+  if(!askPaintingLightsStatus(&paintingLightsStatus))
+  paintingLightsStatus = 0;
+
   int32_t speakerPowerSwitchStatus;
-  askSpeakerSwitchStatus(&speakerPowerSwitchStatus);
+  if(!askSpeakerSwitchStatus(&speakerPowerSwitchStatus))
+  speakerPowerSwitchStatus = 0;
 
   if(mainLightStatus || paintingLightsStatus || speakerPowerSwitchStatus){
     return true;

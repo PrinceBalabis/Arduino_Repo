@@ -5,7 +5,6 @@ static msg_t ApartmentStatusLEDThread(void *arg) {
   Serial.println(F("Started Apartment Status LED Thread"));
 
   while (1) {
-    Serial.println(ledBrightness);
 
     if (ledStatus) {
       // change the brightness for next time through the loop:
