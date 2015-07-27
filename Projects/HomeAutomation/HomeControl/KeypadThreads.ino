@@ -75,7 +75,7 @@ static msg_t KeypadUpdaterThread(void *arg) {
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
     keyName = getKeyName(keypad.getKey());
-    chThdSleepMilliseconds(5); // Keypad update frequency
+    chThdSleepMilliseconds(keypadUpdateTime); // Keypad update frequency
   }
   return 0;
 }
@@ -162,7 +162,7 @@ static msg_t KeypadCommandThread(void *arg)
         // Signal CommandExecutionerThread to run command
         chSemSignal(&cmdExSem);
       }
-      chThdSleepMilliseconds(150);
+      chThdSleepMilliseconds(keypadHoldUpdateTime);
     }
   }
   return 0;

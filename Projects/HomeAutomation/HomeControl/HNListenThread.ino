@@ -9,14 +9,16 @@ static msg_t HNListenThread(void *arg) {
   while (1) {
     if (msgReceived) { // Check message if a new message is received
 
-      if (msgType == typeCommand) { // If its a simple command
-        switch (msgContent) {
-          case cmdSetPCOn:
-            executeCommand = cmdSetPCOn;
-            // Signal CommandExecutionerThread to run command
-            chSemSignal(&cmdExSem);
-        }
-      } else if (msgType == typeAsk) { // If its a question
+      switch (msgType) {
+        case typeCommand: // If its a simple command
+          switch (msgContent) {
+            case cmdSetPCOn:
+              executeCommand = cmdSetPCOn;
+              chSemSignal(&cmdExSem);
+          }
+          break;
+          //    case typeAsk:
+          //      break;
       }
 
       msgReceived = false; // Listen for new message

@@ -21,7 +21,7 @@ const uint8_t homeNetworkCEPin = 8;
 const uint8_t homeNetworkCSNPin = 9;
 
 //Tweaks
-const uint16_t homeNetworkCheckMessageDelay = 200; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
+const uint16_t homeNetworkCheckMessageDelay = 500; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 
 /*
 *  ------------------------------------
@@ -40,6 +40,15 @@ const uint8_t paintingLightsButton = 5;
 // Computer swtich
 const uint8_t computerPowerButton = 8;
 /*
+
+/*
+*  ------------------------------------
+ *  Keypad Performance
+ *  ------------------------------------
+ */
+const uint8_t keypadUpdateTime = 10; // How often to update keypad reads in milliseconds
+const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when holding a button, in milliseconds
+
 
 /*
 *  ------------------------------------
