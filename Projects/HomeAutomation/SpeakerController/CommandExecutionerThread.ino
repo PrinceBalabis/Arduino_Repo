@@ -10,8 +10,7 @@ SEMAPHORE_DECL(cmdExSem, 0);
 
 static msg_t CommandExecutioner(void *arg)
 {
-  chThdSleepMilliseconds(2000); // Needs to wait for other threads to start or else Arduino might crash
-  Serial.println(F("Started CommandExecutioner thread"));
+  Serial.println(F("CommandExecutioner thread started"));
 
   while (1)
   {

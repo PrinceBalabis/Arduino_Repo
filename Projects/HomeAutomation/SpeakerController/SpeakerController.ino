@@ -29,16 +29,24 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(commandExecutioner, 64);
+static WORKING_AREA(hNListenThread, 124);
+static WORKING_AREA(commandExecutioner, 124);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
-  homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
-  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+  chThdSleepMilliseconds(1000);
 
   // CommandExecutioner thread which executes commands
-  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
+  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
+  chThdSleepMilliseconds(1000);
+
+  // Home Network Threads
+  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+  chThdSleepMilliseconds(1000);
+  homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
+  chThdSleepMilliseconds(1000);
+
+  Serial.println(F("Speaker Controller fully initialized!"));
 
   while (1);
 }

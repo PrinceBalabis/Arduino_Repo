@@ -4,7 +4,7 @@
  **/
 
 static msg_t HNListenThread(void *arg) {
-  Serial.println(F("HNListenThread started, dont forget to set a unique nodeID!"));
+  Serial.println(F("Home Network listener started"));
   homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
 
   while (1) {
