@@ -22,7 +22,7 @@ const uint8_t homeNetworkCSNPin = 9;
 
 //Tweaks
 const uint16_t homeNetworkCheckMessageDelay = 500; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
-
+const uint16_t homeNetworkAutoUpdateTime = 10; // How often to auto update network. Should be short because this node is parent for many child nodes
 /*
 *  ------------------------------------
  *  Keypad Button reservations
@@ -57,5 +57,5 @@ const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when ho
  */
 
 // PC Power pin pin
-const int pcPowerPin = 6;
+const uint8_t pcPowerPin = 6;
 

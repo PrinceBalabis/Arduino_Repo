@@ -9,7 +9,6 @@ HomeNetwork.h - Library for Prince Home Automation & IOT network of RF24 nodes
 #include "RF24Network.h"
 #include "nodesConfig.h"
 
-
 class RF24;
 class RF24Network;
 
@@ -18,7 +17,8 @@ class HomeNetwork
 public:
   HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
   void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
-  void setTimeout(uint16_t _homeNetwork_timeoutSendTime, uint16_t _homeNetwork_timeoutAnswerTime);
+  void setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _homeNetwork_timeoutAnswerTime);
+  void setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime);
   void autoUpdate();
   bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
@@ -74,8 +74,8 @@ private:
 
   // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
   // Tweak however you want though
-  uint16_t homeNetwork_timeoutSendTime = 2000; // Amount of time before trying to resend message again to node
-  uint16_t homeNetwork_timeoutAnswerTime = 2000; // Amount of time to wait until given up waiting of answer to question
+  uint16_t homeNetwork_timeoutSendTime = 1000; // Amount of time before trying to resend message again to node
+  uint16_t homeNetwork_timeoutAnswerTime = 1000; // Amount of time to wait until given up waiting of answer to question
   uint16_t homeNetwork_autoUpdateTime = 50; // How often the network is updated
 
   // Set delay between retries & # of retries for a "radio.write" command

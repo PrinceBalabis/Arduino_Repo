@@ -11,7 +11,7 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _hom
 /**
 *  Thread for the Home Network
 **/
-static WORKING_AREA(homeNetworkThread, 64);
+static WORKING_AREA(homeNetworkThread, 100);
 static msg_t HomeNetworkThread(void *_homeNetwork)
 {
   HomeNetwork* homeNetwork = ((HomeNetwork*)_homeNetwork);
@@ -39,11 +39,26 @@ void HomeNetwork::begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSen
   network.txTimeout = 400;
 }
 
-void HomeNetwork::setTimeout(uint16_t _homeNetwork_timeoutSendTime, uint16_t _homeNetwork_timeoutAnswerTime)
+void HomeNetwork::setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _homeNetwork_timeoutAnswerTime)
 {
-  homeNetwork_timeoutSendTime = _homeNetwork_timeoutSendTime;
-  homeNetwork_timeoutAnswerTime = _homeNetwork_timeoutAnswerTime;
+  // If the values are less than 0 then set the values to default
+  if(_homeNetwork_timeoutSendTime < 0 || _homeNetwork_timeoutAnswerTime < 0){
+    homeNetwork_timeoutSendTime = 1000; // 2 seconds
+    homeNetwork_timeoutAnswerTime = 1000; // 2 seconds
+  } else {
+    homeNetwork_timeoutSendTime = (uint16_t)_homeNetwork_timeoutSendTime;
+    homeNetwork_timeoutAnswerTime = (uint16_t)_homeNetwork_timeoutAnswerTime;
+  }
 }
+
+void HomeNetwork::setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime)
+{
+  if(_homeNetwork_autoUpdateTime < 0)
+  homeNetwork_autoUpdateTime = 50; // 50 ms
+  else
+  homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
+}
+
 
 void HomeNetwork::autoUpdate()
 {

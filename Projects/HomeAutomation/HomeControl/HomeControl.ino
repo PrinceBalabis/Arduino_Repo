@@ -41,9 +41,9 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(keypadCommandThread, 64);
-static WORKING_AREA(keypadUpdaterThread, 64);
+static WORKING_AREA(hNListenThread, 100);
+static WORKING_AREA(keypadCommandThread, 100);
+static WORKING_AREA(keypadUpdaterThread, 100);
 static WORKING_AREA(commandExecutioner, 100);
 
 void mainThread() {
@@ -51,7 +51,7 @@ void mainThread() {
   chThdSleepMilliseconds(1000);
 
   // CommandExecutioner thread which executes commands
-  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
+  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
   chThdSleepMilliseconds(1000);
 
   // Home Network Threads
@@ -59,9 +59,9 @@ void mainThread() {
   chThdSleepMilliseconds(1000);
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdSleepMilliseconds(1000);
+  homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
 
   // Keypad threads
-
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);
   chThdSleepMilliseconds(1000);
   chThdCreateStatic(keypadCommandThread, sizeof(keypadCommandThread), NORMALPRIO + 1, KeypadCommandThread, NULL);
