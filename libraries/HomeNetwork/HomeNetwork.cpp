@@ -59,6 +59,13 @@ void HomeNetwork::setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime)
   homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
 }
 
+void HomeNetwork::pauseAutoUpdate(bool state)
+{
+  autoUpdatePaused = state; // Set to wished state
+  while(autoUpdatePauseExecuted != state){ // Wait for wished state to set
+    chThdSleepMilliseconds(5);
+  }
+}
 
 void HomeNetwork::autoUpdate()
 {
@@ -279,7 +286,6 @@ bool HomeNetwork::askApartmentStatus() {
   askPaintingLightsStatus(&paintingLightsStatus);
   int32_t speakerPowerSwitchStatus;
   askSpeakerSwitchStatus(&speakerPowerSwitchStatus);
-
 
   if(mainLightStatus || paintingLightsStatus || speakerPowerSwitchStatus){
     return true;

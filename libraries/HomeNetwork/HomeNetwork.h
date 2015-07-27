@@ -19,6 +19,7 @@ public:
   void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
   void setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _homeNetwork_timeoutAnswerTime);
   void setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime);
+  void pauseAutoUpdate(bool state);
   void autoUpdate();
   bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 

@@ -59,7 +59,6 @@ void mainThread() {
   chThdSleepMilliseconds(1000);
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdSleepMilliseconds(1000);
-  homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
 
   // Keypad threads
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);

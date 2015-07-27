@@ -36,13 +36,17 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(exampleSendThread, 64);
+static WORKING_AREA(hNListenThread, 124);
+static WORKING_AREA(exampleSendThread, 124);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
+  chThdSleepMilliseconds(1000);
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
+  chThdSleepMilliseconds(1000);
   chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+
+  Serial.println(F("RF 433 MHz Controller fully started!"));
 
   while (1);
 }
