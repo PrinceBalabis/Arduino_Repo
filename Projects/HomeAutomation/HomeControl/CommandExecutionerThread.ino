@@ -10,7 +10,7 @@ SEMAPHORE_DECL(cmdExSem, 0);
 
 static msg_t CommandExecutioner(void *arg)
 {
-  Serial.println(F("Started CommandExecutioner thread"));
+  Serial.println(F("Started CommandExecutioner thread, waiting for command to be executed"));
 
   while (1)
   {

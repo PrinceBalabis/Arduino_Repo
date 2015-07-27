@@ -4,7 +4,7 @@
  **/
 
 static msg_t HNListenThread(void *arg) {
-  Serial.println(F("HMListenThread started, dont forget to have a unique nodeID!"));
+  Serial.println(F("HNListenThread started, dont forget to set a unique nodeID!"));
 
   while (1) {
     if (msgReceived) { // Check message if a new message is received

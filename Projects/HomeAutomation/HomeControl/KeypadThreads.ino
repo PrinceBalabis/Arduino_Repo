@@ -67,7 +67,7 @@ uint8_t getKeyName(char keycode) {
 }
 
 static msg_t KeypadUpdaterThread(void *arg) {
-  Serial.println(F("Keypad listener started"));
+  Serial.println(F("Keypad read updater thread started"));
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
   keypad.setDebounceTime(1); //Time until a new key is accepted
