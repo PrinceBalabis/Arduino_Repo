@@ -43,8 +43,8 @@ void HomeNetwork::setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _home
 {
   // If the values are less than 0 then set the values to default
   if(_homeNetwork_timeoutSendTime < 0 || _homeNetwork_timeoutAnswerTime < 0){
-    homeNetwork_timeoutSendTime = 1000; // 2 seconds
-    homeNetwork_timeoutAnswerTime = 1000; // 2 seconds
+    homeNetwork_timeoutSendTime = homeNetwork_defaultTimeoutSendTime; // 2 seconds
+    homeNetwork_timeoutAnswerTime = homeNetwork_defaultTimeoutAnswerTime; // 2 seconds
   } else {
     homeNetwork_timeoutSendTime = (uint16_t)_homeNetwork_timeoutSendTime;
     homeNetwork_timeoutAnswerTime = (uint16_t)_homeNetwork_timeoutAnswerTime;
@@ -53,8 +53,8 @@ void HomeNetwork::setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _home
 
 void HomeNetwork::setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime)
 {
-  if(_homeNetwork_autoUpdateTime < 0)
-  homeNetwork_autoUpdateTime = 50; // 50 ms
+  if(_homeNetwork_autoUpdateTime < 0) // If less than 0 then set to default
+  homeNetwork_autoUpdateTime = homeNetwork_defaultAutoUpdateTime;
   else
   homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
 }
