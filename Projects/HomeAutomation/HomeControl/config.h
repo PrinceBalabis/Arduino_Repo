@@ -38,7 +38,7 @@ const uint8_t speakerModeButton = 13;
 const uint8_t mainLightsButton = 4;
 const uint8_t paintingLightsButton = 3;
 // Computer swtich
-const uint8_t computerPowerButton = 9;
+const uint8_t pcPowerButton = 9;
 // PC Controller
 const uint8_t pcDisableMonitorButton = 11;
 /*

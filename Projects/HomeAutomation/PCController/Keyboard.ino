@@ -4,7 +4,7 @@
  * 
  */
 
-void DisableMonitors() {
+void pcDisableMonitors() {
   // CTRL-SHIFT-ALT-L
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(KEY_LEFT_SHIFT);
@@ -14,3 +14,12 @@ void DisableMonitors() {
   Keyboard.releaseAll();
 }
 
+void pcEnableMonitors() {
+  // CTRL-SHIFT-ALT-K
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('k');
+  delay(100);
+  Keyboard.releaseAll();
+}

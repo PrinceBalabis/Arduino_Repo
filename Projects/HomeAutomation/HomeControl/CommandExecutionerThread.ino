@@ -3,7 +3,7 @@
  ** Executes commands
  **/
 
-int32_t executeCommand = 0;
+int32_t commandToExecute = 0;
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
@@ -17,15 +17,15 @@ static msg_t CommandExecutioner(void *arg)
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     chSemWait(&cmdExSem);
 
-    switch (executeCommand) {
+    switch (commandToExecute) {
       case cmdSetPCOn:
         setPCPowerSwitchOnMomentarily();
         break;
-      case computerPowerButton:
+      case pcPowerButton:
         togglePCPowerSwitch();
         break;
       case pcDisableMonitorButton:
-        homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
+        homeNetwork.sendCommand(nodePC, cmdSetPCSetMonitorsOff);
         break;
       case mainLightsButton:
         homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
@@ -51,4 +51,12 @@ static msg_t CommandExecutioner(void *arg)
     }
   }
   return 0;
+}
+
+/*
+ * Run this function to enable CommandExecutionerThread to run
+ */
+void executeCommand(int32_t _commandToExecute) {
+  commandToExecute = _commandToExecute;
+  chSemSignal(&cmdExSem);
 }

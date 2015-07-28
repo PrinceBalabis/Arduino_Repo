@@ -12,15 +12,14 @@ static msg_t HNListenThread(void *arg) {
       homeNetwork.pauseAutoUpdate(true); // Pause network update in order to queue commands
 
       switch (msgType) {
-        case typeCommand: // If its a simple command
-          switch (msgContent) {
-            case cmdSetPCOn:
-              executeCommand = cmdSetPCOn;
-              chSemSignal(&cmdExSem);
-          }
+        case typeCommand: // If its a simple command, relay it to CommandExecutionerThread
+          executeCommand(msgContent);
           break;
-          //    case typeAsk:
-          //      break;
+
+        case typeAsk: // If its a question, do some things
+          //Questions here
+          switch (msgContent) {
+          }
       }
 
       msgReceived = false; // Listen for new message

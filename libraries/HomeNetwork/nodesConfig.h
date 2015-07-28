@@ -81,9 +81,10 @@ static const int cmdSetPCToggleMute = 5;
 static const int cmdSetPCPlayPause = 6;
 static const int cmdSetPCNext = 7;
 static const int cmdSetPCPrevious = 8;
-static const int cmdSetPCDisableMonitors = 9;
-static const int cmdSetPCSpotifyPlaylistWorkout = 10;
-static const int cmdSetPCSpotifyPlaylistDinner = 11;
+static const int cmdSetPCSetMonitorsOff = 9;
+static const int cmdSetPCSetMonitorsOn = 10;
+static const int cmdSetPCSpotifyPlaylistWorkout = 11;
+static const int cmdSetPCSpotifyPlaylistDinner = 12;
 
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************

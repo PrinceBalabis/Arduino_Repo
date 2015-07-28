@@ -74,7 +74,8 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
-    keyName = getKeyName(keypad.getKey());
+    //    keyName = getKeyName(keypad.getKey());
+    keypad.getKey();
     chThdSleepMilliseconds(keypadUpdateTime); // Keypad update frequency
   }
   return 0;
@@ -88,69 +89,57 @@ static msg_t KeypadCommandThread(void *arg)
     // Wait for signal from KeypadEvent, it sends a signal whenever keypad status changes
     chSemWait(&cmdKeypadSem);
 
-    // Store last key pressed
-    if (keyName != 0) {
-      lastKeyPressed = keyName;
-    }
-
-    // Here are commands to run when a key is released
-    if (state == RELEASED )
-    {
-      switch (lastKeyPressed) {
-        case computerPowerButton:
-          executeCommand = computerPowerButton;
-          chSemSignal(&cmdExSem);
-          break;
-      }
-      lastKeyPressed = 0; // Clear last key saved
-    }
-
-    // Here are commands to run once when pressed
-    else if (state == PRESSED )
+    // Here are commands to run once when PRESSED
+    if (state == PRESSED )
     {
       switch (keyName) {
         case mainLightsButton:
-          executeCommand = mainLightsButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(keyName);
           break;
         case paintingLightsButton:
-          executeCommand = paintingLightsButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(keyName);
           break;
-        case computerPowerButton:
-          executeCommand = computerPowerButton;
-          chSemSignal(&cmdExSem);
+        case pcPowerButton:
+          executeCommand(keyName);
           break;
         case pcDisableMonitorButton:
-          executeCommand = pcDisableMonitorButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(keyName);
           break;
         case speakerPowerButton:
-          executeCommand = speakerPowerButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(keyName);
           break;
         case speakerMuteButton:
-          executeCommand = speakerMuteButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(keyName);
           break;
         case speakerModeButton:
-          executeCommand = speakerModeButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(keyName);
+          break;
+      }
+      // Remember last key which was pressed, in order to perform "hold-key" and "release-key" actions
+      lastKeyPressed = keyName;
+    }
+
+    // Here are commands to run when a key is RELEASED
+    else if (state == RELEASED )
+    {
+      switch (lastKeyPressed) {
+        case pcPowerButton:
+          executeCommand(lastKeyPressed);
           break;
       }
     }
-    // Commands to run while holding
+
+    // Commands to run while HOLDING a key down
     while (state == HOLD) {
       switch (lastKeyPressed) {
         case speakerUpVolButton:
-          executeCommand = speakerUpVolButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(lastKeyPressed);
           break;
         case speakerDownVolButton:
-          executeCommand = speakerDownVolButton;
-          chSemSignal(&cmdExSem);
+          executeCommand(lastKeyPressed);
           break;
       }
+      // Some delay in order to execute hold commands in regular intervals
       chThdSleepMilliseconds(keypadHoldUpdateTime);
     }
   }
@@ -161,6 +150,8 @@ static msg_t KeypadCommandThread(void *arg)
  *  This function is an event which only runs when the key state is changed
  **/
 void keypadEvent(KeypadEvent key) {
+  keyName = getKeyName(key);
+  Serial.println(keyName);
   switch (keypad.getState()) {
     case PRESSED:
       Serial.println(F("PRESSED"));

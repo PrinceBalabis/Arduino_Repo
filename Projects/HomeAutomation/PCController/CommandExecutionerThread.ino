@@ -18,7 +18,10 @@ static msg_t CommandExecutioner(void *arg)
 
     switch (executeCommand) {
       case cmdSetPCDisableMonitors:
-        DisableMonitors();
+        pcDisableMonitors();
+        break;
+      case cmdSetPCDisableMonitors:
+        pcEnableMonitors();
         break;
     }
   }
