@@ -44,6 +44,37 @@ void pcDecreaseVolume() {
   Keyboard.releaseAll();
 }
 
+void pcSetVolumePresetLow() {
+  // CTRL-SHIFT-ALT-U
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('U');
+  delay(50);
+  Keyboard.releaseAll();
+}
+
+void pcSetVolumePresetMedium() {
+  // CTRL-SHIFT-ALT-I
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('i');
+  delay(50);
+  Keyboard.releaseAll();
+}
+
+void pcSetVolumePresetMax() {
+  // CTRL-SHIFT-ALT-O
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('o');
+  delay(50);
+  Keyboard.releaseAll();
+}
+
+
 void pcMuteOn() {
   // CTRL-SHIFT-ALT-X
   Keyboard.press(KEY_LEFT_CTRL);
@@ -110,7 +141,8 @@ void pcSpotifyStartPlaylistDinner() {
 
 void initializeSpotifyStartPlaylist() {
   pcSpotifyStart(); // Start or focus on Spotify
-  delay(6000); // Wait for Spotify to load
+  pcSetVolumePresetMedium(); //Set volume to Medium
+  delay(7000); // Wait for Spotify to load/start
 
   //Ctrl-L (Give focus to address/search field )
   Keyboard.press(KEY_LEFT_CTRL);
@@ -126,20 +158,26 @@ void initializeSpotifyStartPlaylist() {
   delay(1);
   Keyboard.releaseAll();
 
+  delay(10); // Wait for Spotify to load
+
   //Backspace (Clear text field)
   Keyboard.press(KEY_BACKSPACE);
   delay(1);
   Keyboard.releaseAll();
+
+  delay(10); // Wait for Spotify to load
 }
 
 void continueSpotifyStartPlaylist() {
 
-  delay(2000); // Wait for Spotify to load search
+  delay(3000); // Wait for Spotify to load search
 
   //Arrow down (To focus on Pulse CROSSFIT playlist)
   Keyboard.press(KEY_DOWN_ARROW);
   delay(1);
   Keyboard.releaseAll();
+
+  delay(10); // Wait for Spotify to load
 
   //Enter (To choose playlist)
   Keyboard.press(KEY_RETURN);
@@ -153,10 +191,14 @@ void continueSpotifyStartPlaylist() {
   delay(1);
   Keyboard.releaseAll();
 
+  delay(10); // Wait for Spotify to load
+
   //Enter (To activate focus to playlist)
   Keyboard.press(KEY_RETURN);
   delay(1);
   Keyboard.releaseAll();
+
+  delay(10); // Wait for Spotify to load
 
   //7x tab (To shift focus to song lists)
   Keyboard.press(KEY_TAB);
@@ -189,6 +231,8 @@ void continueSpotifyStartPlaylist() {
     delay(10);
     Keyboard.releaseAll();
   }
+
+  delay(10); // Wait for Spotify to load
 
   //Enter (To play the first song on the playlist)
   Keyboard.press(KEY_RETURN);

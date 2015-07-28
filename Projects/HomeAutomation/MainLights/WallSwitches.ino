@@ -26,8 +26,8 @@ static msg_t WallSwitchThread(void *arg) {
       rightSwitchState = !rightSwitchState;
     }
 
-    // Sleep for 150 milliseconds, to make time for other threads and to act as button debouncing
-    chThdSleepMilliseconds(100);
+    // Sleep some milliseconds, to make time for other threads and to act as button debouncing
+    chThdSleepMilliseconds(200);
   }
   return 0;
 }

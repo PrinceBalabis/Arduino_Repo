@@ -17,7 +17,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
-  Serial.begin(115200);
+//  Serial.begin(115200);
 
   initLights();
 
@@ -33,10 +33,13 @@ static WORKING_AREA(hNListenThread, 124);
 void chSetup() {
   SPI.begin(); // SPI is used by homeNetwork
   chThdSleepMilliseconds(1000);
+  
   homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
   chThdSleepMilliseconds(1000);
+  
   chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
   chThdSleepMilliseconds(1000);
+  
   chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
   chThdSleepMilliseconds(1000);
 }

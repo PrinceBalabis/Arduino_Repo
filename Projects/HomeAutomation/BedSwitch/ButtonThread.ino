@@ -18,12 +18,12 @@ static msg_t ButtonThread(void *arg) {
       while (!apartmentStatusUpdaterPauseExecuted) // Wait for the pause to happen
         chThdSleepMilliseconds(10);
 
-      if (homeNetwork.askApartmentStatus()) {
-        homeNetwork.shutdownApartment();
+      if (askApartmentStatus()) {
+        shutdownApartment();
         setLED(LOW);
         Serial.println("Shut down apartment");
       } else {
-        homeNetwork.startupApartment();
+        startupApartment();
         setLED(HIGH);
         Serial.println("Started up apartment");
       }
@@ -32,11 +32,17 @@ static msg_t ButtonThread(void *arg) {
 
       apartmentStatusUpdaterPaused = false; // Resume the apartment status polling
 
-    } else if (!buttonStatus) {
+    } else if (!buttonStatus && lastButtonStatus) {
       lastButtonStatus = LOW;
+      Serial.print("Disable button for ");
+      Serial.print(buttonRepressTime);
+      Serial.println(" seconds");
+      chThdSleepMilliseconds(buttonRepressTime); // Wait 10 seconds before able to press button again
+      Serial.println("Button is enabled again!");
     }
 
     chThdSleepMilliseconds(buttonReadUpdateTime);
   }
   return 0;
 }
+

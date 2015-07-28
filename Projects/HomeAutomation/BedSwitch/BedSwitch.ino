@@ -21,16 +21,16 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
-  Serial.begin(115200);
+//  Serial.begin(115200);
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()
   while (1);
 }
 
-static WORKING_AREA(buttonThread, 124);
-static WORKING_AREA(apartmentStatusLEDThread, 124);
-static WORKING_AREA(apartmentStatusUpdater, 124);
+static WORKING_AREA(buttonThread, 64);
+static WORKING_AREA(apartmentStatusLEDThread, 64);
+static WORKING_AREA(apartmentStatusUpdater, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork

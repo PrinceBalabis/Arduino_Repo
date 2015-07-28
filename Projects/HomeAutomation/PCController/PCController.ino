@@ -27,7 +27,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
-  Serial.begin(115200);
+//  Serial.begin(115200);
 
 //  while (!Serial) {
 //    ; // wait for serial port to connect. Needed for Leonardo only

@@ -90,6 +90,7 @@ static const int cmdSetPCVolPresetMedium = 14;
 static const int cmdSetPCVolPresetLow = 15;
 static const int cmdSetPCSpotifyPlaylistWorkout = 16;
 static const int cmdSetPCSpotifyPlaylistDinner = 17;
+static const int cmdSetPCSpotifyPlaylistMorning = 17;
 
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
