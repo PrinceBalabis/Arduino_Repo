@@ -67,6 +67,29 @@ static const int cmdToggleSpeakerMode = 9;
 static const int cmdSetSpeakerModePC = 10;
 static const int cmdSetSpeakerModeLineIn = 11;
 
+
+//***********************PC Controller************************************************************
+//Fourth child of Home Control
+static const uint16_t nodePC = 041;
+
+// Command(message type: typeCommand)
+static const int cmdSetPCVolUp = 1;
+static const int cmdSetPCVolDown = 2;
+static const int cmdSetPCsetMute = 3;
+static const int cmdSetPCsetNoMute = 4;
+static const int cmdSetPCToggleMute = 5;
+static const int cmdSetPCPlayPause = 6;
+static const int cmdSetPCNext = 7;
+static const int cmdSetPCPrevious = 8;
+static const int cmdSetPCDisableMonitors = 9;
+static const int cmdSetPCSpotifyPlaylistWorkout = 10;
+static const int cmdSetPCSpotifyPlaylistDinner = 11;
+
+
+//***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
+static const uint16_t exampleNode = 051;
+
+
 //***********************Other Nodes****************************************************************************
 //static const uint16_t nodeNAS = 02;
 //static const uint16_t nodeRaspberryPi = 03;

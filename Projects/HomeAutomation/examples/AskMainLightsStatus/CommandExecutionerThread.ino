@@ -18,10 +18,15 @@ static msg_t CommandExecutioner(void *arg)
     chSemWait(&cmdExSem);
 
     switch (executeCommand) {
-      case cmdToggleLights:
-        Serial.print(F("Toggle: "));
+      case cmdGetLightsStatus:
+        int32_t mainLightsStatus;
         bool sent = homeNetwork.toggleMainLights();
-        Serial.println(sent);
+//        bool sent = homeNetwork.askMainLightsStatus(&mainLightsStatus);
+        Serial.print(F("Sent: "));
+        Serial.print(sent);
+        Serial.print(F(" Status: "));
+        Serial.print(mainLightsStatus);
+        Serial.println();
         break;
     }
   }

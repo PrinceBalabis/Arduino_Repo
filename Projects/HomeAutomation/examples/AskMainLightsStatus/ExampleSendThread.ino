@@ -5,11 +5,11 @@
 
 static msg_t ExampleSendThread(void *arg) {
   Serial.println(F("ExampleSendThread begin"));
+  homeNetwork.pauseAutoUpdate(true);
 
   while (1) {
-    chThdSleepMilliseconds(1943); // Redo this send program every few moments, give enough time for other threads to run
-Serial.println(F("doing send starting"));
-    executeCommand = cmdToggleLights;
+    chThdSleepMilliseconds(500); // Redo this send program every few moments, give enough time for other threads to run
+    executeCommand = cmdGetLightsStatus;
     chSemSignal(&cmdExSem);
 
   }
