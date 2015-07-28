@@ -1,7 +1,7 @@
 /*
  * OBS! Don't forget these are just keyboard shortcuts!
  * You must have setup NirCmd on the computer together with NirCmd keyboard shortcuts!
- * 
+ *
  */
 
 void pcDisableMonitors() {
@@ -15,11 +15,11 @@ void pcDisableMonitors() {
 }
 
 void pcEnableMonitors() {
-  // CTRL-SHIFT-ALT-K
-  Keyboard.press(KEY_LEFT_CTRL);
-  Keyboard.press(KEY_LEFT_SHIFT);
-  Keyboard.press(KEY_LEFT_ALT);
-  Keyboard.press('g');
-  delay(100);
-  Keyboard.releaseAll();
+  // Just toggle Caps lock on and off in order to wake monitors
+  Keyboard.press(KEY_CAPS_LOCK);
+  delay(50);
+  Keyboard.release(KEY_CAPS_LOCK);
+  Keyboard.press(KEY_CAPS_LOCK);
+  delay(50);
+  Keyboard.release(KEY_CAPS_LOCK);
 }

@@ -3,7 +3,7 @@
  ** Executes commands
  **/
 
-int32_t executeCommand = 0;
+int32_t commandToExecute = 0;
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
@@ -17,7 +17,7 @@ static msg_t CommandExecutioner(void *arg)
     // Wait for signal to run
     chSemWait(&cmdExSem);
 
-    switch (executeCommand) {
+    switch (commandToExecute) {
       case cmdSetPCDisableMonitors:
         pcDisableMonitors();
         Serial.println(F("Disabled Monitors"));
