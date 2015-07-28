@@ -30,6 +30,14 @@ static msg_t CommandExecutioner(void *arg)
         homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
         Serial.println(F("Disabled Monitors"));
         break;
+      case pcSpotifyPlaylistWorkout:
+        homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistWorkout);
+        Serial.println(F("Started Spotify Workout Playlist"));
+        break;
+      case pcSpotifyPlaylistDinner:
+        homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistDinner);
+        Serial.println(F("Started Spotify Dinner Playlist"));
+        break;
       case mainLightsButton:
         homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
         Serial.println(F("Toggled Main Lights"));

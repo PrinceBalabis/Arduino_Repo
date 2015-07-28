@@ -5,12 +5,12 @@
  */
 
 void pcDisableMonitors() {
-  // CTRL-SHIFT-ALT-L
+  // CTRL-SHIFT-ALT-H
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('h');
-  delay(100);
+  delay(50);
   Keyboard.releaseAll();
 }
 
@@ -30,7 +30,7 @@ void pcIncreaseVolume() {
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('v');
-  delay(100);
+  delay(50);
   Keyboard.releaseAll();
 }
 
@@ -40,7 +40,7 @@ void pcDecreaseVolume() {
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('g');
-  delay(100);
+  delay(50);
   Keyboard.releaseAll();
 }
 
@@ -50,7 +50,7 @@ void pcMuteOn() {
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('x');
-  delay(100);
+  delay(50);
   Keyboard.releaseAll();
 }
 
@@ -60,7 +60,139 @@ void pcMuteOff() {
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press('z');
-  delay(100);
+  delay(50);
+  Keyboard.releaseAll();
+}
+
+void pcSpotifyStart() {
+  // CTRL-SHIFT-ALT-S
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('s');
+  delay(50);
+  Keyboard.releaseAll();
+}
+
+/*
+ * WOW! Väldig process för att starta Spotify playlist....
+ *
+ * Tidslinje:
+ * Ctrl-L (Give focus to address/search field )
+ * CTRL-A (Select text field)
+ * Backspace (Clear text field)
+ * Type "pulse cross" (to search for Pulse CROSSFIT playlist)
+ * Arrow down (To focus on Pulse CROSSFIT playlist)
+ * Enter (To choose playlist)
+ * Tab (To shift focus to playlist)
+ * Enter (To activate focus to playlist)
+ * 7x tab (To shift focus to song lists)
+ * Enter (To play the first song on the playlist)
+ * Done!
+ */
+void pcSpotifyStartPlaylistWorkout() {
+  initializeSpotifyStartPlaylist();
+
+  //Type "pulse cross" (to search for Pulse CROSSFIT playlist)
+  Keyboard.print("pulse cross");
+
+  continueSpotifyStartPlaylist();
+}
+
+void pcSpotifyStartPlaylistDinner() {
+  initializeSpotifyStartPlaylist();
+
+  //Type "pulse cross" (to search for Pulse CROSSFIT playlist)
+  Keyboard.print("dinner with friends");
+
+  continueSpotifyStartPlaylist();
+}
+
+void initializeSpotifyStartPlaylist() {
+  pcSpotifyStart(); // Start or focus on Spotify
+  delay(6000); // Wait for Spotify to load
+
+  //Ctrl-L (Give focus to address/search field )
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press('l');
+  delay(1);
+  Keyboard.releaseAll();
+
+  delay(100); // Wait for Spotify to load
+
+  //CTRL - A (Select text field)
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press('a');
+  delay(1);
+  Keyboard.releaseAll();
+
+  //Backspace (Clear text field)
+  Keyboard.press(KEY_BACKSPACE);
+  delay(1);
+  Keyboard.releaseAll();
+}
+
+void continueSpotifyStartPlaylist() {
+
+  delay(2000); // Wait for Spotify to load search
+
+  //Arrow down (To focus on Pulse CROSSFIT playlist)
+  Keyboard.press(KEY_DOWN_ARROW);
+  delay(1);
+  Keyboard.releaseAll();
+
+  //Enter (To choose playlist)
+  Keyboard.press(KEY_RETURN);
+  delay(1);
+  Keyboard.releaseAll();
+
+  delay(1000); // Wait for Spotify to load playlist page
+
+  //Tab (To shift focus to playlist)
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+
+  //Enter (To activate focus to playlist)
+  Keyboard.press(KEY_RETURN);
+  delay(1);
+  Keyboard.releaseAll();
+
+  //7x tab (To shift focus to song lists)
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+  Keyboard.press(KEY_TAB);
+  delay(1);
+  Keyboard.releaseAll();
+
+  delay(50); // Wait for Spotify to catch up
+
+  //Press down arrow random times to randomize first song!
+  for (int i = 0; i < random(50); i++) {
+    Keyboard.press(KEY_DOWN_ARROW);
+    delay(10);
+    Keyboard.releaseAll();
+  }
+
+  //Enter (To play the first song on the playlist)
+  Keyboard.press(KEY_RETURN);
+  delay(1);
   Keyboard.releaseAll();
 }
 

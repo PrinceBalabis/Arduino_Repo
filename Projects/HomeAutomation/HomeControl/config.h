@@ -41,6 +41,8 @@ const uint8_t paintingLightsButton = 3;
 const uint8_t pcPowerButton = 9;
 // PC Controller
 const uint8_t pcDisableMonitorButton = 11;
+const uint8_t pcSpotifyPlaylistWorkout = 6;
+const uint8_t pcSpotifyPlaylistDinner = 5;
 /*
 
 /*

@@ -34,6 +34,14 @@ static msg_t CommandExecutioner(void *arg)
         pcDecreaseVolume();
         Serial.println(F("Decreased Volume"));
         break;
+      case cmdSetPCSpotifyPlaylistWorkout:
+        pcSpotifyStartPlaylistWorkout();
+        Serial.println(F("Started Spotify Workout Playlist"));
+        break;
+      case cmdSetPCSpotifyPlaylistDinner:
+        pcSpotifyStartPlaylistDinner();
+        Serial.println(F("Started Spotify Dinner Playlist"));
+        break;
     }
   }
   return 0;

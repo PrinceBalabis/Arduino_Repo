@@ -102,6 +102,12 @@ static msg_t KeypadCommandThread(void *arg)
         case pcDisableMonitorButton:
           executeCommand(keyName);
           break;
+        case pcSpotifyPlaylistWorkout:
+          executeCommand(keyName);
+          break;
+        case pcSpotifyPlaylistDinner:
+          executeCommand(keyName);
+          break;
         case speakerPowerButton:
           executeCommand(keyName);
           break;
