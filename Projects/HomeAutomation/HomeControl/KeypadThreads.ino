@@ -96,10 +96,11 @@ static msg_t KeypadCommandThread(void *arg)
     // Here are commands to run when a key is released
     if (state == RELEASED )
     {
-      if (computerPowerButton == lastKeyPressed)
-      {
-        executeCommand = computerPowerButton;
-        chSemSignal(&cmdExSem);
+      switch (lastKeyPressed) {
+        case computerPowerButton:
+          executeCommand = computerPowerButton;
+          chSemSignal(&cmdExSem);
+          break;
       }
       lastKeyPressed = 0; // Clear last key saved
     }
@@ -107,48 +108,48 @@ static msg_t KeypadCommandThread(void *arg)
     // Here are commands to run once when pressed
     else if (state == PRESSED )
     {
-      if (MainLightsButton == keyName)
-      {
-        executeCommand = MainLightsButton;
-        chSemSignal(&cmdExSem);
-      }
-      else if (paintingLightsButton == keyName)
-      {
-        executeCommand = paintingLightsButton;
-        chSemSignal(&cmdExSem);
-      }
-      else if (computerPowerButton == keyName)
-      {
-        executeCommand = computerPowerButton;
-        chSemSignal(&cmdExSem);
-      }
-      else if (speakerPowerButton == keyName)
-      {
-        executeCommand = speakerPowerButton;
-        chSemSignal(&cmdExSem);
-      }
-      else if (speakerMuteButton == keyName)
-      {
-        executeCommand = speakerMuteButton;
-        chSemSignal(&cmdExSem);
-      }
-      else if (speakerModeButton == keyName)
-      {
-        executeCommand = speakerModeButton;
-        chSemSignal(&cmdExSem);
+      switch (keyName) {
+        case mainLightsButton:
+          executeCommand = mainLightsButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case paintingLightsButton:
+          executeCommand = paintingLightsButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case computerPowerButton:
+          executeCommand = computerPowerButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case pcDisableMonitorButton:
+          executeCommand = pcDisableMonitorButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case speakerPowerButton:
+          executeCommand = speakerPowerButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case speakerMuteButton:
+          executeCommand = speakerMuteButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case speakerModeButton:
+          executeCommand = speakerModeButton;
+          chSemSignal(&cmdExSem);
+          break;
       }
     }
     // Commands to run while holding
     while (state == HOLD) {
-      if (speakerUpVolButton == lastKeyPressed)
-      {
-        executeCommand = speakerUpVolButton;
-        chSemSignal(&cmdExSem);
-      }
-      else if (speakerDownVolButton == lastKeyPressed)
-      {
-        executeCommand = speakerDownVolButton;
-        chSemSignal(&cmdExSem);
+      switch (lastKeyPressed) {
+        case speakerUpVolButton:
+          executeCommand = speakerUpVolButton;
+          chSemSignal(&cmdExSem);
+          break;
+        case speakerDownVolButton:
+          executeCommand = speakerDownVolButton;
+          chSemSignal(&cmdExSem);
+          break;
       }
       chThdSleepMilliseconds(keypadHoldUpdateTime);
     }

@@ -29,16 +29,18 @@ const uint16_t homeNetworkAutoUpdateTime = 20; // How often to auto update netwo
  *  ------------------------------------
  */
 // NextBase
-const uint8_t speakerPowerButton = 7;
-const uint8_t speakerUpVolButton = 3;
-const uint8_t speakerDownVolButton = 2;
-const uint8_t speakerMuteButton = 1;
-const uint8_t speakerModeButton = 4;
+const uint8_t speakerPowerButton = 10;
+const uint8_t speakerUpVolButton = 16;
+const uint8_t speakerDownVolButton = 15;
+const uint8_t speakerMuteButton = 14;
+const uint8_t speakerModeButton = 13;
 // Lights
-const uint8_t MainLightsButton = 6;
-const uint8_t paintingLightsButton = 5;
+const uint8_t mainLightsButton = 4;
+const uint8_t paintingLightsButton = 3;
 // Computer swtich
-const uint8_t computerPowerButton = 8;
+const uint8_t computerPowerButton = 9;
+// PC Controller
+const uint8_t pcDisableMonitorButton = 11;
 /*
 
 /*

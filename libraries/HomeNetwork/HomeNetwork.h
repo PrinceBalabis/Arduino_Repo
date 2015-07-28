@@ -22,44 +22,9 @@ public:
   void pauseAutoUpdate(bool state);
   void autoUpdate();
   bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
-
-  /*
-  * Add new home commands here!
-  * return if message was successfully sent or not
-  */
-  bool toggleMainLights();
-  bool setMainLightsOn();
-  bool setMainLightsOff();
-  bool askMainLightsStatus(int32_t *pmsgResponse);
-
-  bool setPCOn();
-
-  bool togglePaintingLights();
-  bool setPaintingLightsOn();
-  bool setPaintingLightsOff();
-  bool askPaintingLightsStatus(int32_t *pmsgResponse);
-  bool toggleSpeakerPowerSwitch();
-  bool setSpeakerPowerSwitchOn();
-  bool setSpeakerPowerSwitchOff();
-  bool askSpeakerSwitchStatus(int32_t *pmsgResponse);
-
-  bool toggleSpeakerPower();
-  bool setSpeakerPowerOn();
-  bool setSpeakerPowerOff();
-  bool setSpeakerVolumeUp();
-  bool setSpeakerVolumeDown();
-  bool toggleSpeakerMute();
-  bool toggleSpeakerMode();
-  bool setSpeakerModePC();
-  bool setSpeakerModeLineIn();
-
-  bool askApartmentStatus();
-  bool shutdownApartment();
-  bool startupApartment();
-
-  // Example functions
-  bool askExampleDataA(int32_t *pmsgResponse);
-  bool askExampleDataB(int32_t *pmsgResponse);
+  bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
+  bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
+  bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
 
 private:
   RF24& radio;
@@ -93,7 +58,5 @@ private:
 
   // Local communication functions
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
-  bool write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
-  bool writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
 };
 #endif

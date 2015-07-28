@@ -41,10 +41,10 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 100);
-static WORKING_AREA(keypadCommandThread, 100);
-static WORKING_AREA(keypadUpdaterThread, 100);
-static WORKING_AREA(commandExecutioner, 100);
+static WORKING_AREA(hNListenThread, 64);
+static WORKING_AREA(keypadCommandThread, 64);
+static WORKING_AREA(keypadUpdaterThread, 64);
+static WORKING_AREA(commandExecutioner, 64);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork

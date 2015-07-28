@@ -1,3 +1,13 @@
+/*
+ * PCController
+ * This is to an Arduino connected to a PC as a HID keyboard device(must be HID-capable CPU like Atmega32u4)
+ * 
+ * Requirements:
+ * -Arduino Pro Micro(5V version)
+ * -NRF24L01+ Module with 5V module adapter(Because VCC is 3.3V on the module)
+ * -NirCmd Installed with shortcuts created+enabled keyboard shortcuts("Shortcut Key" in shortcut properties)
+ */
+
 #include <ChibiOS_AVR.h>
 #include <RF24Network.h>
 #include <RF24.h>
@@ -20,9 +30,9 @@ void setup() {
   //delay(5000);
   Serial.begin(115200);
 
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for Leonardo only
-  }
+//  while (!Serial) {
+//    ; // wait for serial port to connect. Needed for Leonardo only
+//  }
   
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()

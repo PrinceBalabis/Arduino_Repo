@@ -21,29 +21,32 @@ static msg_t CommandExecutioner(void *arg)
       case cmdSetPCOn:
         setPCPowerSwitchOnMomentarily();
         break;
-      case MainLightsButton:
-        homeNetwork.toggleMainLights();
-        break;
-      case paintingLightsButton:
-        homeNetwork.togglePaintingLights();
-        break;
       case computerPowerButton:
         togglePCPowerSwitch();
         break;
+      case pcDisableMonitorButton:
+        homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
+        break;
+      case mainLightsButton:
+        homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
+        break;
+      case paintingLightsButton:
+        homeNetwork.sendCommand(nodeRF433MHz, cmdTogglePaintingLights);
+        break;
       case speakerPowerButton:
-        homeNetwork.toggleSpeakerPower();
+        homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerPower);
         break;
       case speakerUpVolButton:
-        homeNetwork.setSpeakerVolumeUp();
+        homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeUp);
         break;
       case speakerDownVolButton:
-        homeNetwork.setSpeakerVolumeDown();
+        homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeDown);
         break;
       case speakerMuteButton:
-        homeNetwork.toggleSpeakerMute();
+        homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMute);
         break;
       case speakerModeButton:
-        homeNetwork.toggleSpeakerMode();
+        homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMode);
         break;
     }
   }

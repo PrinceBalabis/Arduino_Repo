@@ -1,3 +1,9 @@
+/*
+ * OBS! Don't forget these are just keyboard shortcuts!
+ * You must have setup NirCmd on the computer together with NirCmd keyboard shortcuts!
+ * 
+ */
+
 void DisableMonitors() {
   // CTRL-SHIFT-ALT-L
   Keyboard.press(KEY_LEFT_CTRL);

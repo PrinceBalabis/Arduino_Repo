@@ -95,10 +95,10 @@ void HomeNetwork::autoUpdate()
 }
 
 /**
-* write
+* send
 * This function sends the message to a receiver, both which are set in parameter
 **/
-bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
+bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
 
   // Set receiver of message
@@ -114,12 +114,17 @@ bool HomeNetwork::write(uint16_t msgReceiver, int32_t msgContent, unsigned char 
   }
 }
 
+bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
+  return send(msgReceiver, msgContent, typeCommand);
+}
+
+
 /**
-* writeQuestion
+* sendQuestion
 * This function sends the message to a receiver, both which are set in parameter
 * Gets a response back
 **/
-bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
+bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
   autoUpdatePaused = true; // Pause listening for messages
 
   while(!autoUpdatePauseExecuted){
@@ -135,7 +140,7 @@ bool HomeNetwork::writeQuestion(uint16_t msgReceiver, int32_t msgContent, int32_
   bool questionTimeOut = false;
   while (!questionSent && !questionTimeOut) {
     network.update(); // Check the network regularly for the entire network to function properly
-    questionSent = write(msgReceiver, msgContent, typeAsk); // Send question
+    questionSent = send(msgReceiver, msgContent, typeAsk); // Send question
     if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
       questionTimeOut = true;
     }
@@ -192,139 +197,41 @@ uint16_t HomeNetwork::read(int32_t *pmsgReceived, unsigned char *pmsgType) {
 }
 
 bool HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
-  return write(_msgSender, _ResponseData, typeResponse);
+  return send(_msgSender, _ResponseData, typeResponse);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool HomeNetwork::setMainLightsOn() {
-  return write(nodeMainLights, cmdSetLightsOn, typeCommand);
-}
-
-bool HomeNetwork::setMainLightsOff() {
-  return write(nodeMainLights, cmdSetLightsOff, typeCommand);
-}
-
-bool HomeNetwork::toggleMainLights() {
-  return write(nodeMainLights, cmdToggleLights, typeCommand);
-}
-
-bool HomeNetwork::askMainLightsStatus(int32_t *pmsgResponse) {
-  return writeQuestion(nodeMainLights, cmdGetLightsStatus, pmsgResponse);
-}
-
-
-bool HomeNetwork::setPCOn() {
-  return write(nodeHomeControl, cmdSetPCOn, typeCommand);
-}
-
-
-bool HomeNetwork::setPaintingLightsOn() {
-  return write(nodeRF433MHz, cmdSetPaintingLightsOn, typeCommand);
-}
-
-bool HomeNetwork::setPaintingLightsOff() {
-  return write(nodeRF433MHz, cmdSetPaintingLightsOff, typeCommand);
-}
-
-bool HomeNetwork::togglePaintingLights() {
-  return write(nodeRF433MHz, cmdTogglePaintingLights, typeCommand);
-}
-
-bool HomeNetwork::askPaintingLightsStatus(int32_t *pmsgResponse) {
-  return writeQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, pmsgResponse);
-}
-
-bool HomeNetwork::setSpeakerPowerSwitchOn() {
-  return write(nodeRF433MHz, cmdSetSpeakerPowerSwitchOn, typeCommand);
-}
-
-bool HomeNetwork::setSpeakerPowerSwitchOff() {
-  return write(nodeRF433MHz, cmdSetSpeakerPowerSwitchOff, typeCommand);
-}
-
-bool HomeNetwork::toggleSpeakerPowerSwitch() {
-  return write(nodeRF433MHz, cmdToggleSpeakerPowerSwitch, typeCommand);
-}
-
-bool HomeNetwork::askSpeakerSwitchStatus(int32_t *pmsgResponse) {
-  return writeQuestion(nodeRF433MHz, cmdGetSpeakerPowerStatus, pmsgResponse);
-}
-
-bool HomeNetwork::toggleSpeakerPower(){
-  return write(nodeSpeaker, cmdToggleSpeakerPower, typeCommand);
-}
-
-bool HomeNetwork::setSpeakerPowerOn(){
-  return write(nodeSpeaker, cmdSetSpeakerPowerOn, typeCommand);
-}
-
-bool HomeNetwork::setSpeakerPowerOff(){
-  return write(nodeSpeaker, cmdSetSpeakerPowerOff, typeCommand);
-}
-
-bool HomeNetwork::setSpeakerVolumeUp(){
-  setTimeout(0,0); // Disable timeout and only retry once to remove input lag
-  bool sent = write(nodeSpeaker, cmdSetSpeakerVolumeUp, typeCommand);
-  setTimeout(-1,-1); // Reset to default
-  return sent;
-}
-
-bool HomeNetwork::setSpeakerVolumeDown(){
-  setTimeout(0,0); // Disable timeout and only retry once to remove input lag
-  bool sent = write(nodeSpeaker, cmdSetSpeakerVolumeDown, typeCommand);
-  setTimeout(-1,-1); // Reset to default
-  return sent;
-}
-
-bool HomeNetwork::toggleSpeakerMute(){
-  return write(nodeSpeaker, cmdToggleSpeakerMute, typeCommand);
-}
-
-bool HomeNetwork::toggleSpeakerMode(){
-  return write(nodeSpeaker, cmdToggleSpeakerMode, typeCommand);
-}
-
-bool HomeNetwork::setSpeakerModePC(){
-  return write(nodeSpeaker, cmdSetSpeakerModePC, typeCommand);
-}
-
-bool HomeNetwork::setSpeakerModeLineIn(){
-  return write(nodeSpeaker, cmdSetSpeakerModeLineIn, typeCommand);
-}
-
-// Returns true if a source is on, returns false if all is off
-bool HomeNetwork::askApartmentStatus() {
-
-  int32_t mainLightStatus;
-  if(!askMainLightsStatus(&mainLightStatus))
-  mainLightStatus = 0;
-
-  int32_t paintingLightsStatus;
-  if(!askPaintingLightsStatus(&paintingLightsStatus))
-  paintingLightsStatus = 0;
-
-  int32_t speakerPowerSwitchStatus;
-  if(!askSpeakerSwitchStatus(&speakerPowerSwitchStatus))
-  speakerPowerSwitchStatus = 0;
-
-  if(mainLightStatus || paintingLightsStatus || speakerPowerSwitchStatus){
-    return true;
-  } else {
-    return false;
-  }
-}
-
-bool HomeNetwork::shutdownApartment() {
-  setMainLightsOff();
-  setPaintingLightsOff();
-  setSpeakerPowerOff();
-}
-
-bool HomeNetwork::startupApartment() {
-  setMainLightsOn();
-  setSpeakerPowerOn();
-}
+// // Returns true if a source is on, returns false if all is off
+// bool HomeNetwork::askApartmentStatus() {
+//
+//   int32_t mainLightStatus;
+//   if(!askMainLightsStatus(&mainLightStatus))
+//   mainLightStatus = 0;
+//
+//   int32_t paintingLightsStatus;
+//   if(!askPaintingLightsStatus(&paintingLightsStatus))
+//   paintingLightsStatus = 0;
+//
+//   int32_t speakerPowerSwitchStatus;
+//   if(!askSpeakerSwitchStatus(&speakerPowerSwitchStatus))
+//   speakerPowerSwitchStatus = 0;
+//
+//   if(mainLightStatus || paintingLightsStatus || speakerPowerSwitchStatus){
+//     return true;
+//   } else {
+//     return false;
+//   }
+// }
+//
+// bool HomeNetwork::shutdownApartment() {
+//   setMainLightsOff();
+//   setPaintingLightsOff();
+//   setSpeakerPowerOff();
+// }
+//
+// bool HomeNetwork::startupApartment() {
+//   setMainLightsOn();
+//   setSpeakerPowerOn();
+// }
 
 // uint8_t HomeNetwork::setPartyMode() {
 //   setPaintingLightsOn();
