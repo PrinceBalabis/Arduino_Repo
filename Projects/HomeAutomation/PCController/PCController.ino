@@ -27,7 +27,6 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
-  //delay(5000);
   Serial.begin(115200);
 
 //  while (!Serial) {

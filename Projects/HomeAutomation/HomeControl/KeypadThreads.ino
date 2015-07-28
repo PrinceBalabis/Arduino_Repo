@@ -149,19 +149,22 @@ void keypadEvent(KeypadEvent key) {
 
   switch (keypad.getState()) {
     case PRESSED:
-      Serial.println(F("PRESSED"));
+      Serial.print(F("Pressed key: "));
+      Serial.println(keyName);
       state = PRESSED;
       chSemSignal(&cmdKeypadSem);
       break;
 
     case HOLD:
       state = HOLD;
-      Serial.println(F("HOLD"));
+      Serial.print(F("Held key: "));
+      Serial.println(keyName);
       chSemSignal(&cmdKeypadSem);
       break;
 
     case RELEASED:
-      Serial.println(F("RELEASED"));
+      Serial.print(F("Released key: "));
+      Serial.println(keyName);
       state = RELEASED;
       chSemSignal(&cmdKeypadSem);
       break;

@@ -20,33 +20,43 @@ static msg_t CommandExecutioner(void *arg)
     switch (commandToExecute) {
       case cmdSetPCOn:
         setPCPowerSwitchOnMomentarily();
+        Serial.println(F("Turned PC on"));
         break;
       case pcPowerButton:
         togglePCPowerSwitch();
+        Serial.println(F("Toggled PC Power Switch"));
         break;
       case pcDisableMonitorButton:
-        homeNetwork.sendCommand(nodePC, cmdSetPCSetMonitorsOff);
+        homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
+        Serial.println(F("Disabled Monitors"));
         break;
       case mainLightsButton:
         homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
+        Serial.println(F("Toggled Main Lights"));
         break;
       case paintingLightsButton:
         homeNetwork.sendCommand(nodeRF433MHz, cmdTogglePaintingLights);
+        Serial.println(F("Toggled Painting Lights"));
         break;
       case speakerPowerButton:
         homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerPower);
+        Serial.println(F("Toggled Speaker Power"));
         break;
       case speakerUpVolButton:
         homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeUp);
+        Serial.println(F("Increased Speaker Volume"));
         break;
       case speakerDownVolButton:
         homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeDown);
+        Serial.println(F("Decreased Speaker Volume"));
         break;
       case speakerMuteButton:
         homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMute);
+        Serial.println(F("Toggled Speaker Mute"));
         break;
       case speakerModeButton:
         homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMode);
+        Serial.println(F("Toggled Speaker Mode"));
         break;
     }
   }

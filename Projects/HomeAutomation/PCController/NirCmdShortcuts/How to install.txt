@@ -1,0 +1,8 @@
+Download and install NirCmd x64 from: http://www.nirsoft.net/utils/nircmd.html
+into "C:\Program Files\NirCmd"
+Copy all the NirCmd shortcuts into either Desktop or Start Menu(Or else keyboard shortcut won't work):
+
+If the key shortcuts dont work go into properties and reconfigure key shortcut to a new key shortcut
+
+Read more about windows keyboard shortcuts:
+https://support.microsoft.com/en-us/kb/134552

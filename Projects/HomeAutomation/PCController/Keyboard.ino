@@ -9,7 +9,7 @@ void pcDisableMonitors() {
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
-  Keyboard.press('l');
+  Keyboard.press('h');
   delay(100);
   Keyboard.releaseAll();
 }
@@ -19,7 +19,7 @@ void pcEnableMonitors() {
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(KEY_LEFT_SHIFT);
   Keyboard.press(KEY_LEFT_ALT);
-  Keyboard.press('k');
+  Keyboard.press('g');
   delay(100);
   Keyboard.releaseAll();
 }

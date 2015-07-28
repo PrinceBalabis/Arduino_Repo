@@ -13,8 +13,7 @@ static msg_t HNListenThread(void *arg) {
       switch (msgType) {
 
         case typeCommand: // If its a simple command, relay it to CommandExecutionerThread
-          executeCommand = msgContent;
-          chSemSignal(&cmdExSem);
+          executeCommand(msgContent);
           break;
 
         case typeAsk: // If its a question, do some things
