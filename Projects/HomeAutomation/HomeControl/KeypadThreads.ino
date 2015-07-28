@@ -74,7 +74,6 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
-    //    keyName = getKeyName(keypad.getKey());
     keypad.getKey();
     chThdSleepMilliseconds(keypadUpdateTime); // Keypad update frequency
   }
@@ -83,8 +82,6 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
 static msg_t KeypadCommandThread(void *arg)
 {
-  uint8_t lastKeyPressed = 0;
-
   while (1) {
     // Wait for signal from KeypadEvent, it sends a signal whenever keypad status changes
     chSemWait(&cmdKeypadSem);
@@ -115,28 +112,26 @@ static msg_t KeypadCommandThread(void *arg)
           executeCommand(keyName);
           break;
       }
-      // Remember last key which was pressed, in order to perform "hold-key" and "release-key" actions
-      lastKeyPressed = keyName;
     }
 
     // Here are commands to run when a key is RELEASED
     else if (state == RELEASED )
     {
-      switch (lastKeyPressed) {
+      switch (keyName) {
         case pcPowerButton:
-          executeCommand(lastKeyPressed);
+          executeCommand(keyName);
           break;
       }
     }
 
     // Commands to run while HOLDING a key down
     while (state == HOLD) {
-      switch (lastKeyPressed) {
+      switch (keyName) {
         case speakerUpVolButton:
-          executeCommand(lastKeyPressed);
+          executeCommand(keyName);
           break;
         case speakerDownVolButton:
-          executeCommand(lastKeyPressed);
+          executeCommand(keyName);
           break;
       }
       // Some delay in order to execute hold commands in regular intervals
@@ -150,8 +145,8 @@ static msg_t KeypadCommandThread(void *arg)
  *  This function is an event which only runs when the key state is changed
  **/
 void keypadEvent(KeypadEvent key) {
-  keyName = getKeyName(key);
-  Serial.println(keyName);
+  keyName = getKeyName(key); // Save key which this event points to
+
   switch (keypad.getState()) {
     case PRESSED:
       Serial.println(F("PRESSED"));
