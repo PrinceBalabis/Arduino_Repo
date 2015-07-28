@@ -26,6 +26,14 @@ static msg_t CommandExecutioner(void *arg)
         pcEnableMonitors();
         Serial.println(F("Enabled Monitors"));
         break;
+      case cmdSetPCVolUp:
+        pcIncreaseVolume();
+        Serial.println(F("Increased Volume"));
+        break;
+      case cmdSetPCVolDown:
+        pcDecreaseVolume();
+        Serial.println(F("Decreased Volume"));
+        break;
     }
   }
   return 0;

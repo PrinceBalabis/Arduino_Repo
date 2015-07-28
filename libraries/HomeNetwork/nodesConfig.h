@@ -73,18 +73,23 @@ static const int cmdSetSpeakerModeLineIn = 11;
 static const uint16_t nodePC = 041;
 
 // Command(message type: typeCommand)
-static const int cmdSetPCVolUp = 1;
-static const int cmdSetPCVolDown = 2;
-static const int cmdSetPCMute = 3;
-static const int cmdSetPCNoMute = 4;
-static const int cmdSetPCToggleMute = 5;
-static const int cmdSetPCPlayPause = 6;
-static const int cmdSetPCNext = 7;
-static const int cmdSetPCPrevious = 8;
-static const int cmdSetPCDisableMonitors = 9;
-static const int cmdSetPCEnableMonitors = 10;
-static const int cmdSetPCSpotifyPlaylistWorkout = 11;
-static const int cmdSetPCSpotifyPlaylistDinner = 12;
+static const int cmdSetPCMute = 1;
+static const int cmdSetPCNoMute = 2;
+static const int cmdSetPCToggleMute = 3;
+static const int cmdSetPCPlayPause = 4;
+static const int cmdSetPCNext = 5;
+static const int cmdSetPCPrevious = 6;
+static const int cmdSetPCDisableMonitors = 7;
+static const int cmdSetPCEnableMonitors = 8;
+static const int cmdSetPCVolUp = 9;
+static const int cmdSetPCVolDown = 10;
+static const int cmdSetPCVolUpBunch = 11;
+static const int cmdSetPCVolDownBunch = 12;
+static const int cmdSetPCVolPresetMax = 13;
+static const int cmdSetPCVolPresetMedium = 14;
+static const int cmdSetPCVolPresetLow = 15;
+static const int cmdSetPCSpotifyPlaylistWorkout = 16;
+static const int cmdSetPCSpotifyPlaylistDinner = 17;
 
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************

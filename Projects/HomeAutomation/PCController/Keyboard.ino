@@ -23,3 +23,44 @@ void pcEnableMonitors() {
   delay(50);
   Keyboard.release(KEY_CAPS_LOCK);
 }
+
+void pcIncreaseVolume() {
+  // CTRL-SHIFT-ALT-V
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('v');
+  delay(100);
+  Keyboard.releaseAll();
+}
+
+void pcDecreaseVolume() {
+  // CTRL-SHIFT-ALT-G
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('g');
+  delay(100);
+  Keyboard.releaseAll();
+}
+
+void pcMuteOn() {
+  // CTRL-SHIFT-ALT-X
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('x');
+  delay(100);
+  Keyboard.releaseAll();
+}
+
+void pcMuteOff() {
+  // CTRL-SHIFT-ALT-Z
+  Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
+  Keyboard.press('z');
+  delay(100);
+  Keyboard.releaseAll();
+}
+
