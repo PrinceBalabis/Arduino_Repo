@@ -165,7 +165,7 @@ void initializeSpotifyStartPlaylist() {
   delay(1);
   Keyboard.releaseAll();
 
-  delay(10); // Wait for Spotify to load
+  delay(500); // Wait for Spotify to load
 }
 
 void continueSpotifyStartPlaylist() {
