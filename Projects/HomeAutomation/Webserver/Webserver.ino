@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * Before running this sketch you must configure ESP-05 to connect to your network at boot
  * Also it must run at 9600 baud
  * Set WiFi Mode to only STA
@@ -12,10 +12,10 @@
  *    AT+CIOBAUD=9600
  * Restart to save settings
  *    AT+RST
- *    
- * How to Send a GET HTTP Request from a simple internet browser:  
+ *
+ * How to Send a GET HTTP Request from a simple internet browser:
  * Enter this in browser to send command 13
- * http://princehome.duckdns.org:9500?cmd=13
+ * http://princehome.duckdns.org:9500?c13
  */
 
 #include <SoftwareSerial.h>
@@ -28,17 +28,11 @@ const boolean debugToggle = false;
 
 void setup()
 {
-  Serial.begin(9600);
-  esp8266.begin(9600); // your esp's baud rate might be different
+  Serial.begin(115200);
+  esp8266.begin(38400); // your esp's baud rate might be different
 
   delay(5000);
-  sendCommand("AT+RST\r\n", 2000, debugToggle); // Reset module
-  delay(5000);
-  sendCommand("AT+CIFSR\r\n", 1000, debugToggle); // Print ip address
-  sendCommand("AT+CIPMUX=1\r\n", 1000, debugToggle); // configure for multiple connections
-  sendCommand("AT+CIPSERVER=1,9500\r\n", 1000, debugToggle); // turn on server on port 80
-
-  Serial.println("Server Ready");
+  initESP8266();
 }
 
 void loop()
@@ -48,14 +42,16 @@ void loop()
 
     if (esp8266.find("+IPD,"))
     {
-      delay(1000); // wait for the serial buffer to fill up (read all the serial data)
+      delay(50); // wait for the serial buffer to fill up (read all the serial data)
       // get the connection id so that we can then disconnect
       int connectionId = esp8266.read() - 48; // subtract 48 because the read() function returns
       // the ASCII decimal value and 0 (the first decimal number) starts at 48
+      Serial.print(F("Client:"));
+      Serial.print(connectionId);
 
-      esp8266.find("cmd="); // advance cursor to "pin="
+      esp8266.find("c"); // advance cursor to "pin="
 
-      //Keep reading all characters in command
+      //Read the command
       String strPinNumber = "";
       while (1) {
         char temp = esp8266.read();
@@ -64,22 +60,23 @@ void loop()
         strPinNumber += temp - 48; // Store char in String beacuse of ASCII error
       }
       int pinNumber = strPinNumber.toInt(); // Convert to int
-      Serial.print("Command: ");
+      Serial.print(",Command:");
       Serial.println(pinNumber);
 
       // Build string that is send back to client that sent command
-      String content;
-      content = "Command: ";
-      content += pinNumber;
+//      String content;
+//      content = "Command: ";
+//      content += pinNumber;
+//
+//      sendHTTPResponse(connectionId, content);
 
-      sendHTTPResponse(connectionId, content);
-
+      // Dont need close command as timeout is only 1 second, doesnt work anyway!
       // make close command
-      String closeCommand = "AT+CIPCLOSE=";
-      closeCommand += connectionId; // append connection id
-      closeCommand += "\r\n";
-
-      sendCommand(closeCommand, 1000, debugToggle); // close connection
+      //      String closeCommand = "AT+CIPCLOSE=";
+      //      closeCommand += connectionId; // append connection id
+      //      closeCommand += "\r\n";
+      //
+      //      sendCommand(closeCommand, 1000, debugToggle); // close connection
     }
   }
 }
@@ -119,10 +116,10 @@ String sendData(String command, const int timeout, boolean debug)
     }
   }
 
-  if (debug)
-  {
-    Serial.print(response);
-  }
+  //  if (debug)
+  //  {
+  //    Serial.print(response);
+  //  }
 
   return response;
 }
@@ -190,7 +187,22 @@ String sendCommand(String command, const int timeout, boolean debug)
     Serial.print(response);
   }
 
+  //  if (response.indexOf("busy p...") > 0) {
+  //    Serial.print("ESP8266 hanged, reinitializing...");
+  //    initESP8266();
+  //  }
+
   return response;
 }
 
+void initESP8266() {
+  sendCommand("AT+RST\r\n", 2000, debugToggle); // Reset module
+  delay(5000); // Wait for module to connect to network
+  sendCommand("AT+CIFSR\r\n", 1000, debugToggle); // Print ip address
+  sendCommand("AT+CIPMUX=1\r\n", 1000, debugToggle); // configure for multiple connections
+  sendCommand("AT+CIPSERVER=1,9500\r\n", 1000, debugToggle); // turn on server on port 80
+  sendCommand("AT+CIPSTO=5\r\n", 1000, debugToggle); // Set server timeout to 5 seconds, clients stop waiting for response after 5 seconds
+
+  Serial.println("Server Ready");
+}
 
