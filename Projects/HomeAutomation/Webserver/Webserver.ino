@@ -1,40 +1,203 @@
-#include <Wire.h>
-#include <ChibiOS_AVR.h>
-#include <RF24Network.h>
-#include <RF24.h>
-#include <SPI.h>
-#include <Ethernet.h>
-#include "config.h"
+/*
+ * Enter this in browser to send cmd 13
+ * http://princehome.duckdns.org:9500?cmd=13
+ */
 
-// Data to share
-volatile int msgNode = -1;
-volatile int msgContent = -1;
+#include <SoftwareSerial.h>
 
-static WORKING_AREA(waThread1, 64);
-static WORKING_AREA(waThread2, 124);
-//------------------------------------------------------------------------------
-void setup() {
-  Serial.begin(115200);
+SoftwareSerial esp8266(2, 3); // make RX Arduino line is pin 2, make TX Arduino line is pin 3.
+// This means that you need to connect the TX line from the esp to the Arduino's pin 2
+// and the RX line from the esp to the Arduino's pin 3
 
-  chBegin(mainThread);
-  // chBegin never returns, main thread continues with mainThread()
-  while (1);
+const boolean debugToggle = 1;
+
+const int led1 = 12;
+const int led2 = 13;
+
+void setup()
+{
+  Serial.begin(9600);
+  esp8266.begin(9600); // your esp's baud rate might be different
+
+  pinMode(led1, OUTPUT);
+  digitalWrite(led1, LOW);
+
+  pinMode(led2, OUTPUT);
+  digitalWrite(led2, LOW);
+
+  delay(5000);
+  sendCommand("AT+RST\r\n", 2000, debugToggle); // Reset module
+  delay(5000);
+  sendCommand("AT+CIFSR\r\n", 1000, debugToggle); // Print ip address
+  sendCommand("AT+CIPMUX=1\r\n", 1000, debugToggle); // configure for multiple connections
+  sendCommand("AT+CIPSERVER=1,9500\r\n", 1000, debugToggle); // turn on server on port 80
+
+  Serial.println("Server Ready");
 }
 
-//------------------------------------------------------------------------------
-// main thread runs at NORMALPRIO
-void mainThread() {
+void loop()
+{
+  if (esp8266.available()) // check if the esp is sending a message
+  {
+    Serial.println("Connected1");
 
-  //chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO + 3, Thread1, NULL);
+    if (esp8266.find("+IPD,"))
+    {
+      Serial.println("Connected2");
+      delay(1000); // wait for the serial buffer to fill up (read all the serial data)
+      // get the connection id so that we can then disconnect
+      int connectionId = esp8266.read() - 48; // subtract 48 because the read() function returns
+      // the ASCII decimal value and 0 (the first decimal number) starts at 48
 
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO + 2, Thread2, NULL);
+      esp8266.find("cmd="); // advance cursor to "pin="
 
-  // increment counter
-  while (1);
+      int pinNumber = (esp8266.read() - 48); // get first number i.e. if the pin 13 then the 1st number is 1
+      int secondNumber = (esp8266.read() - 48);
+      if (secondNumber >= 0 && secondNumber <= 9)
+      {
+        pinNumber *= 10;
+        pinNumber += secondNumber; // get second number, i.e. if the pin number is 13 then the 2nd number is 3, then add to the first number
+      }
+
+      digitalWrite(pinNumber, !digitalRead(pinNumber)); // toggle pin
+
+      // build string that is send back to device that is requesting pin toggle
+      String content;
+      content = "Pin ";
+      content += pinNumber;
+      content += " is ";
+
+      if (digitalRead(pinNumber))
+      {
+        content += "ON";
+      }
+      else
+      {
+        content += "OFF";
+      }
+
+      sendHTTPResponse(connectionId, content);
+
+      // make close command
+      String closeCommand = "AT+CIPCLOSE=";
+      closeCommand += connectionId; // append connection id
+      closeCommand += "\r\n";
+
+      sendCommand(closeCommand, 1000, debugToggle); // close connection
+    }
+  }
 }
-//------------------------------------------------------------------------------
-void loop() {
-  // not used
+
+/*
+* Name: sendData
+* Description: Function used to send data to ESP8266.
+* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+* Returns: The response from the esp8266 (if there is a reponse)
+*/
+String sendData(String command, const int timeout, boolean debug)
+{
+  String response = "";
+
+  int dataSize = command.length();
+  char data[dataSize];
+  command.toCharArray(data, dataSize);
+
+  esp8266.write(data, dataSize); // send the read character to the esp8266
+  if (debug)
+  {
+    Serial.println("\r\n====== HTTP Response From Arduino ======");
+    Serial.write(data, dataSize);
+    Serial.println("\r\n========================================");
+  }
+
+  long int time = millis();
+
+  while ( (time + timeout) > millis())
+  {
+    while (esp8266.available())
+    {
+
+      // The esp has data so display its output to the serial window
+      char c = esp8266.read(); // read the next character.
+      response += c;
+    }
+  }
+
+  if (debug)
+  {
+    Serial.print(response);
+  }
+
+  return response;
+}
+
+/*
+* Name: sendHTTPResponse
+* Description: Function that sends HTTP 200, HTML UTF-8 response
+*/
+void sendHTTPResponse(int connectionId, String content)
+{
+
+  // build HTTP response
+  String httpResponse;
+  String httpHeader;
+  // HTTP Header
+  httpHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n";
+  httpHeader += "Content-Length: ";
+  httpHeader += content.length();
+  httpHeader += "\r\n";
+  httpHeader += "Connection: close\r\n\r\n";
+  httpResponse = httpHeader + content + " "; // There is a bug in this code: the last character of "content" is not sent, I cheated by adding this extra space
+  sendCIPData(connectionId, httpResponse);
+}
+
+/*
+* Name: sendCIPDATA
+* Description: sends a CIPSEND=<connectionId>,<data> command
+*
+*/
+void sendCIPData(int connectionId, String data)
+{
+  String cipSend = "AT+CIPSEND=";
+  cipSend += connectionId;
+  cipSend += ",";
+  cipSend += data.length();
+  cipSend += "\r\n";
+  sendCommand(cipSend, 1000, debugToggle);
+  sendData(data, 1000, debugToggle);
+}
+
+/*
+* Name: sendCommand
+* Description: Function used to send data to ESP8266.
+* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+* Returns: The response from the esp8266 (if there is a reponse)
+*/
+String sendCommand(String command, const int timeout, boolean debug)
+{
+  String response = "";
+
+  esp8266.print(command); // send the read character to the esp8266
+
+  long int time = millis();
+
+  while ( (time + timeout) > millis())
+  {
+    while (esp8266.available())
+    {
+
+      // The esp has data so display its output to the serial window
+      char c = esp8266.read(); // read the next character.
+      response += c;
+    }
+  }
+
+  if (debug)
+  {
+    Serial.print(response);
+  }
+
+  return response;
 }
 
 

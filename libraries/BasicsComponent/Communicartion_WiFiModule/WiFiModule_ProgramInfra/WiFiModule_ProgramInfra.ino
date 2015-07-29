@@ -1,9 +1,9 @@
 // Digital pin 2 is RX(TX on other device)
 // Digital pin 3 is TX(RX on other device)
 
-Const String aPSSID = "Router";
-Const String aPPass = "kungarike";
-Const int encryption = 7; // WPA2-PSK [AES]
+const String aPSSID = "Router";
+const String aPPass = "kungarike";
+const int encryption = 7; // WPA2-PSK [AES]
 #include <SoftwareSerial.h>
 
 SoftwareSerial wiFiSerial(2, 3); //RX, TX
