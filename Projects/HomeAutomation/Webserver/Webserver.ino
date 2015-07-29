@@ -1,5 +1,5 @@
 /*
- * Enter this in browser to send cmd 13
+ * Enter this in browser to send command 13
  * http://princehome.duckdns.org:9500?cmd=13
  */
 
@@ -9,21 +9,12 @@ SoftwareSerial esp8266(2, 3); // make RX Arduino line is pin 2, make TX Arduino 
 // This means that you need to connect the TX line from the esp to the Arduino's pin 2
 // and the RX line from the esp to the Arduino's pin 3
 
-const boolean debugToggle = 1;
-
-const int led1 = 12;
-const int led2 = 13;
+const boolean debugToggle = false;
 
 void setup()
 {
   Serial.begin(9600);
   esp8266.begin(9600); // your esp's baud rate might be different
-
-  pinMode(led1, OUTPUT);
-  digitalWrite(led1, LOW);
-
-  pinMode(led2, OUTPUT);
-  digitalWrite(led2, LOW);
 
   delay(5000);
   sendCommand("AT+RST\r\n", 2000, debugToggle); // Reset module
@@ -39,11 +30,9 @@ void loop()
 {
   if (esp8266.available()) // check if the esp is sending a message
   {
-    Serial.println("Connected1");
 
     if (esp8266.find("+IPD,"))
     {
-      Serial.println("Connected2");
       delay(1000); // wait for the serial buffer to fill up (read all the serial data)
       // get the connection id so that we can then disconnect
       int connectionId = esp8266.read() - 48; // subtract 48 because the read() function returns
@@ -51,30 +40,22 @@ void loop()
 
       esp8266.find("cmd="); // advance cursor to "pin="
 
-      int pinNumber = (esp8266.read() - 48); // get first number i.e. if the pin 13 then the 1st number is 1
-      int secondNumber = (esp8266.read() - 48);
-      if (secondNumber >= 0 && secondNumber <= 9)
-      {
-        pinNumber *= 10;
-        pinNumber += secondNumber; // get second number, i.e. if the pin number is 13 then the 2nd number is 3, then add to the first number
+      //Keep reading all characters in command
+      String strPinNumber = "";
+      while (1) {
+        char temp = esp8266.read();
+        if (temp == -1) // If read() returned -1 then it means there is no more to read, exit out of loop
+          break;
+        strPinNumber += temp - 48; // Store char in String beacuse of ASCII error
       }
+      int pinNumber = strPinNumber.toInt(); // Convert to int
+      Serial.print("Command: ");
+      Serial.println(pinNumber);
 
-      digitalWrite(pinNumber, !digitalRead(pinNumber)); // toggle pin
-
-      // build string that is send back to device that is requesting pin toggle
+      // Build string that is send back to client that sent command
       String content;
-      content = "Pin ";
+      content = "Command: ";
       content += pinNumber;
-      content += " is ";
-
-      if (digitalRead(pinNumber))
-      {
-        content += "ON";
-      }
-      else
-      {
-        content += "OFF";
-      }
 
       sendHTTPResponse(connectionId, content);
 
@@ -176,11 +157,8 @@ void sendCIPData(int connectionId, String data)
 String sendCommand(String command, const int timeout, boolean debug)
 {
   String response = "";
-
   esp8266.print(command); // send the read character to the esp8266
-
   long int time = millis();
-
   while ( (time + timeout) > millis())
   {
     while (esp8266.available())
