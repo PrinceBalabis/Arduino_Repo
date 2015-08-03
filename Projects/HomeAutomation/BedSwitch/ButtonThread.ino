@@ -20,11 +20,11 @@ static msg_t ButtonThread(void *arg) {
 
       if (askApartmentStatus()) {
         shutdownApartment();
-        setLED(LOW);
+        disableLED();
         Serial.println("Shut down apartment");
       } else {
         startupApartment();
-        setLED(HIGH);
+        enableLED();
         Serial.println("Started up apartment");
       }
       lastButtonStatus = HIGH;

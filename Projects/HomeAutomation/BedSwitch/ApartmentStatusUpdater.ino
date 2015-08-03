@@ -20,11 +20,11 @@ static msg_t ApartmentStatusUpdater(void *arg) {
 
     // What happens when apartment is either on or off
     if (apartmentStatus && !ledStatus) {
-      setLED(HIGH);
+      enableLED();
       Serial.println(F("Apartment just went online, switching LED on!"));
     } else if (!apartmentStatus && ledStatus) {
-      setLED(LOW);
-      Serial.println(F("Apartment just went offline, switching LED off!"));
+      disableLED();
+      Serial.println(F("Apartment just went offline"));
     }
     chThdSleepMilliseconds(apartmentStatusUpdateTime);
   }
@@ -45,7 +45,6 @@ bool askApartmentStatus() {
     Serial.println(F("Main lights are on!"));
     return true;
   }
-
 
   int32_t paintingLightsStatus;
   if (!homeNetwork.sendQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, &paintingLightsStatus)) {

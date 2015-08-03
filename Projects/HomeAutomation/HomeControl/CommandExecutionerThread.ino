@@ -16,6 +16,8 @@ static msg_t CommandExecutioner(void *arg)
   {
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     chSemWait(&cmdExSem);
+    
+    bool sent = false;
 
     switch (commandToExecute) {
       case cmdSetPCOn:
@@ -27,46 +29,50 @@ static msg_t CommandExecutioner(void *arg)
         Serial.println(F("Toggled PC Power Switch"));
         break;
       case pcDisableMonitorButton:
-        homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
+        sent = homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
         Serial.println(F("Disabled Monitors"));
         break;
       case pcSpotifyPlaylistWorkout:
-        homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistWorkout);
+        sent = homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistWorkout);
         Serial.println(F("Started Spotify Workout Playlist"));
         break;
       case pcSpotifyPlaylistDinner:
-        homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistDinner);
+        sent = homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistDinner);
         Serial.println(F("Started Spotify Dinner Playlist"));
         break;
       case mainLightsButton:
-        homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
+        sent = homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
         Serial.println(F("Toggled Main Lights"));
         break;
       case paintingLightsButton:
-        homeNetwork.sendCommand(nodeRF433MHz, cmdTogglePaintingLights);
+        Serial.println(F("B4 Toggled Painting Lights"));
+        sent = homeNetwork.sendCommand(nodeRF433MHz, cmdTogglePaintingLights);
         Serial.println(F("Toggled Painting Lights"));
         break;
       case speakerPowerButton:
-        homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerPower);
+        sent = homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerPower);
         Serial.println(F("Toggled Speaker Power"));
         break;
       case speakerUpVolButton:
-        homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeUp);
+        sent = homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeUp);
         Serial.println(F("Increased Speaker Volume"));
         break;
       case speakerDownVolButton:
-        homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeDown);
+        sent = homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerVolumeDown);
         Serial.println(F("Decreased Speaker Volume"));
         break;
       case speakerMuteButton:
-        homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMute);
+        sent = homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMute);
         Serial.println(F("Toggled Speaker Mute"));
         break;
       case speakerModeButton:
-        homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMode);
+        sent = homeNetwork.sendCommand(nodeSpeaker, cmdToggleSpeakerMode);
         Serial.println(F("Toggled Speaker Mode"));
         break;
     }
+
+    if (!sent)
+      Serial.println(F("ERROR! Couldn't send command! Node may be offline!"));
   }
   return 0;
 }

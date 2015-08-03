@@ -1,55 +1,61 @@
 uint8_t ledBrightness = minLEDBrightness;
 
+bool fadeDirection = true; // false=fade out, true=fade in
+
 static msg_t ApartmentStatusLEDThread(void *arg) {
   pinMode(ledPin, OUTPUT);
   Serial.println(F("Started Apartment Status LED Thread"));
 
-  while (1) {
+  analogWrite(ledPin, 0); // Initialize LED to Off
 
+  while (1) {
     if (ledStatus) {
       // change the brightness for next time through the loop:
-      ledBrightness = ledBrightness + fadeAmount;
+      if (fadeDirection)
+        ledBrightness = ledBrightness + fadeAmount;
+      else
+        ledBrightness = ledBrightness - fadeAmount;
+
+      Serial.println(ledBrightness);
 
       analogWrite(ledPin, ledBrightness);
 
       // reverse the direction of the fading at the ends of the fade:
-      if (ledBrightness <= minLEDBrightness) {
-        fadeAmount = -fadeAmount;
-        chThdSleepMilliseconds(1000);
+      if (ledBrightness <= minLEDBrightness) {// Reverse fade if the LED has reached minimum brightness
+        fadeDirection = true;
+        Serial.println(F("Reached minimum brightness, switching"));
+        chThdSleepMilliseconds(500);
       }
-      else if (ledBrightness >= maxLEDBrightness) {
-        fadeAmount = -fadeAmount;
-        chThdSleepMilliseconds(1000);
+      else if (ledBrightness >= maxLEDBrightness) { // Reverse fade if the LED has reached maximum brightness
+        fadeDirection = false;
+        Serial.println(F("Reached maximum brightness, switching"));
+        chThdSleepMilliseconds(500);
       }
-
+      chThdSleepMilliseconds(fadeTime);
     } else {
-      // reverse the direction of the fading at the ends of the fade:
-      if (fadeAmount > 0) { // Reverse fade if its fading up
-        fadeAmount = -fadeAmount;
-      } else if (ledBrightness != 0) { // Keep fading out LED untill 0
-        ledBrightness = ledBrightness + fadeAmount;
-        analogWrite(ledPin, ledBrightness);
-      } else if (ledBrightness == 0) {
-        chThdSleepMilliseconds(200); // Idle when LED has shut down
-      }
+      chThdSleepMilliseconds(2000); // Minimize CPU load when LED is off
     }
-    chThdSleepMilliseconds(fadeTime);
   }
 
   return 0;
 }
 
-void setLED(bool state) {
-  if (ledStatus != state) {
-    switch (state) {
-      case HIGH:
-        //Make it fade up
-        if (fadeAmount < 0)
-          fadeAmount = -fadeAmount;
-        // Make LED start from the minimum value and go up
-        ledBrightness = minLEDBrightness;
-        break;
-    }
-    ledStatus = state;
-  }
+void enableLED() {
+  ledStatus = true; //Enable LED fading in and out
+  Serial.println(F("Switching LED on!"));
 }
+
+void disableLED() {
+  while (ledBrightness > 0) { // Keep fading out LED until off
+    ledBrightness = ledBrightness - fadeAmount;
+    analogWrite(ledPin, ledBrightness);
+    chThdSleepMilliseconds(fadeTime);
+
+  }
+
+  ledStatus = false; //Disable LED fading in and out
+  fadeDirection = true; // Make sure it fades in when LED is enabled again
+  Serial.println(F("Switching LED off!"));
+
+}
+

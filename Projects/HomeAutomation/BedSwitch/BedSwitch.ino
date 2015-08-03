@@ -21,7 +21,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
-//  Serial.begin(115200);
+  Serial.begin(115200);
 
   chBegin(mainThread);
   // chBegin never returns, main thread continues with mainThread()

@@ -8,6 +8,7 @@ static msg_t HNListenThread(void *arg) {
   homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
 
   while (1) {
+
     if (msgReceived) { // Check message if a new message is received
       homeNetwork.pauseAutoUpdate(true); // Pause network update in order to queue commands
 

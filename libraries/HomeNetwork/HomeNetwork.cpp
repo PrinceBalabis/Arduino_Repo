@@ -2,8 +2,8 @@
 *  HomeNetwork.cpp
 */
 
-#include "HomeNetwork.h"
 
+#include "HomeNetwork.h"
 HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork): radio(_radio), network(_network), homeNetwork(_homeNetwork)
 {
 }
@@ -124,58 +124,58 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 * This function sends the message to a receiver, both which are set in parameter
 * Gets a response back
 **/
-bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
-  autoUpdatePaused = true; // Pause listening for messages
-
-  while(!autoUpdatePauseExecuted){
-    chThdSleepMilliseconds(2); // Needed for stability, give autoupdate time to pause
-  }
-
-  // Send question, will retry until succeed or timeout
-  uint16_t msgSenderReceived = -1;
-  int32_t msgReceived = 0;
-  unsigned char msgTypeReceived = 'Z';
-  bool questionSent = false;
-  unsigned long started_waiting_at = millis();
-  bool questionTimeOut = false;
-  while (!questionSent && !questionTimeOut) {
-    network.update(); // Check the network regularly for the entire network to function properly
-    questionSent = send(msgReceiver, msgContent, typeAsk); // Send question
-    if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
-      questionTimeOut = true;
-    }
-    chThdSleepMilliseconds(2); // Send every few ms
-  }
-
-  // Wait for answer, will wait untill received or timeout
-  bool answerTimeout = false;
-
-  // Only wait for answer if question was sent
-  if(questionSent){
-    //How long to wait for the answer
-    started_waiting_at = millis();
-
-    while ((msgSenderReceived != msgReceiver || msgTypeReceived != typeResponse) && !answerTimeout) {
-      network.update(); // Check the network regularly for the entire network to function properly
-      if(network.available())
-      {
-        msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      }
-      if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
-        answerTimeout = true;
-      }
-      chThdSleepMilliseconds(2); // Check every few ms if message is received
-    }
-
-    *pmsgResponse = msgReceived; // Save answer to variable
-  }
-  autoUpdatePaused = false; // Continue listening for messages
-
-  if(questionSent && !answerTimeout)
-  return 1;
-  else
-  return 0;
-}
+// bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
+//   autoUpdatePaused = true; // Pause listening for messages
+//
+//   while(!autoUpdatePauseExecuted){
+//     chThdSleepMilliseconds(2); // Needed for stability, give autoupdate time to pause
+//   }
+//
+//   // Send question, will retry until succeed or timeout
+//   uint16_t msgSenderReceived = -1;
+//   int32_t msgReceived = 0;
+//   unsigned char msgTypeReceived = 'Z';
+//   bool questionSent = false;
+//   unsigned long started_waiting_at = millis();
+//   bool questionTimeOut = false;
+//   while (!questionSent && !questionTimeOut) {
+//     network.update(); // Check the network regularly for the entire network to function properly
+//     questionSent = send(msgReceiver, msgContent, typeAsk); // Send question
+//     if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
+//       questionTimeOut = true;
+//     }
+//     chThdSleepMilliseconds(2); // Send every few ms
+//   }
+//
+//   // Wait for answer, will wait untill received or timeout
+//   bool answerTimeout = false;
+//
+//   // Only wait for answer if question was sent
+//   if(questionSent){
+//     //How long to wait for the answer
+//     started_waiting_at = millis();
+//
+//     while ((msgSenderReceived != msgReceiver || msgTypeReceived != typeResponse) && !answerTimeout) {
+//       network.update(); // Check the network regularly for the entire network to function properly
+//       if(network.available())
+//       {
+//         msgSenderReceived = read(&msgReceived, &msgTypeReceived);
+//       }
+//       if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
+//         answerTimeout = true;
+//       }
+//       chThdSleepMilliseconds(2); // Check every few ms if message is received
+//     }
+//
+//     *pmsgResponse = msgReceived; // Save answer to variable
+//   }
+//   autoUpdatePaused = false; // Continue listening for messages
+//
+//   if(questionSent && !answerTimeout)
+//   return 1;
+//   else
+//   return 0;
+// }
 
 /**
 *  read

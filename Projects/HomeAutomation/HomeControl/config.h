@@ -21,7 +21,7 @@ const uint8_t homeNetworkCEPin = 8;
 const uint8_t homeNetworkCSNPin = 9;
 
 //Tweaks
-const uint16_t homeNetworkCheckMessageDelay = 500; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
+const uint16_t homeNetworkCheckMessageDelay = 1000; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 const uint16_t homeNetworkAutoUpdateTime = 20; // How often to auto update network. Should be short because this node is parent for many child nodes
 /*
 *  ------------------------------------
@@ -50,7 +50,7 @@ const uint8_t pcSpotifyPlaylistDinner = 5;
  *  Keypad Performance
  *  ------------------------------------
  */
-const uint8_t keypadUpdateTime = 20; // How often to update keypad reads in milliseconds
+const uint8_t keypadUpdateTime = 30; // How often to update keypad reads in milliseconds
 const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when holding a button, in milliseconds
 
 
