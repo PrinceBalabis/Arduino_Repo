@@ -2,9 +2,7 @@
  *  This Sketch is to make a "universal home control".
  *  Controlling PC, lights, speaker & other home electronics
  *  Hardware needed:
- *  - 940 nm IR LED with a resistor to pin 3
  *  - NPN transistor for PC Power switch
- *  - 433 MHz transmitter
  *
  * WARNING: Don't use Digital Pin 10 even if its not used, its reserved by SPI library!
  */
@@ -41,10 +39,10 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 64);
-static WORKING_AREA(keypadCommandThread, 64);
+static WORKING_AREA(hNListenThread, 8);
+static WORKING_AREA(keypadCommandThread, 16);
 static WORKING_AREA(keypadUpdaterThread, 64);
-static WORKING_AREA(commandExecutioner, 64);
+static WORKING_AREA(commandExecutioner, 32);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
