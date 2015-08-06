@@ -16,11 +16,11 @@ static const unsigned char typeCommand = 'C';
 static const uint16_t nodeMainLights = 00;
 
 // Ask
-static const int cmdGetLightsStatus = 1;
+static const uint8_t cmdGetLightsStatus = 1;
 // Command
-static const int cmdToggleLights = 1;
-static const int cmdSetLightsOn = 2;
-static const int cmdSetLightsOff = 3;
+static const uint8_t cmdToggleLights = 1;
+static const uint8_t cmdSetLightsOn = 2;
+static const uint8_t cmdSetLightsOff = 3;
 
 //***********************Home Control************************************************************
 //First child of Main Room Lights node
@@ -28,22 +28,22 @@ static const uint16_t nodeHomeControl = 01;
 
 // Command(message type: typeCommand)
 // Starts from 17 because buttons use 1-16
-static const int cmdSetPCOn = 17;
+static const uint8_t cmdSetPCOn = 17;
 
 //***********************433MHz Controller************************************************************
 //First child of Home Control
 static const uint16_t nodeRF433MHz = 011;
 
 // Ask(message type: typeAsk)
-static const int cmdGetPaintingLightsStatus = 1;
-static const int cmdGetSpeakerPowerStatus = 2;
+static const uint8_t cmdGetPaintingLightsStatus = 1;
+static const uint8_t cmdGetSpeakerPowerStatus = 2;
 // Command(message type: typeCommand)
-static const int cmdSetPaintingLightsOn = 1;
-static const int cmdSetPaintingLightsOff = 2;
-static const int cmdTogglePaintingLights = 3;
-static const int cmdSetSpeakerPowerSwitchOn = 4;
-static const int cmdSetSpeakerPowerSwitchOff = 5;
-static const int cmdToggleSpeakerPowerSwitch = 6;
+static const uint8_t cmdSetPaintingLightsOn = 1;
+static const uint8_t cmdSetPaintingLightsOff = 2;
+static const uint8_t cmdTogglePaintingLights = 3;
+static const uint8_t cmdSetSpeakerPowerSwitchOn = 4;
+static const uint8_t cmdSetSpeakerPowerSwitchOff = 5;
+static const uint8_t cmdToggleSpeakerPowerSwitch = 6;
 
 //***********************Bed Switch************************************************************
 //Second child of Home Control
@@ -55,17 +55,17 @@ static const uint16_t nodeBedSwitch = 02;
 static const uint16_t nodeSpeaker = 031;
 
 // Command(message type: typeCommand)
-static const int cmdToggleSpeakerPower = 1;
-static const int cmdSetSpeakerPowerOn = 2;
-static const int cmdSetSpeakerPowerOff = 3;
-static const int cmdSetSpeakerVolumeUp = 4;
-static const int cmdSetSpeakerVolumeDown = 5;
-static const int cmdToggleSpeakerMute = 6;
-static const int cmdSetSpeakerMuteOn = 7;
-static const int cmdSetSpeakerMuteOff = 8;
-static const int cmdToggleSpeakerMode = 9;
-static const int cmdSetSpeakerModePC = 10;
-static const int cmdSetSpeakerModeLineIn = 11;
+static const uint8_t cmdToggleSpeakerPower = 1;
+static const uint8_t cmdSetSpeakerPowerOn = 2;
+static const uint8_t cmdSetSpeakerPowerOff = 3;
+static const uint8_t cmdSetSpeakerVolumeUp = 4;
+static const uint8_t cmdSetSpeakerVolumeDown = 5;
+static const uint8_t cmdToggleSpeakerMute = 6;
+static const uint8_t cmdSetSpeakerMuteOn = 7;
+static const uint8_t cmdSetSpeakerMuteOff = 8;
+static const uint8_t cmdToggleSpeakerMode = 9;
+static const uint8_t cmdSetSpeakerModePC = 10;
+static const uint8_t cmdSetSpeakerModeLineIn = 11;
 
 
 //***********************PC Controller************************************************************
@@ -73,24 +73,24 @@ static const int cmdSetSpeakerModeLineIn = 11;
 static const uint16_t nodePC = 041;
 
 // Command(message type: typeCommand)
-static const int cmdSetPCMute = 1;
-static const int cmdSetPCNoMute = 2;
-static const int cmdSetPCToggleMute = 3;
-static const int cmdSetPCPlayPause = 4;
-static const int cmdSetPCNext = 5;
-static const int cmdSetPCPrevious = 6;
-static const int cmdSetPCDisableMonitors = 7;
-static const int cmdSetPCEnableMonitors = 8;
-static const int cmdSetPCVolUp = 9;
-static const int cmdSetPCVolDown = 10;
-static const int cmdSetPCVolUpBunch = 11;
-static const int cmdSetPCVolDownBunch = 12;
-static const int cmdSetPCVolPresetMax = 13;
-static const int cmdSetPCVolPresetMedium = 14;
-static const int cmdSetPCVolPresetLow = 15;
-static const int cmdSetPCSpotifyPlaylistWorkout = 16;
-static const int cmdSetPCSpotifyPlaylistDinner = 17;
-static const int cmdSetPCSpotifyPlaylistMorning = 17;
+static const uint8_t cmdSetPCMute = 1;
+static const uint8_t cmdSetPCNoMute = 2;
+static const uint8_t cmdSetPCToggleMute = 3;
+static const uint8_t cmdSetPCPlayPause = 4;
+static const uint8_t cmdSetPCNext = 5;
+static const uint8_t cmdSetPCPrevious = 6;
+static const uint8_t cmdSetPCDisableMonitors = 7;
+static const uint8_t cmdSetPCEnableMonitors = 8;
+static const uint8_t cmdSetPCVolUp = 9;
+static const uint8_t cmdSetPCVolDown = 10;
+static const uint8_t cmdSetPCVolUpBunch = 11;
+static const uint8_t cmdSetPCVolDownBunch = 12;
+static const uint8_t cmdSetPCVolPresetMax = 13;
+static const uint8_t cmdSetPCVolPresetMedium = 14;
+static const uint8_t cmdSetPCVolPresetLow = 15;
+static const uint8_t cmdSetPCSpotifyPlaylistWorkout = 16;
+static const uint8_t cmdSetPCSpotifyPlaylistDinner = 17;
+static const uint8_t cmdSetPCSpotifyPlaylistMorning = 17;
 
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
