@@ -11,7 +11,7 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _hom
 /**
 *  Thread for the Home Network
 **/
-static WORKING_AREA(homeNetworkThread, 8);
+static WORKING_AREA(homeNetworkThread, 1);
 static msg_t HomeNetworkThread(void *_homeNetwork)
 {
   HomeNetwork* homeNetwork = ((HomeNetwork*)_homeNetwork);
