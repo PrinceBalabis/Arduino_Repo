@@ -20,8 +20,7 @@ static msg_t CommandExecutioner(void *arg)
     switch (executeCommand) {
       case cmdGetLightsStatus:
         int32_t mainLightsStatus;
-        bool sent = homeNetwork.toggleMainLights();
-//        bool sent = homeNetwork.askMainLightsStatus(&mainLightsStatus);
+        bool sent = homeNetwork.sendQuestion(nodeMainLights, cmdGetLightsStatus, &mainLightsStatus);
         Serial.print(F("Sent: "));
         Serial.print(sent);
         Serial.print(F(" Status: "));

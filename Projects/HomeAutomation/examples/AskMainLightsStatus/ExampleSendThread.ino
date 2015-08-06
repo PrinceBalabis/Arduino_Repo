@@ -8,7 +8,7 @@ static msg_t ExampleSendThread(void *arg) {
   homeNetwork.pauseAutoUpdate(true);
 
   while (1) {
-    chThdSleepMilliseconds(500); // Redo this send program every few moments, give enough time for other threads to run
+    chThdSleepMilliseconds(1000); // Redo this send program every few moments, give enough time for other threads to run
     executeCommand = cmdGetLightsStatus;
     chSemSignal(&cmdExSem);
 

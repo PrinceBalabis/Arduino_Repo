@@ -30,9 +30,9 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 124);
-static WORKING_AREA(commandExecutioner, 124);
-static WORKING_AREA(exampleSendThread, 124);
+static WORKING_AREA(hNListenThread, 1);
+static WORKING_AREA(commandExecutioner, 32);
+static WORKING_AREA(exampleSendThread, 1);
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
