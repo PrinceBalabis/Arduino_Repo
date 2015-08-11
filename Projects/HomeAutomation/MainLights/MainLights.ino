@@ -4,6 +4,7 @@
 #include <SPI.h>
 #include <HomeNetwork.h>
 #include "config.h"
+#include <EEPROM.h>
 
 //Variables which stores the received values from other nodes
 //Regularly check msgReceived variable if a message is received in thread
@@ -11,6 +12,8 @@ bool msgReceived = false;
 uint16_t msgSender = -1;
 unsigned char msgType = 'Z';
 int32_t msgContent = -1;
+
+SEMAPHORE_DECL(homeNetworkSem, 0);
 
 RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
@@ -22,7 +25,6 @@ void setup() {
   initLights();
 
   chBegin(chSetup);
-  // chBegin never returns, main thread continues with mainThread()
 
   while (1);
 }
@@ -33,13 +35,13 @@ static WORKING_AREA(hNListenThread, 1);
 void chSetup() {
   SPI.begin(); // SPI is used by homeNetwork
   chThdSleepMilliseconds(1000);
-  
-  homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
+
+  homeNetwork.begin(nodeID, &homeNetworkSem, &msgSender, &msgType, &msgContent);
   chThdSleepMilliseconds(1000);
-  
+
   chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
   chThdSleepMilliseconds(1000);
-  
+
   chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 1, HNListenThread, NULL);
   chThdSleepMilliseconds(1000);
 }

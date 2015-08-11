@@ -1,27 +1,24 @@
 //------------------------------------------------------------------------------
 // Ceiling lights functions
 
-bool mainLightsState = 0;
+bool mainLightsStatus = 0;
 
-void initLights(){
+void initLights() {
   // Setup ceiling lights relay pin
   pinMode(mainLightsPin, OUTPUT);
+
+  //Restore the previous main lights state before restart
+  setMainLights(EEPROM.read(MainLightsStatusAddress));
 }
 
-void setLightsOn(){
-  mainLightsState = 1;
-  digitalWrite(mainLightsPin, mainLightsState);
-  Serial.println("Turned on lights");
+void setMainLights(bool status) {
+  if (mainLightsStatus != status) { // Only run if mainLights arent already on
+    mainLightsStatus = status; // Save status to RAM
+    digitalWrite(mainLightsPin, status); // Toggle mainLights switch
+    EEPROM.write(MainLightsStatusAddress, status); //Save to EEPROM
+  }
 }
 
-void setLightsOff(){
-  mainLightsState = 0;
-  digitalWrite(mainLightsPin, mainLightsState);
-  Serial.println("Turned off lights");
-}
-
-void toggleLights(){
-  mainLightsState = !mainLightsState;
-  digitalWrite(mainLightsPin, mainLightsState);
-  Serial.println("Toggled lights");
+void toggleLights() {
+  setMainLights(!mainLightsStatus);
 }

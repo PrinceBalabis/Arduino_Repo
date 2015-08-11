@@ -28,3 +28,10 @@ const uint8_t homeNetworkCSNPin = 9;
 //Tweaks
 const uint16_t homeNetworkCheckMessageDelay = 20; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
 const uint16_t homeNetworkAutoUpdateTime = 10; // How often to auto update network. Should be short because this node is parent for many child nodes
+
+/*
+*  ------------------------------------
+ *  EEPROM Addresses
+ *  ------------------------------------
+ */
+const uint8_t MainLightsStatusAddress = 0;
