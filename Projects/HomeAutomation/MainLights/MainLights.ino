@@ -6,41 +6,52 @@
 #include "config.h"
 #include <EEPROM.h>
 
-//Variables which stores the received values from other nodes
-//Regularly check msgReceived variable if a message is received in thread
-uint16_t msgSender = -1;
-unsigned char msgType = 'Z';
-int32_t msgContent = -1;
-
 RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
+
+bool mainLightsStatus = 0;
 
 void setup() {
   Serial.begin(115200);
 
   initLights();
 
-  chBegin(chSetup);
+  chBegin(mainThread);
 
   while (1);
 }
 
-static WORKING_AREA(wallSwitchThread, 4);
-static WORKING_AREA(hNListenThread, 1);
+// If a thread weirdly crashes then increase the stack value
+static WORKING_AREA(wallSwitchThread, 4); // 4 bytes works great
 
-void chSetup() {
+void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   chThdSleepMilliseconds(1000);
 
-  homeNetwork.begin(nodeID, &msgSender, &msgType, &msgContent);
+  homeNetwork.begin(nodeID);
   chThdSleepMilliseconds(1000);
 
   chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
   chThdSleepMilliseconds(1000);
 
-  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 1, HNListenThread, NULL);
-  chThdSleepMilliseconds(1000);
+  Serial.println(F("Home Network Listen Thread started"));
+  homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
+
+  while (1) {
+    // Pauses here untill a message is received
+    homeNetwork.waitForIncomingMessage();
+    Serial.print(F("New Message.. "));
+
+    //Get received message
+    uint16_t msgSender;
+    unsigned char msgType;
+    int32_t msgContent;
+    homeNetwork.getIncomingMessage(&msgSender, &msgType, &msgContent);
+
+    //Send message for decoding
+    decodeMessage(&msgSender, &msgType, &msgContent);
+  }
 }
 
 void loop() {

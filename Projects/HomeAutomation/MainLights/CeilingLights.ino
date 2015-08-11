@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // Ceiling lights functions
 
-bool mainLightsStatus = 0;
+
 
 void initLights() {
   // Setup ceiling lights relay pin
