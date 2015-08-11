@@ -21,13 +21,6 @@ RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
-//Variables which stores the received values from other nodes
-//Regularly check msgReceived variable if a message is received in thread
-bool msgReceived = false;
-uint16_t msgSender = -1;
-unsigned char msgType = 'Z';
-int32_t msgContent = -1;
-
 void setup() {
   Serial.begin(115200);
 
@@ -39,10 +32,10 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 1);
-static WORKING_AREA(keypadCommandThread, 1);
-static WORKING_AREA(keypadUpdaterThread, 80);
-static WORKING_AREA(commandExecutioner, 1);
+// If a thread weirdly crashes then increase the stack value
+static WORKING_AREA(keypadCommandThread, 16); //8 bytes crash - 16 bytes works great
+static WORKING_AREA(keypadUpdaterThread, 124); //64 bytes crash - 124 bytes works great
+static WORKING_AREA(commandExecutioner, 4); //1 bytes crash - 4 bytes works great
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
@@ -52,10 +45,8 @@ void mainThread() {
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
   chThdSleepMilliseconds(1000);
 
-  // Home Network Threads
-  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
-  chThdSleepMilliseconds(1000);
-  homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
+  // Home Network Thread
+  homeNetwork.begin(nodeID);
   chThdSleepMilliseconds(1000);
 
   // Keypad threads
@@ -63,8 +54,24 @@ void mainThread() {
   chThdSleepMilliseconds(1000);
   chThdCreateStatic(keypadCommandThread, sizeof(keypadCommandThread), NORMALPRIO + 1, KeypadCommandThread, NULL);
 
-  Serial.println(F("Home Control fully started!"));
-  Serial.println();
+  Serial.println(F("Home Network Listen Thread started"));
+  homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
+
+  // This infinite loop is used to get incoming home network messages
+  while (1) {
+    // Pauses here untill a message is received
+    homeNetwork.waitForIncomingMessage();
+    Serial.print(F("New Message.. "));
+
+    //Get received message
+    uint16_t msgSender;
+    unsigned char msgType;
+    int32_t msgContent;
+    homeNetwork.getIncomingMessage(&msgSender, &msgType, &msgContent);
+
+    //Send message to CommandExecutionerThread for decoding
+    executeCommand(msgContent);
+  }
 }
 
 void loop() {

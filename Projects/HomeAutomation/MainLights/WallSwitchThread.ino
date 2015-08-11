@@ -27,7 +27,7 @@ static msg_t WallSwitchThread(void *arg) {
     }
 
     // Sleep some milliseconds, to make time for other threads and to act as button debouncing
-    chThdSleepMilliseconds(200);
+    chThdSleepMilliseconds(wallSwitchUpdateDelay);
   }
   return 0;
 }

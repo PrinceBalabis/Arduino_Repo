@@ -10,8 +10,6 @@ RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
-bool mainLightsStatus = 0;
-
 void setup() {
   Serial.begin(115200);
 
@@ -38,6 +36,7 @@ void mainThread() {
   Serial.println(F("Home Network Listen Thread started"));
   homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
 
+  // This infinite loop is used to get incoming home network messages
   while (1) {
     // Pauses here untill a message is received
     homeNetwork.waitForIncomingMessage();
