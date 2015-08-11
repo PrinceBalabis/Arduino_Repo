@@ -13,11 +13,11 @@ uint16_t msgSender = -1;
 unsigned char msgType = 'Z';
 int32_t msgContent = -1;
 
-SEMAPHORE_DECL(homeNetworkSem, 0);
-
 RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
+
+SEMAPHORE_DECL(homeNetworkSem, 0);
 
 void setup() {
   Serial.begin(115200);

@@ -9,7 +9,7 @@ static msg_t HNListenThread(void *arg) {
 
   while (1) {
     // Pause loop while waiting for a message
-    chSemWait(&homeNetworkSem);
+    homeNetwork.waitForIncomingMessage();
 
     switch (msgType) {
       case typeCommand: // If its a simple command
@@ -29,7 +29,7 @@ static msg_t HNListenThread(void *arg) {
         switch (msgContent) {
           case cmdGetLightsStatus:
             homeNetwork.respondToQuestion(msgSender, mainLightsStatus);
-//            Serial.println(F("Main Lights Status question"));
+            //            Serial.println(F("Main Lights Status question"));
             break;
         }
         break;
