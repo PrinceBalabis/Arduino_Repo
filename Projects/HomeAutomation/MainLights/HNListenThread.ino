@@ -8,7 +8,7 @@ static msg_t HNListenThread(void *arg) {
   homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
 
   while (1) {
-    // Pause loop while waiting for a message
+    // Pauses here untill a message is received
     homeNetwork.waitForIncomingMessage();
 
     switch (msgType) {
@@ -34,8 +34,6 @@ static msg_t HNListenThread(void *arg) {
         }
         break;
     }
-
-    homeNetwork.pauseAutoUpdate(false); // Resume network update in order to get queued commands
   }
   return 0;
 }
