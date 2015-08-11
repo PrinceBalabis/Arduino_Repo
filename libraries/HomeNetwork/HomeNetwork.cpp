@@ -100,18 +100,22 @@ void HomeNetwork::autoUpdate()
 **/
 bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
-
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
 
-  // Send message to server, keep trying untill server confirms receiver gets the message
-  bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
-  if (msgSent) {
-    return 1;
-  }
-  else {
-    return 0;
-  }
+  // bool msgTimeOut = false;
+  // unsigned long started_waiting_at = millis();
+  //
+  // while (!msgSent && !msgTimeOut) {
+    bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
+
+  //   if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !msgSent) {
+  //     return false; // return false if command sending timed out
+  //   }
+  //
+  //   chThdSleepMilliseconds(1); // Resend every few ms
+  // }
+    return true;
 }
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
@@ -132,29 +136,19 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
   }
 
   // Send question, will retry until succeed or timeout
-  uint16_t msgSenderReceived = -1;
-  int32_t msgReceived = 0;
-  unsigned char msgTypeReceived = 'Z';
-  bool questionSent = false;
-  unsigned long started_waiting_at = millis();
-  bool questionTimeOut = false;
-  while (!questionSent && !questionTimeOut) {
-    network.update(); // Check the network regularly for the entire network to function properly
-    questionSent = send(msgReceiver, msgContent, typeAsk); // Send question
-    if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !questionSent) {
-      questionTimeOut = true;
-    }
-    chThdSleepMilliseconds(2); // Send every few ms
-  }
+  bool questionSent = send(msgReceiver, msgContent, typeAsk); // Send question
 
   // Wait for answer, will wait untill received or timeout
   bool answerTimeout = false;
 
   // Only wait for answer if question was sent
   if(questionSent){
-    //How long to wait for the answer
-    started_waiting_at = millis();
+    int32_t msgSenderReceived = -1;
+    unsigned char msgTypeReceived = 'Z';
+    int32_t msgReceived = 0;
 
+    //How long to wait for the answer
+    unsigned long started_waiting_at = millis();
     while ((msgSenderReceived != msgReceiver || msgTypeReceived != typeResponse) && !answerTimeout) {
       network.update(); // Check the network regularly for the entire network to function properly
       if(network.available())
