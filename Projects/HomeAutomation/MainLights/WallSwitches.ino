@@ -4,8 +4,8 @@
 static msg_t WallSwitchThread(void *arg) {
 
   // Switch state variables
-  int leftSwitchState = 0;
-  int rightSwitchState = 0;
+  bool leftSwitchState = 0;
+  bool rightSwitchState = 0;
 
   // Setup switch pins
   pinMode(leftSwitchPin, INPUT);

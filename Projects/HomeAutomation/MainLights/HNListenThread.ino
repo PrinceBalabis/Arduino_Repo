@@ -28,6 +28,7 @@ static msg_t HNListenThread(void *arg) {
           switch (msgContent) {
             case cmdGetLightsStatus:
               homeNetwork.respondToQuestion(msgSender, mainLightsState);
+              Serial.println(F("Main Lights Status question"));
               break;
           }
           break;
