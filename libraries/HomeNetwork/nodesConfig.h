@@ -13,88 +13,87 @@ static const unsigned char typeCommand = 'C';
 
 //***********************Main Room Lights************************************************************
 // This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
-static const uint16_t nodeMainLights = 00;
+#define NODE_MAINLIGHTS_ID 00
 
-// Ask
-static const uint8_t cmdGetLightsStatus = 1;
 // Command
-static const uint8_t cmdToggleLights = 1;
-static const uint8_t cmdSetLightsOn = 2;
-static const uint8_t cmdSetLightsOff = 3;
+#define NODE_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE 1
+#define NODE_MAINLIGHTS_CMD_MAINLIGHTS_ON 2
+#define NODE_MAINLIGHTS_CMD_MAINLIGHTS_OFF 3
+// Question
+#define NODE_MAINLIGHTS_QSN_MAINLIGHTS_STATUS 1
 
 //***********************Home Control************************************************************
 //First child of Main Room Lights node
-static const uint16_t nodeHomeControl = 01;
+#define NODE_HOMECONTROL_ID 01
 
 // Command(message type: typeCommand)
 // Starts from 17 because buttons use 1-16
-static const uint8_t cmdSetPCOn = 17;
+#define NODE_HOMECONTROL_CMD_PC_ON 17
 
-//***********************433MHz Controller************************************************************
-//First child of Home Control
-static const uint16_t nodeRF433MHz = 011;
+//***********************433MHz************************************************************
+// First child of Home Control
+#define NODE_RF433MHZ_ID 011
 
-// Ask(message type: typeAsk)
-static const uint8_t cmdGetPaintingLightsStatus = 1;
-static const uint8_t cmdGetSpeakerPowerStatus = 2;
-// Command(message type: typeCommand)
-static const uint8_t cmdSetPaintingLightsOn = 1;
-static const uint8_t cmdSetPaintingLightsOff = 2;
-static const uint8_t cmdTogglePaintingLights = 3;
-static const uint8_t cmdSetSpeakerPowerSwitchOn = 4;
-static const uint8_t cmdSetSpeakerPowerSwitchOff = 5;
-static const uint8_t cmdToggleSpeakerPowerSwitch = 6;
+// Question
+#define NODE_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS 1
+#define NODE_RF433MHZ_QSN_SPEAKER_POWER_STATUS 2
+
+// Command
+#define NODE_RF433MHZ_CMD_PAINTINGLIGHTS_ON 1
+#define NODE_RF433MHZ_CMD_PAINTINGLIGHTS_OFF 2
+#define NODE_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE 3
+#define NODE_RF433MHZ_CMD_SPEAKERPOWER_ON 4
+#define NODE_RF433MHZ_CMD_SPEAKERPOWER_OFF 5
+#define NODE_RF433MHZ_CMD_SPEAKERPOWER_TOGGLE 6
 
 //***********************Bed Switch************************************************************
 //Second child of Home Control
-static const uint16_t nodeBedSwitch = 02;
+#define NODE_BEDSWITCH_ID 02
 
-
-//***********************Speaker Controller************************************************************
+//***********************Speaker************************************************************
 //Third child of Home Control
-static const uint16_t nodeSpeaker = 031;
+#define NODE_SPEAKER_ID 031
 
-// Command(message type: typeCommand)
-static const uint8_t cmdToggleSpeakerPower = 1;
-static const uint8_t cmdSetSpeakerPowerOn = 2;
-static const uint8_t cmdSetSpeakerPowerOff = 3;
-static const uint8_t cmdSetSpeakerVolumeUp = 4;
-static const uint8_t cmdSetSpeakerVolumeDown = 5;
-static const uint8_t cmdToggleSpeakerMute = 6;
-static const uint8_t cmdSetSpeakerMuteOn = 7;
-static const uint8_t cmdSetSpeakerMuteOff = 8;
-static const uint8_t cmdToggleSpeakerMode = 9;
-static const uint8_t cmdSetSpeakerModePC = 10;
-static const uint8_t cmdSetSpeakerModeLineIn = 11;
-
+// Command
+#define NODE_SPEAKER_CMD_POWER_TOGGLE 1
+#define NODE_SPEAKER_CMD_POWER_ON 2
+#define NODE_SPEAKER_CMD_POWER_OFF 3
+#define NODE_SPEAKER_CMD_VOLUME_UP 4
+#define NODE_SPEAKER_CMD_VOLUME_DOWN 5
+#define NODE_SPEAKER_CMD_MUTE_TOGGLE 6
+#define NODE_SPEAKER_CMD_MUTE_ON 7
+#define NODE_SPEAKER_CMD_MUTE_OFF 8
+#define NODE_SPEAKER_CMD_MODE_TOGGLE 9
+#define NODE_SPEAKER_CMD_MODE_PC 10
+#define NODE_SPEAKER_CMD_MODE_LINEIN 11
 
 //***********************PC Controller************************************************************
 //Fourth child of Home Control
-static const uint16_t nodePC = 041;
+#define NODE_PC_ID 041
 
 // Command(message type: typeCommand)
-static const uint8_t cmdSetPCMute = 1;
-static const uint8_t cmdSetPCNoMute = 2;
-static const uint8_t cmdSetPCToggleMute = 3;
-static const uint8_t cmdSetPCPlayPause = 4;
-static const uint8_t cmdSetPCNext = 5;
-static const uint8_t cmdSetPCPrevious = 6;
-static const uint8_t cmdSetPCDisableMonitors = 7;
-static const uint8_t cmdSetPCEnableMonitors = 8;
-static const uint8_t cmdSetPCVolUp = 9;
-static const uint8_t cmdSetPCVolDown = 10;
-static const uint8_t cmdSetPCVolUpBunch = 11;
-static const uint8_t cmdSetPCVolDownBunch = 12;
-static const uint8_t cmdSetPCVolPresetMax = 13;
-static const uint8_t cmdSetPCVolPresetMedium = 14;
-static const uint8_t cmdSetPCVolPresetLow = 15;
-static const uint8_t cmdSetPCSpotifyPlaylistWorkout = 16;
-static const uint8_t cmdSetPCSpotifyPlaylistDinner = 17;
-static const uint8_t cmdSetPCSpotifyPlaylistMorning = 17;
-
+#define NODE_PC_CMD_MUTE_ON 1
+#define NODE_PC_CMD_MUTE_OFF 2
+#define NODE_PC_CMD_MUTE_TOGGLE 3
+#define NODE_PC_CMD_MEDIA_PLAYPAUSE 4
+#define NODE_PC_CMD_MEDIA_STOP 5
+#define NODE_PC_CMD_MEDIA_NEXT 6
+#define NODE_PC_CMD_MEDIA_PREVIOUS 7
+#define NODE_PC_CMD_MONITORS_DISABLE 8
+#define NODE_PC_CMD_MONITORS_ENABLE 8
+#define NODE_PC_CMD_VOLUME_UP 10
+#define NODE_PC_CMD_VOLUME_DOWN 11
+#define NODE_PC_CMD_VOLUME_UP_BUNCH 12
+#define NODE_PC_CMD_VOLUME_DOWN_BUNCH 13
+#define NODE_PC_CMD_VOLUME_PRESET_MAX 14
+#define NODE_PC_CMD_VOLUME_PRESET_MEDIUM 15
+#define NODE_PC_CMD_VOLUME_PRESET_LOW 16
+#define NODE_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT 17
+#define NODE_PC_CMD_SPOTIFY_PLAYLIST_DINNER 18
+#define NODE_PC_CMD_SPOTIFY_PLAYLIST_MORNING 19
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
-static const uint16_t exampleNode = 051;
+#define NODE_TEST_ID 05
 
 
 //***********************Other Nodes****************************************************************************

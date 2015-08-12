@@ -6,21 +6,21 @@
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
-const uint16_t nodeID = nodeMainLights;
+#define HOME_NODEID NODE_MAINLIGHTS_ID
 
 //CE and CSN pins
-const uint8_t homeNetworkCEPin = 8;
-const uint8_t homeNetworkCSNPin = 9;
+#define RF24_PIN_CE 8
+#define RF24_PIN_CSN 9
 
 // How often to auto update network. Should be short because this node is parent for many child nodes
-const uint16_t homeNetworkAutoUpdateTime = 10;
+#define HOME_AUTOUPDATE_DELAY 5
 
 /*
  *  ------------------------------------
  *  EEPROM Addresses
  *  ------------------------------------
  */
-const uint8_t MainLightsStatusAddress = 0;
+#define EEPROM_MAINLIGHTS 0
 
 /*
  *  ------------------------------------
@@ -28,15 +28,16 @@ const uint8_t MainLightsStatusAddress = 0;
  *  ------------------------------------
  */
 // Variables for switch pins
-const int leftSwitchPin = 4;
-const int rightSwitchPin = 5;
+#define WALLSWITCH_PIN_LEFT 4
+#define WALLSWITCH_PIN_RIGHT 5
 
 // How often to check for wall switch changes
-const uint16_t wallSwitchUpdateDelay = 100;
+#define WALLSWITCH_UPDATEDELAY 100
+
 /*
  *  ------------------------------------
  *  Relay/Main Lights
  *  ------------------------------------
  */
 // Ceiling lights relay/ceiling light pin
-const int mainLightsPin = A0;
+#define MAINLIGHTS_PIN A0

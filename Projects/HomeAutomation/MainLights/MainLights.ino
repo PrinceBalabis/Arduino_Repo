@@ -6,12 +6,13 @@
 #include "config.h"
 #include <EEPROM.h>
 
-RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
+RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
   Serial.begin(115200);
+  Serial.println(F("MainLights Node"));
 
   initLights();
 
@@ -25,32 +26,14 @@ static WORKING_AREA(wallSwitchThread, 4); // 4 bytes works great
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
-  chThdSleepMilliseconds(1000);
-
-  homeNetwork.begin(nodeID);
-  chThdSleepMilliseconds(1000);
 
   chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
-  chThdSleepMilliseconds(1000);
 
-  Serial.println(F("Home Network Listen Thread started"));
-  homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
+  homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
 
-  // This infinite loop is used to get incoming home network messages
-  while (1) {
-    // Pauses here untill a message is received
-    homeNetwork.waitForIncomingMessage();
-    Serial.print(F("New Message.. "));
-
-    //Get received message
-    uint16_t msgSender;
-    unsigned char msgType;
-    int32_t msgContent;
-    homeNetwork.getIncomingMessage(&msgSender, &msgType, &msgContent);
-
-    //Send message for decoding
-    decodeMessage(&msgSender, &msgType, &msgContent);
-  }
+  homeNetwork.setAutoUpdateTime(HOME_AUTOUPDATE_DELAY);
+  
+  Serial.println(F("System booted up!"));
 }
 
 void loop() {

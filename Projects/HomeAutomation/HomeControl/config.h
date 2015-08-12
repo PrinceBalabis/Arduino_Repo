@@ -1,47 +1,43 @@
-/*
-*  This is the config file.
- *  Here you can configure Buttons assigns, IR codes,
- *  RF24 codes & component pins.
- *  Also you can enable/disable serial
- */
+#define COMMANDEXECUTIONER_MSGORIGIN_LOCAL 0
+#define COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK 1
 
 /*
 *  ------------------------------------
  *  RF24 Mesh Node
  *  ------------------------------------
  */
-
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
-const uint16_t nodeID = nodeHomeControl;
+#define NODEID NODE_HOMECONTROL_ID
 
-//Hardware
-const uint8_t homeNetworkCEPin = 8;
-const uint8_t homeNetworkCSNPin = 9;
+//CE and CSN pins
+#define RF24_PIN_CE 8
+#define RF24_PIN_CSN 9
 
-//Tweaks
-const uint16_t homeNetworkAutoUpdateTime = 20; // How often to auto update network. Should be short because this node is parent for many child nodes
+// How often to auto update network. Should be short because this node is parent for many child nodes
+#define HOME_AUTOUPDATE_DELAY 5
+
 /*
 *  ------------------------------------
  *  Keypad Button reservations
  *  ------------------------------------
  */
 // NextBase
-const uint8_t speakerPowerButton = 10;
-const uint8_t speakerUpVolButton = 16;
-const uint8_t speakerDownVolButton = 15;
-const uint8_t speakerMuteButton = 14;
-const uint8_t speakerModeButton = 13;
+#define BUTTON_SPEAKER_POWER 10
+#define BUTTON_SPEAKER_VOLUME_UP 16
+#define BUTTON_SPEAKER_VOLUME_DOWN 15
+#define BUTTON_SPEAKER_MUTE 14
+#define BUTTON_SPEAKER_MODE 13
 // Lights
-const uint8_t mainLightsButton = 4;
-const uint8_t paintingLightsButton = 3;
-// Computer swtich
-const uint8_t pcPowerButton = 9;
+#define BUTTON_MAINLIGHTS_TOGGLE 4
+#define BUTTON_PAINTINGLIGHTS_TOGGLE 3
+// Computer switch
+#define BUTTON_PC_POWER 9
 // PC Controller
-const uint8_t pcDisableMonitorButton = 11;
-const uint8_t pcSpotifyPlaylistWorkout = 6;
-const uint8_t pcSpotifyPlaylistDinner = 5;
+#define BUTTON_PC_MONITOR_DISABLE 11
+#define BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT 6
+#define BUTTON_PC_SPOTIFYPLAYLIST_DINNER 5
 /*
 
 /*
@@ -52,13 +48,11 @@ const uint8_t pcSpotifyPlaylistDinner = 5;
 const uint8_t keypadUpdateTime = 20; // How often to update keypad reads in milliseconds
 const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when holding a button, in milliseconds
 
-
 /*
 *  ------------------------------------
  *  Components pins
  *  ------------------------------------
  */
-
 // PC Power pin pin
 const uint8_t pcPowerPin = 6;
 

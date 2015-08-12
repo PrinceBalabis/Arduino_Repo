@@ -17,12 +17,13 @@
 #include <HomeNetwork.h>
 #include "config.h"
 
-RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
+RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
   Serial.begin(115200);
+  Serial.println(F("HomeControl Node"));
 
   // PC Power switch setup
   pcPowerSetup();
@@ -35,43 +36,25 @@ void setup() {
 // If a thread weirdly crashes then increase the stack value
 static WORKING_AREA(keypadCommandThread, 16); //8 bytes crash - 16 bytes works great
 static WORKING_AREA(keypadUpdaterThread, 64); //32 bytes crash - 64 bytes works great
-static WORKING_AREA(commandExecutioner, 8); //4 bytes crash - 8 bytes works great
+static WORKING_AREA(commandExecutioner, 16); //8 bytes crash - 16 bytes works great
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
-  chThdSleepMilliseconds(1000);
 
   // CommandExecutioner thread which executes commands
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
-  chThdSleepMilliseconds(1000);
 
   // Home Network Thread
-  homeNetwork.begin(nodeID);
-  chThdSleepMilliseconds(1000);
+  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   // Keypad threads
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);
-  chThdSleepMilliseconds(1000);
   chThdCreateStatic(keypadCommandThread, sizeof(keypadCommandThread), NORMALPRIO + 1, KeypadCommandThread, NULL);
 
-  Serial.println(F("Home Network Listen Thread started"));
-  homeNetwork.setAutoUpdateTime(homeNetworkAutoUpdateTime);
+  homeNetwork.setAutoUpdateTime(HOME_AUTOUPDATE_DELAY);
+  
+  Serial.println(F("System booted up!"));
 
-  // This infinite loop is used to get incoming home network messages
-  while (1) {
-    // Pauses here untill a message is received
-    homeNetwork.waitForIncomingMessage();
-    Serial.print(F("New Message.. "));
-
-    //Get received message
-    uint16_t msgSender;
-    unsigned char msgType;
-    int32_t msgContent;
-    homeNetwork.getIncomingMessage(&msgSender, &msgType, &msgContent);
-
-    //Send message to CommandExecutionerThread for decoding
-    executeCommand(msgContent);
-  }
 }
 
 void loop() {

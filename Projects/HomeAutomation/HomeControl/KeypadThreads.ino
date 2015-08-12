@@ -67,7 +67,7 @@ uint8_t getKeyName(char keycode) {
 }
 
 static msg_t KeypadUpdaterThread(void *arg) {
-  Serial.println(F("Keypad read updater thread started"));
+  Serial.println(F("Started KeypadUpdaterThread thread"));
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
   keypad.setDebounceTime(1); //Time until a new key is accepted
@@ -82,6 +82,7 @@ static msg_t KeypadUpdaterThread(void *arg) {
 
 static msg_t KeypadCommandThread(void *arg)
 {
+  Serial.println(F("Started KeypadCommandThread thread"));
   while (1) {
     // Wait for signal from KeypadEvent, it sends a signal whenever keypad status changes
     chSemWait(&cmdKeypadSem);
@@ -90,32 +91,32 @@ static msg_t KeypadCommandThread(void *arg)
     if (state == PRESSED )
     {
       switch (keyName) {
-        case mainLightsButton:
-          executeCommand(keyName);
+        case BUTTON_MAINLIGHTS_TOGGLE:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case paintingLightsButton:
-          executeCommand(keyName);
+        case BUTTON_PAINTINGLIGHTS_TOGGLE:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case pcPowerButton:
-          executeCommand(keyName);
+        case BUTTON_PC_POWER:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case pcDisableMonitorButton:
-          executeCommand(keyName);
+        case BUTTON_PC_MONITOR_DISABLE:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case pcSpotifyPlaylistWorkout:
-          executeCommand(keyName);
+        case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case pcSpotifyPlaylistDinner:
-          executeCommand(keyName);
+        case BUTTON_PC_SPOTIFYPLAYLIST_DINNER:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case speakerPowerButton:
-          executeCommand(keyName);
+        case BUTTON_SPEAKER_POWER:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case speakerMuteButton:
-          executeCommand(keyName);
+        case BUTTON_SPEAKER_MUTE:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case speakerModeButton:
-          executeCommand(keyName);
+        case BUTTON_SPEAKER_MODE:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
       }
     }
@@ -124,8 +125,8 @@ static msg_t KeypadCommandThread(void *arg)
     else if (state == RELEASED )
     {
       switch (keyName) {
-        case pcPowerButton:
-          executeCommand(keyName);
+        case BUTTON_SPEAKER_POWER:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
       }
     }
@@ -133,11 +134,11 @@ static msg_t KeypadCommandThread(void *arg)
     // Commands to run while HOLDING a key down
     while (state == HOLD) {
       switch (keyName) {
-        case speakerUpVolButton:
-          executeCommand(keyName);
+        case BUTTON_SPEAKER_VOLUME_UP:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case speakerDownVolButton:
-          executeCommand(keyName);
+        case BUTTON_SPEAKER_VOLUME_DOWN:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
       }
       // Some delay in order to execute hold commands in regular intervals

@@ -15,12 +15,11 @@ class RF24Network;
 class HomeNetwork
 {
 public:
-  HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
-  void begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent);
+  HomeNetwork(RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
+  void begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t));
+  void autoUpdate();
   void setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _homeNetwork_timeoutAnswerTime);
   void setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime);
-  void pauseAutoUpdate(bool state);
-  void autoUpdate();
   bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
   bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
@@ -30,13 +29,10 @@ private:
   RF24& radio;
   RF24Network& network;
   HomeNetwork* homeNetwork;
-  bool* pmsgReceived;
-  uint16_t* pmsgSender;
-  unsigned char* pmsgType;
-  int32_t* pmsgContent;
+
+  void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t);
 
   bool autoUpdatePaused = false;
-  bool autoUpdatePauseExecuted = false;
 
   // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
   // Tweak however you want though
@@ -44,8 +40,8 @@ private:
   uint16_t homeNetwork_defaultTimeoutSendTime = 1000;
   uint16_t homeNetwork_timeoutAnswerTime = 1000; // Amount of time to wait until given up waiting of answer to question
   uint16_t homeNetwork_defaultTimeoutAnswerTime = 1000;
-  uint16_t homeNetwork_autoUpdateTime = 50; // How often the network is updated
-  uint16_t homeNetwork_defaultAutoUpdateTime = 50;
+  uint16_t homeNetwork_autoUpdateTime = 5; // How often the network is updated
+  uint16_t homeNetwork_defaultAutoUpdateTime = 5;
 
   // Set delay between retries & # of retries for a "radio.write" command
   const uint8_t homeNetwork_retryDelay = 2;

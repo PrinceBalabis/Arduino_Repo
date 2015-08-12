@@ -11,6 +11,7 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _hom
 /**
 *  Thread for the Home Network
 **/
+// Declare a semaphore with an inital counter value of zero.
 static WORKING_AREA(homeNetworkThread, 1);
 static msg_t HomeNetworkThread(void *_homeNetwork)
 {
@@ -24,13 +25,10 @@ static msg_t HomeNetworkThread(void *_homeNetwork)
   return 0;
 }
 
-void HomeNetwork::begin(uint16_t nodeID, bool *_pmsgReceived, uint16_t *_pmsgSender, unsigned char *_pmsgType, int32_t *_pmsgContent)
+void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
+  pmsgReceivedF = _pmsgReceivedF;
   chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, homeNetwork);
-  pmsgReceived = _pmsgReceived;
-  pmsgSender = _pmsgSender;
-  pmsgType = _pmsgType;
-  pmsgContent = _pmsgContent;
 
   radio.begin(); // Initialize radio
   network.begin(homeNetwork_channel, nodeID); // Start mesh Network
@@ -59,40 +57,31 @@ void HomeNetwork::setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime)
   homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
 }
 
-void HomeNetwork::pauseAutoUpdate(bool state)
-{
-  autoUpdatePaused = state; // Set to wished state
-  while(autoUpdatePauseExecuted != state){ // Wait for wished state to set
-    chThdSleepMilliseconds(5);
-  }
-}
-
 void HomeNetwork::autoUpdate()
 {
   while (1) {
 
     // Get stuck in this loop while its ment to be paused
     while(autoUpdatePaused){
-      autoUpdatePauseExecuted = true;
-      chThdSleepMilliseconds(50);  //Give other threads some time to run
-    }
-
-    // Reset the auto update execute flag if its true
-    if(autoUpdatePauseExecuted) {
-      autoUpdatePauseExecuted = false;
+      chThdSleepMilliseconds(10);  //Check if autoUpdate should unpause every few ms
+      Serial.print(F("Paused"));
     }
 
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
     {
-      // Save message to global variables to be read by Sketch code
-      *pmsgSender = read(pmsgContent, pmsgType);
-      *pmsgReceived = true;
+      // Send incoming message to Sketch function
+      unsigned char msgType;
+      int32_t msgContent;
+      uint16_t msgSender = read(&msgContent, &msgType);
+      pmsgReceivedF(msgSender, msgType, msgContent);
     }
 
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
   }
 }
+
+
 
 /**
 * send
@@ -107,7 +96,7 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
   // unsigned long started_waiting_at = millis();
   //
   // while (!msgSent && !msgTimeOut) {
-    bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
+  bool msgSent = network.write(header, &msgContent, sizeof(msgContent));
 
   //   if (millis() - started_waiting_at > homeNetwork_timeoutSendTime && !msgSent) {
   //     return false; // return false if command sending timed out
@@ -115,7 +104,7 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
   //
   //   chThdSleepMilliseconds(1); // Resend every few ms
   // }
-    return true;
+  return true;
 }
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
@@ -129,12 +118,6 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 * Gets a response back
 **/
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
-  autoUpdatePaused = true; // Pause listening for messages
-
-  while(!autoUpdatePauseExecuted){
-    chThdSleepMilliseconds(2); // Needed for stability, give autoupdate time to pause
-  }
-
   // Send question, will retry until succeed or timeout
   bool questionSent = send(msgReceiver, msgContent, typeAsk); // Send question
 
@@ -163,7 +146,6 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 
     *pmsgResponse = msgReceived; // Save answer to variable
   }
-  autoUpdatePaused = false; // Continue listening for messages
 
   if(questionSent && !answerTimeout)
   return 1;
