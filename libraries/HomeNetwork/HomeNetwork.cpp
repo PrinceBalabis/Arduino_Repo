@@ -63,10 +63,13 @@ void HomeNetwork::autoUpdate()
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
     {
-      // Send incoming message to Sketch function
+      // Send incoming message to Sketch function, if its just a command, send the confirmation
       unsigned char msgType;
       int32_t msgContent;
       uint16_t msgSender = read(&msgContent, &msgType);
+      if(msgType == HOME_TYPE_COMMAND){ // if its just a command, send the confirmation message back
+        sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION);
+      }
       pmsgReceivedF(msgSender, msgType, msgContent);
     }
 
@@ -93,7 +96,7 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
 * This function differs from send function by that this sends a message WITHOUT
 * waiting for a confirmation-message back from the receiver of the initial message
 **/
-void HomeNetwork::sendRAW(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
+void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
@@ -110,8 +113,12 @@ void HomeNetwork::sendRAW(uint16_t msgReceiver, int32_t msgContent, unsigned cha
 * This function differs from send function by that this sends a message AND
 * waits for a confirmation-message back from the receiver of the initial message
 **/
-void HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
+bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
+  setNetworkUpdateStatus(false); // Pause autoUpdate
+  while(currentAutoUpdateStatus) // Wait for Network autoUpdate to pause
+  chThdSleepMilliseconds(1);
+
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
 
@@ -119,23 +126,51 @@ void HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
   // doesn't have to be the node you are trying to send to,
   // but could be a parent node. So its not very useful.
   network.write(header, &msgContent, sizeof(msgContent));
+
+  // Read answer and send back
+  int32_t msgResponse;
+  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse);
+
+  setNetworkUpdateStatus(false); // Resume autoUpdate
+
+  if(msgContent == msgResponse)
+  return true;
+  else
+  return false;
+
 }
 
-void HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
-  send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
+bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
+  return send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
 }
 
 /**
 * sendQuestion
-* This function sends the message to a receiver, both which are set in parameter
-* Gets a response back
+* This function sends a question to a receiver, both which are set in parameter
+* A response is expected
+* returns whether answer was received or not
 **/
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
   setNetworkUpdateStatus(false); // Pause autoUpdate
+  while(currentAutoUpdateStatus); // Wait for Network autoUpdate to pause
 
   // Send question
-  send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
+  sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
 
+  // Read answer and send back
+  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_QUESTION, pmsgResponse);
+
+  setNetworkUpdateStatus(false); // Resume autoUpdate
+
+  return answerReceived;
+}
+
+/**
+* readAnswer
+* returns true if answer is received, false if it is not
+**/
+bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse)
+{
   // Wait for answer, will wait untill received or timeout
   bool answerTimeout = false;
 
@@ -143,9 +178,8 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
   unsigned char msgTypeReceived = 'Z';
   int32_t msgReceived = 0;
 
-  //How long to wait for the answer
   unsigned long started_waiting_at = millis();
-  while ((msgSenderReceived != msgReceiver || msgTypeReceived != HOME_TYPE_QUESTION) && !answerTimeout) {
+  while ((msgSenderReceived != *pmsgReceiver || msgTypeReceived != msgType) && !answerTimeout) {
     network.update(); // Check the network regularly for the entire network to function properly
     if(network.available())
     {
@@ -159,14 +193,17 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 
   *pmsgResponse = msgReceived; // Save answer to variable
 
-  setNetworkUpdateStatus(false); // Resume autoUpdate
-
   return true;
+}
+
+void HomeNetwork::respondToCommand(uint16_t _msgSender, int32_t _ResponseData) {
+  send(_msgSender, _ResponseData, HOME_TYPE_CONFIRMATION);
 }
 
 void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
   send(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
 }
+
 
 /**
 *  read

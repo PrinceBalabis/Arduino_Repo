@@ -8,6 +8,7 @@
 
 // Types every node can use for each other:
 #define HOME_TYPE_COMMAND 'C'
+#define HOME_TYPE_CONFIRMATION 'O'
 #define HOME_TYPE_QUESTION 'Q'
 #define HOME_TYPE_RESPONSE 'R'
 
