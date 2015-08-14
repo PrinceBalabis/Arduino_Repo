@@ -6,22 +6,22 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
   Serial.print(F("New Message.. "));
 
    switch (msgType) {
-    case typeCommand: // If its a simple command
+    case HOME_TYPE_COMMAND: // If its a simple command
       switch (msgContent) {
-        case NODE_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE:
+        case HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE:
           toggleLights();
           break;
-        case NODE_MAINLIGHTS_CMD_MAINLIGHTS_ON:
+        case HOME_MAINLIGHTS_CMD_MAINLIGHTS_ON:
           setMainLights(true);
           break;
-        case NODE_MAINLIGHTS_CMD_MAINLIGHTS_OFF:
+        case HOME_MAINLIGHTS_CMD_MAINLIGHTS_OFF:
           setMainLights(false);
           break;
       }
       break;
-    case typeAsk: // If its a question
+    case HOME_TYPE_QUESTION: // If its a question
       switch (msgContent) {
-        case NODE_MAINLIGHTS_QSN_MAINLIGHTS_STATUS:
+        case HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS:
           homeNetwork.respondToQuestion(msgSender, mainLightsStatus);
           Serial.println(F("Main Lights Status question"));
           break;

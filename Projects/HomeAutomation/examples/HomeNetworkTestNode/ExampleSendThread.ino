@@ -8,7 +8,7 @@ static msg_t ExampleSendThread(void *arg) {
 
   while (1) {
     chThdSleepMilliseconds(TESTING_SEND_DELAY); // Redo this send program every few moments, give enough time for other threads to run
-    executeCommand(TESTING_QSN_MAINLIGHTS_STATUS, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+    executeCommand(TESTING_CHOSEN_COMMAND, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
   }
   return 0;
 }
