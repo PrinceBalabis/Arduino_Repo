@@ -23,7 +23,7 @@ uint16_t msgSender = -1;
 unsigned char msgType = 'Z';
 int32_t msgContent = -1;
 
-RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
+RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
@@ -36,19 +36,12 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 124);
-static WORKING_AREA(exampleSendThread, 124);
-
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
-  chThdSleepMilliseconds(1000);
-  homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
-  chThdSleepMilliseconds(1000);
-  chThdCreateStatic(hNListenThread, sizeof(hNListenThread), NORMALPRIO + 2, HNListenThread, NULL);
+  
+  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("RF 433 MHz Controller fully started!"));
-
-  while (1);
 }
 
 void loop() {

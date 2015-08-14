@@ -9,6 +9,6 @@
 // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
 // Tweak however you want though
 #define HOME_SETTING_DEFAULT_TIMEOUT_SENDTIME 1000 // Amount of time before trying to resend message again to node
-#define HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME 1000 // The amount of time to wait for an answer after sending question
+#define HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME 100 // The amount of time to wait for an answer after sending question
 #define HOME_SETTING_DEFAULT_TIME_RESPONSE 2 // How often to check if question has been answered
 #define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 5

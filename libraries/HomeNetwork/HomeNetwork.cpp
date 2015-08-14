@@ -29,14 +29,29 @@ static msg_t HomeNetworkThread(void *_homeNetwork)
 
 void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
+  radio.begin(); // Initialize radio
+  network.begin(HOME_SETTING_CHANNEL, nodeID); // Start mesh Network
+  // Radio settings must be run after network.begin
+  radio.setPALevel(HOME_SETTING_POWERAMPLIFIERLEVEL);
+  radio.setDataRate(HOME_SETTING_DATARATE);
+
+  //Clear all incoming queued messages that was received by RF24 module before Arduino completed boot
+  bool messagesRemaining = true;
+  while(messagesRemaining){
+    network.update(); // Check the network regularly for the entire network to function properly
+    if(network.available()){
+      unsigned char msgType;
+      int32_t msgContent;
+      uint16_t msgSender = read(&msgContent, &msgType);
+    } else {
+      messagesRemaining = false;
+    }
+  }
+
+  //Start Network Auto Update thread
   pmsgReceivedF = _pmsgReceivedF;
   homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
   chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, homeNetwork);
-
-  radio.begin(); // Initialize radio
-  network.begin(HOME_SETTING_CHANNEL, nodeID); // Start mesh Network
-  radio.setPALevel(HOME_SETTING_POWERAMPLIFIERLEVEL);
-  radio.setDataRate(HOME_SETTING_DATARATE);
 }
 
 void HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
@@ -85,7 +100,9 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
 
   if(status){
     // Wait for autoUpdate to pause
-    while(!currentAutoUpdateStatus);
+    while(!currentAutoUpdateStatus){
+      chThdSleepMilliseconds(1);
+    }
   }
 }
 
@@ -116,8 +133,6 @@ void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
   setNetworkUpdateStatus(false); // Pause autoUpdate
-  while(currentAutoUpdateStatus) // Wait for Network autoUpdate to pause
-  chThdSleepMilliseconds(1);
 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
@@ -131,13 +146,13 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
   int32_t msgResponse;
   const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse);
 
-  setNetworkUpdateStatus(false); // Resume autoUpdate
+  setNetworkUpdateStatus(true); // Resume autoUpdate
 
-  if(msgContent == msgResponse)
-  return true;
-  else
-  return false;
-
+  if(answerReceived && msgContent == msgResponse){
+    return true;
+  } else{
+    return false;
+  }
 }
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
@@ -152,17 +167,23 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 **/
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
   setNetworkUpdateStatus(false); // Pause autoUpdate
-  while(currentAutoUpdateStatus); // Wait for Network autoUpdate to pause
 
   // Send question
-  sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
+  bool questionSent = send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
 
-  // Read answer and send back
-  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_QUESTION, pmsgResponse);
+  bool answerReceived = false;
+  if(questionSent){
+    // Read answer and send back
+    answerReceived = readAnswer(&msgReceiver, HOME_TYPE_QUESTION, pmsgResponse);
+  }
 
-  setNetworkUpdateStatus(false); // Resume autoUpdate
+  setNetworkUpdateStatus(true); // Resume autoUpdate
 
-  return answerReceived;
+  if(!questionSent || !answerReceived){
+    return false;
+  } else {
+    return true;
+  }
 }
 
 /**
