@@ -30,6 +30,7 @@ static msg_t HomeNetworkThread(void *_homeNetwork)
 void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
   pmsgReceivedF = _pmsgReceivedF;
+  homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
   chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, homeNetwork);
 
   radio.begin(); // Initialize radio
@@ -38,22 +39,10 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
   radio.setDataRate(HOME_SETTING_DATARATE);
 }
 
-void HomeNetwork::setTimeout(int32_t _homeNetwork_timeoutSendTime, int32_t _homeNetwork_timeoutAnswerTime)
-{
-  // If the values are less than 0 then set the values to default
-  if(_homeNetwork_timeoutSendTime < 0 || _homeNetwork_timeoutAnswerTime < 0){
-    homeNetwork_timeoutSendTime = HOME_SETTING_DEFAULT_TIMEOUT_SENDTIME; // 2 seconds
-    homeNetwork_timeoutAnswerTime = HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME; // 2 seconds
-  } else {
-    homeNetwork_timeoutSendTime = (uint16_t)_homeNetwork_timeoutSendTime;
-    homeNetwork_timeoutAnswerTime = (uint16_t)_homeNetwork_timeoutAnswerTime;
-  }
-}
-
-void HomeNetwork::setAutoUpdateTime(int32_t _homeNetwork_autoUpdateTime)
+void HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
 {
   if(_homeNetwork_autoUpdateTime < 0) // If less than 0 then set to default
-  homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_AUTOUPDATETIME;
+  homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
   else
   homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
 }
@@ -85,7 +74,7 @@ void HomeNetwork::autoUpdate()
   }
 }
 
-void HomeNetwork::setAutoUpdateStatus(bool status)
+void HomeNetwork::setNetworkUpdateStatus(bool status)
 {
 
   // set autoUpdate()
@@ -142,7 +131,7 @@ void HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 * Gets a response back
 **/
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
-  setAutoUpdateStatus(false); // Pause autoUpdate
+  setNetworkUpdateStatus(false); // Pause autoUpdate
 
   // Send question
   send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
@@ -162,15 +151,15 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
     {
       msgSenderReceived = read(&msgReceived, &msgTypeReceived);
     }
-    if (millis() - started_waiting_at > homeNetwork_timeoutAnswerTime && msgSenderReceived == -1) {
+    if (millis() - started_waiting_at > HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME && msgSenderReceived == -1) {
       return false;
     }
-    chThdSleepMilliseconds(2); // Check every few ms if message is received
+    chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_RESPONSE); // Check every few ms if answer-message is received
   }
 
   *pmsgResponse = msgReceived; // Save answer to variable
 
-  setAutoUpdateStatus(false); // Resume autoUpdate
+  setNetworkUpdateStatus(false); // Resume autoUpdate
 
   return true;
 }

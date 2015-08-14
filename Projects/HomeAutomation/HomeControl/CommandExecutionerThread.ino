@@ -18,8 +18,6 @@ static msg_t CommandExecutioner(void *arg)
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     chSemWait(&cmdExSem);
 
-    bool sent;
-
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // If the command is from Home Network
         switch (commandToExecute) {
@@ -76,11 +74,6 @@ static msg_t CommandExecutioner(void *arg)
             Serial.println(F("Disabled Monitors"));
             break;
         }
-    }
-
-    if (sent != NULL) {
-      Serial.print(F("Sent: "));
-      Serial.println(sent);
     }
   }
   return 0;

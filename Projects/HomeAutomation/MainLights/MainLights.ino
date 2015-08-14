@@ -31,8 +31,8 @@ void mainThread() {
 
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
 
-  homeNetwork.setAutoUpdateTime(HOME_AUTOUPDATE_DELAY);
-  
+  homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
+
   Serial.println(F("System booted up!"));
 }
 

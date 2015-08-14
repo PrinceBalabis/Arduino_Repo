@@ -51,7 +51,7 @@ void mainThread() {
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);
   chThdCreateStatic(keypadCommandThread, sizeof(keypadCommandThread), NORMALPRIO + 1, KeypadCommandThread, NULL);
 
-  homeNetwork.setAutoUpdateTime(HOME_AUTOUPDATE_DELAY);
+  homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
   
   Serial.println(F("System booted up!"));
 

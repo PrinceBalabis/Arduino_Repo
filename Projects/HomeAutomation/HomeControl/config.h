@@ -38,7 +38,6 @@
 #define BUTTON_PC_MONITOR_DISABLE 11
 #define BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT 6
 #define BUTTON_PC_SPOTIFYPLAYLIST_DINNER 5
-/*
 
 /*
 *  ------------------------------------
