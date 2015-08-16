@@ -4,7 +4,7 @@ boolean speakerMuteStatus = 0;
 
 bool getSpeakerPowerSwitchStatus() {
   int32_t speakerPowerSwitchStatus = 0;
-  homeNetwork.askSpeakerSwitchStatus(&speakerPowerSwitchStatus);
+  homeNetwork.sendQuestion(HOME_RF433MHZ_ID, HOME_RF433MHZ_QSN_SPEAKER_POWER_STATUS, &speakerPowerSwitchStatus);
   return speakerPowerSwitchStatus;
 }
 
@@ -23,7 +23,7 @@ void toggleSpeakerPower(void) {
 void sendSpeakerPowerOnCommand(void) {
   if (!getSpeakerPowerSwitchStatus())
   {
-    homeNetwork.setSpeakerPowerSwitchOn();
+    homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_SPEAKERPOWER_ON);
     chThdSleepMilliseconds(1000); // Wait for 433 MHz controller to turn on speaker power switch
     sendSpeakerCommand(speakerIRPower); // Send IR power command
     Serial.println(F("Turning on speaker"));
@@ -33,7 +33,7 @@ void sendSpeakerPowerOnCommand(void) {
 void sendSpeakerPowerOffCommand(void) {
   if (getSpeakerPowerSwitchStatus())
   {
-    homeNetwork.setSpeakerPowerSwitchOff();
+    homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_SPEAKERPOWER_OFF);
     speakerMuteStatus = 0;
     Serial.println(F("Turning off speaker"));
   }

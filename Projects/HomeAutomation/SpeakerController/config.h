@@ -1,15 +1,14 @@
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
-const uint16_t nodeID = nodeSpeaker;
+#define NODEID HOME_SPEAKER_ID
 
-//Hardware
-const uint8_t homeNetworkCEPin = 8;
-const uint8_t homeNetworkCSNPin = 9;
+//CE and CSN pins
+#define RF24_PIN_CE 8
+#define RF24_PIN_CSN 9
 
-//Tweaks
-const uint16_t homeNetworkCheckMessageDelay = 50; // How often to check for a new message, WARNING! The shorther the delay the less time for for other threads!
-const uint16_t homeNetworkAutoUpdateTime = 20; // How often to auto update network. Should be short because this node is parent for many child nodes
+// How often to auto update network. Should be short because this node is parent for many child nodes
+#define HOME_AUTOUPDATE_DELAY 5
 
 /*  ------------------------------------
  *  IR Codes

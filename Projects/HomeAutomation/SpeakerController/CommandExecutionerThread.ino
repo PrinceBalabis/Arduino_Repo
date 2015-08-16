@@ -18,31 +18,31 @@ static msg_t CommandExecutioner(void *arg)
     chSemWait(&cmdExSem);
 
     switch (executeCommand) {
-      case cmdToggleSpeakerPower:
+      case HOME_SPEAKER_CMD_POWER_TOGGLE:
         toggleSpeakerPower();
         break;
-      case cmdSetSpeakerPowerOn:
+      case HOME_SPEAKER_CMD_POWER_ON:
         sendSpeakerPowerOnCommand();
         break;
-      case cmdSetSpeakerPowerOff:
+      case HOME_SPEAKER_CMD_POWER_OFF:
         sendSpeakerPowerOffCommand();
         break;
-      case cmdToggleSpeakerMute:
+      case HOME_SPEAKER_CMD_MUTE_TOGGLE:
         toggleSpeakerMuteCommand();
         break;
-      case cmdSetSpeakerMuteOn:
+      case HOME_SPEAKER_CMD_MUTE_ON:
         sendSpeakerMuteOnCommand();
         break;
-      case cmdSetSpeakerMuteOff:
+      case HOME_SPEAKER_CMD_MUTE_OFF:
         sendSpeakerMuteOffCommand();
         break;
-      case cmdSetSpeakerVolumeUp:
+      case HOME_SPEAKER_CMD_VOLUME_UP:
         sendSpeakerUpVolCommand();
         break;
-      case cmdSetSpeakerVolumeDown:
+      case HOME_SPEAKER_CMD_VOLUME_DOWN:
         sendSpeakerDownVolCommand();
         break;
-      case cmdToggleSpeakerMode:
+      case HOME_SPEAKER_CMD_MODE_TOGGLE:
         toggleSpeakerModeCommand();
         break;
     }
