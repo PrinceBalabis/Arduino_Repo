@@ -29,6 +29,7 @@ void mainThread() {
 
   chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
 
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
 
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
