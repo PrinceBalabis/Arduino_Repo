@@ -18,7 +18,7 @@ static msg_t CommandExecutioner(void *arg)
     // Wait for signal to run
     chSemWait(&cmdExSem);
 
-    int32_t status = -1;
+    int32_t status = -999;
     bool sent = false;
 
     switch (commandToExecute) {
@@ -40,8 +40,10 @@ static msg_t CommandExecutioner(void *arg)
     }
     Serial.print(F("Sent: "));
     Serial.print(sent);
-    Serial.print(F(" Status: "));
-    Serial.print(status);
+    if (status != -999) { // If the status variable was used in the example, print it out
+      Serial.print(F(" Status: "));
+      Serial.print(status);
+    }
     Serial.println();
   }
   return 0;
