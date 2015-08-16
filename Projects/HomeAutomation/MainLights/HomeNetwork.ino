@@ -23,7 +23,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
       switch (msgContent) {
         case HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS:
           homeNetwork.respondToQuestion(msgSender, mainLightsStatus);
-          Serial.println(F("Main Lights Status question"));
+          Serial.println(F("Lights status question"));
           break;
       }
       break;

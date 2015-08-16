@@ -38,8 +38,10 @@ void setup() {
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
-  
+
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
+
 
   Serial.println(F("RF 433 MHz Controller fully started!"));
 }

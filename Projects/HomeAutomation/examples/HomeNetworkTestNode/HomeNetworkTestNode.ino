@@ -11,7 +11,7 @@ HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println(F("Testing Node"));
+  Serial.println(F("Home Network Testing Node"));
 
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
@@ -23,6 +23,7 @@ void setup() {
   while (1);
 }
 
+// If a thread weirdly crashes then increase the stack value
 static WORKING_AREA(commandExecutioner, 64);
 static WORKING_AREA(exampleSendThread, 64);
 
@@ -31,11 +32,12 @@ void mainThread() {
 
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
   
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 1, ExampleSendThread, NULL);
 
-  homeNetwork.setAutoUpdateTime(HOME_AUTOUPDATE_DELAY);
+  homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
   Serial.println(F("System booted up!"));
 }

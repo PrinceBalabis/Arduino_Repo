@@ -14,7 +14,7 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _hom
 *  Thread for the Home Network
 **/
 // Declare a semaphore with an inital counter value of zero.
-static WORKING_AREA(homeNetworkThread, 64); // 16 bytes crash - 32 bytes seems to work
+static WORKING_AREA(homeNetworkThread, 64); // 32 bytes crash - 64 bytes seems to work
 static msg_t HomeNetworkThread(void *_homeNetwork)
 {
   HomeNetwork* homeNetwork = ((HomeNetwork*)_homeNetwork);
@@ -70,7 +70,7 @@ void HomeNetwork::autoUpdate()
     if(!autoUpdateStatus){
       currentAutoUpdateStatus = false;
       while(!autoUpdateStatus){
-        chThdSleepMilliseconds(10);  //Check if autoUpdate should unpause every few ms
+        chThdSleepMilliseconds(2);  //Check if autoUpdate should unpause every few ms
       }
       currentAutoUpdateStatus = true;
     }
@@ -82,10 +82,27 @@ void HomeNetwork::autoUpdate()
       unsigned char msgType;
       int32_t msgContent;
       uint16_t msgSender = read(&msgContent, &msgType);
-      if(msgType == HOME_TYPE_COMMAND){ // if its just a command, send the confirmation message back
-        sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION);
+      if(debug)
+      Serial.print("msgType:");
+      if(msgType == HOME_TYPE_COMMAND || msgType ==  HOME_TYPE_QUESTION){ //A normal Command/question
+        if(debug)
+        Serial.print("Normal msgType w/ confirmation...");
+        sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION); // Send back confirmation
+        pmsgReceivedF(msgSender, msgType, msgContent); // deliver message to Sketch
+      } else if(msgType == HOME_TYPE_COMMAND_FAST){ // Fast command, no confirmation message back
+        if(debug)
+        Serial.print("Command fast...");
+        pmsgReceivedF(msgSender, HOME_TYPE_COMMAND, msgContent); // deliver message to Sketch
+      } else if(msgType ==  HOME_TYPE_QUESTION_FAST){// Fast question, no confirmation message back
+        if(debug)
+        Serial.print("Question fast...");
+        pmsgReceivedF(msgSender, HOME_TYPE_QUESTION, msgContent); // deliver message to Sketch
       }
-      pmsgReceivedF(msgSender, msgType, msgContent);
+      else { // default
+        if(debug)
+        Serial.print("default msgType..");
+        pmsgReceivedF(msgSender, msgType, msgContent); //no confirmation message back, deliver message to Sketch
+      }
     }
 
     chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
@@ -106,6 +123,13 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
   }
 }
 
+/**
+* setDebug
+* This function is used to toggle debug messages on/off
+**/
+void HomeNetwork::setDebug(bool status){
+  debug = status;
+}
 
 /**
 * sendRAW
@@ -115,6 +139,18 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
 **/
 void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
+  if(debug)
+  Serial.print("sendFast()..");
+
+  switch(msgType){
+    case HOME_TYPE_COMMAND:
+    msgType = HOME_TYPE_COMMAND_FAST;
+    break;
+    case HOME_TYPE_QUESTION:
+    msgType = HOME_TYPE_QUESTION_FAST;
+    break;
+  }
+
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
 
@@ -132,6 +168,9 @@ void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 **/
 bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
+  if(debug)
+  Serial.print("send()..");
+
   setNetworkUpdateStatus(false); // Pause autoUpdate
 
   // Set receiver of message
@@ -156,6 +195,7 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 }
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
+  Serial.print("sendCommand()..");
   return send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
 }
 
@@ -166,20 +206,36 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 * returns whether answer was received or not
 **/
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
+  Serial.print("sendQuestion()..");
+
   setNetworkUpdateStatus(false); // Pause autoUpdate
 
   // Send question
-  bool questionSent = send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
-
-  bool answerReceived = false;
-  if(questionSent){
-    // Read answer and send back
-    answerReceived = readAnswer(&msgReceiver, HOME_TYPE_QUESTION, pmsgResponse);
+  // bool questionSent = send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
+  sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION_FAST); // Send question
+  if(debug){
+    Serial.print("Question sent");
+    // Serial.print(":");
+    // Serial.print(questionSent);
+    Serial.print("...");
   }
+  bool answerReceived = false;
+  // if(questionSent){
+  // Read answer and send back
+  answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse);
+  // }
+  if(debug){
+    Serial.print("Answer received:");
+    Serial.print(answerReceived);
+    Serial.print("...");
+  }
+
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
-  if(!questionSent || !answerReceived){
+  // if(!questionSent || !answerReceived){
+  if(!answerReceived){
+
     return false;
   } else {
     return true;
@@ -192,37 +248,50 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 **/
 bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse)
 {
-  // Wait for answer, will wait untill received or timeout
-  bool answerTimeout = false;
-
+  if(debug)
+  Serial.print("readAnswer()..");
   int32_t msgSenderReceived = -1;
   unsigned char msgTypeReceived = 'Z';
   int32_t msgReceived = 0;
 
+  Serial.write(msgType);
+
   unsigned long started_waiting_at = millis();
-  while ((msgSenderReceived != *pmsgReceiver || msgTypeReceived != msgType) && !answerTimeout) {
+  while (1) {
     network.update(); // Check the network regularly for the entire network to function properly
+    if (millis() - started_waiting_at > HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME && msgSenderReceived == -1) {
+      if(debug)
+      Serial.print("timeout_readanswer...");
+      return false;
+    }
     if(network.available())
     {
       msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-    }
-    if (millis() - started_waiting_at > HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME && msgSenderReceived == -1) {
-      return false;
+      if(debug)
+      Serial.print("received answer: ");
+      if(msgSenderReceived == *pmsgReceiver && msgTypeReceived == msgType){
+        if(debug)
+        Serial.print("correct..");
+        break;
+      } else {
+        if(debug)
+        Serial.print("not correct..");
+      }
     }
     chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_RESPONSE); // Check every few ms if answer-message is received
   }
+  if(debug)
+  Serial.print("done read..");
 
   *pmsgResponse = msgReceived; // Save answer to variable
 
   return true;
 }
 
-void HomeNetwork::respondToCommand(uint16_t _msgSender, int32_t _ResponseData) {
-  send(_msgSender, _ResponseData, HOME_TYPE_CONFIRMATION);
-}
-
 void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
-  send(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
+  if(debug)
+  Serial.print("respondToQuestion()..");
+  sendFast(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
 }
 
 

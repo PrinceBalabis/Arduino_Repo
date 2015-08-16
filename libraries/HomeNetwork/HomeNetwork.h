@@ -19,6 +19,7 @@ public:
 
   void setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime);
   void setNetworkUpdateStatus(bool status);
+  void setDebug(bool status);
 
   void sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
@@ -27,7 +28,6 @@ public:
   bool readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse);
 
   void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
-  void respondToCommand(uint16_t _msgSender, int32_t _ResponseData);
 
   void autoUpdate(); // Used by internal thread, NOT to be used by Sketch!
 private:
@@ -40,6 +40,8 @@ private:
   bool currentAutoUpdateStatus = true;
 
   int8_t homeNetwork_autoUpdateTime;
+
+  bool debug = false;
 
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 };
