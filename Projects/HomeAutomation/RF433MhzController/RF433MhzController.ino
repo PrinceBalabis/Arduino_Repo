@@ -39,7 +39,7 @@ void setup() {
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
 
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
 

@@ -195,6 +195,7 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 }
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
+  if(debug)
   Serial.print("sendCommand()..");
   return send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
 }
@@ -206,6 +207,7 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 * returns whether answer was received or not
 **/
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
+  if(debug)
   Serial.print("sendQuestion()..");
 
   setNetworkUpdateStatus(false); // Pause autoUpdate
@@ -253,8 +255,6 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
   int32_t msgSenderReceived = -1;
   unsigned char msgTypeReceived = 'Z';
   int32_t msgReceived = 0;
-
-  Serial.write(msgType);
 
   unsigned long started_waiting_at = millis();
   while (1) {
