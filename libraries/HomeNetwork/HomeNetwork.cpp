@@ -177,12 +177,12 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 
   // network.write() function returns wether someone picked up a message,
   // doesn't have to be the node you are trying to send to,
-  // but could be a parent node. So its not very useful.
+  // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
   network.write(header, &msgContent, sizeof(msgContent));
 
   // Read answer and send back
   int32_t msgResponse;
-  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse);
+  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
@@ -223,7 +223,7 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
   bool answerReceived = false;
   // if(questionSent){
   // Read answer and send back
-  answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse);
+  answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, HOME_SETTING_DEFAULT_TIMEOUT_ANSWER);
   // }
   if(debug){
     Serial.print("Answer received:");
@@ -247,7 +247,7 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 * readAnswer
 * returns true if answer is received, false if it is not
 **/
-bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse)
+bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse, uint16_t timeout)
 {
   if(debug)
   Serial.print("readAnswer()->");
@@ -258,7 +258,7 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
   unsigned long started_waiting_at = millis();
   while (1) {
     network.update(); // Check the network regularly for the entire network to function properly
-    if (millis() - started_waiting_at > HOME_SETTING_DEFAULT_TIMEOUT_ANSWERTIME && msgSenderReceived == -1) {
+    if (millis() - started_waiting_at > timeout && msgSenderReceived == -1) {
       if(debug)
       Serial.print("timeout_readanswer->");
       return false;
@@ -277,7 +277,7 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
         Serial.print("not correct->");
       }
     }
-    chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_RESPONSE); // Check every few ms if answer-message is received
+    chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
   }
   if(debug)
   Serial.print("done read->");

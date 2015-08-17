@@ -25,7 +25,7 @@ public:
   bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
   bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
-  bool readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse);
+  bool readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse, uint16_t timeout);
 
   void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
