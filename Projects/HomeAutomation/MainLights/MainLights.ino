@@ -8,7 +8,7 @@
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network);
+HomeNetwork homeNetwork(radio, network, &homeNetwork);
 
 void setup() {
   Serial.begin(115200);
