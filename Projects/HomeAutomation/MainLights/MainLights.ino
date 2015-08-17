@@ -1,4 +1,4 @@
-#include <ChibiOS_AVR.h>
+#include <FreeRTOS_AVR.h>
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
@@ -16,24 +16,19 @@ void setup() {
 
   initLights();
 
-  chBegin(mainThread);
-
-  while (1);
-}
-
-// If a thread weirdly crashes then increase the stack value
-static WORKING_AREA(wallSwitchThread, 4); // 4 bytes works great
-
-void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
 
-  chThdCreateStatic(wallSwitchThread, sizeof(wallSwitchThread), NORMALPRIO + 2, WallSwitchThread, NULL);
+  xTaskCreate(WallSwitchThread, NULL, configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 
   //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
   Serial.println(F("System booted up!"));
+
+  vTaskStartScheduler(); // start FreeRTOS
+
+  while (1);
 }
 
 void loop() {
