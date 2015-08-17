@@ -14,8 +14,8 @@ class RF24Network;
 class HomeNetwork
 {
 public:
-  HomeNetwork(RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork);
-  void begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t));
+  HomeNetwork(RF24& _radio, RF24Network& _network);
+  void begin(HomeNetwork* _homeNetwork, uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t));
 
   void setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime);
   void setNetworkUpdateStatus(bool status);
@@ -33,15 +33,13 @@ public:
 private:
   RF24& radio;
   RF24Network& network;
-  HomeNetwork* homeNetwork;
   void (* pmsgReceivedF)(uint16_t,unsigned char,int32_t);
 
   bool autoUpdateStatus = true;
   bool currentAutoUpdateStatus = true;
+  bool debug = false;
 
   int8_t homeNetwork_autoUpdateTime;
-
-  bool debug = false;
 
   uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 };

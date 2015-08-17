@@ -19,7 +19,7 @@
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, &homeNetwork);
+HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   Serial.begin(115200);
@@ -46,7 +46,7 @@ void mainThread() {
 
   // Home Network Thread
   homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
+  homeNetwork.begin(&homeNetwork, NODEID, &homeNetworkMessageReceived);
 
   // Keypad threads
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);

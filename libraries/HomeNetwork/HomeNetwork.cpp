@@ -6,7 +6,7 @@
 #include <ChibiOS_AVR.h>
 #include "homeNetworkConfig.h"
 
-HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _homeNetwork): radio(_radio), network(_network), homeNetwork(_homeNetwork)
+HomeNetwork::HomeNetwork(RF24& _radio, RF24Network& _network): radio(_radio), network(_network)
 {
 }
 
@@ -15,19 +15,17 @@ HomeNetwork::HomeNetwork( RF24& _radio, RF24Network& _network, HomeNetwork* _hom
 **/
 // Declare a semaphore with an inital counter value of zero.
 static WORKING_AREA(homeNetworkThread, 64); // 32 bytes crash - 64 bytes seems to work
-static msg_t HomeNetworkThread(void *_homeNetwork)
+static msg_t HomeNetworkThread(void *homeNetwork)
 {
-  HomeNetwork* homeNetwork = ((HomeNetwork*)_homeNetwork);
-
   // The thread stops at this function, this function has a loop which keeps the network
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
   // This function has to run on a thread or else home network wont work.
-  homeNetwork->autoUpdate();
+  ((HomeNetwork*)homeNetwork)->autoUpdate();
 
   return 0;
 }
 
-void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
+void HomeNetwork::begin(HomeNetwork* homeNetwork, uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
   radio.begin(); // Initialize radio
   network.begin(HOME_SETTING_CHANNEL, nodeID); // Start mesh Network
@@ -36,17 +34,15 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
   radio.setDataRate(HOME_SETTING_DATARATE);
 
   //Clear all incoming queued messages that was received by RF24 module before Arduino completed boot
-  bool messagesRemaining = true;
-  while(messagesRemaining){
-    network.update(); // Check the network regularly for the entire network to function properly
-    if(network.available()){
-      unsigned char msgType;
-      int32_t msgContent;
-      uint16_t msgSender = read(&msgContent, &msgType);
-    } else {
-      messagesRemaining = false;
-    }
-  }
+  // while(1){
+  //   network.update(); // Check the network regularly for the entire network to function properly
+  //   if(network.available()){
+  //     read(NULL, NULL); // Destroy incoming messages
+  //   } else {
+  //     break;
+  //   }
+  //   chThdSleepMicroseconds(100); // Give system some time to run other stuff
+  // }
 
   //Start Network Auto Update thread
   pmsgReceivedF = _pmsgReceivedF;
@@ -117,7 +113,7 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
   if(status){
     // Wait for autoUpdate to pause
     while(!currentAutoUpdateStatus){
-      chThdSleepMilliseconds(1);
+      chThdSleepMilliseconds(1); // Check if autoUpdate status changed every few ms
     }
   }
 }
@@ -174,38 +170,15 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
+
+  // network.write() function returns wether someone picked up a message,
+  // doesn't have to be the node you are trying to send to,
+  // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
+  network.write(header, &msgContent, sizeof(msgContent));
+
   int32_t msgResponse;
-bool answerReceived;
-
-  unsigned long started_waiting_at = millis();
-  while (1) {
-    if (millis() - started_waiting_at > HOME_SETTING_DEFAULT_TIMEOUT_SENDTIME) { // Timeout function
-      if(debug)
-      Serial.print("timeout_send->");
-      answerReceived = false;
-      break;
-    }
-
-    // network.write() function returns wether someone picked up a message,
-    // doesn't have to be the node you are trying to send to,
-    // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
-    network.write(header, &msgContent, sizeof(msgContent));
-
-    // Read answer and send back
-
-    answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
-
-    if(debug)
-    Serial.print("status: ");
-    if(answerReceived)
-    {
-      break; // Success! Go out of resend loop
-    } else {
-      if(debug)
-      Serial.print("retrying_send.."); // Looping another time to retry send
-    }
-    chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
-  }
+  // Read answer and send back
+  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
