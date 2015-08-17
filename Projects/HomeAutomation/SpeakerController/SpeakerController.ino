@@ -18,7 +18,7 @@ int32_t msgContent = -1;
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, &homeNetwork);
+HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   Serial.begin(115200);
@@ -36,11 +36,11 @@ void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
   
   // CommandExecutioner thread which executes commands
-  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
+  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 4, CommandExecutioner, NULL);
 
   // Home Network Threads
   homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
+  homeNetwork.begin(NODEID, &homeNetwork, &homeNetworkMessageReceived);
 
   Serial.println(F("Speaker Controller fully initialized!"));
 

@@ -42,11 +42,11 @@ void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // CommandExecutioner thread which executes commands
-  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
+  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 4, CommandExecutioner, NULL);
 
   // Home Network Thread
   homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(&homeNetwork, NODEID, &homeNetworkMessageReceived);
+  homeNetwork.begin(NODEID, &homeNetwork, &homeNetworkMessageReceived);
 
   // Keypad threads
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);

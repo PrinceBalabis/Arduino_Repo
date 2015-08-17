@@ -15,9 +15,9 @@ class HomeNetwork
 {
 public:
   HomeNetwork(RF24& _radio, RF24Network& _network);
-  void begin(HomeNetwork* _homeNetwork, uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t));
+  void begin(uint16_t nodeID, HomeNetwork* homeNetwork, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t));
 
-  void setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime);
+  bool setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime);
   void setNetworkUpdateStatus(bool status);
   void setDebug(bool status);
 

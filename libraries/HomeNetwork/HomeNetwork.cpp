@@ -25,7 +25,7 @@ static msg_t HomeNetworkThread(void *homeNetwork)
   return 0;
 }
 
-void HomeNetwork::begin(HomeNetwork* homeNetwork, uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
+void HomeNetwork::begin(uint16_t nodeID, HomeNetwork* homeNetwork, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
   radio.begin(); // Initialize radio
   network.begin(HOME_SETTING_CHANNEL, nodeID); // Start mesh Network
@@ -50,12 +50,15 @@ void HomeNetwork::begin(HomeNetwork* homeNetwork, uint16_t nodeID, void (* _pmsg
   chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, homeNetwork);
 }
 
-void HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
+bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
 {
-  if(_homeNetwork_autoUpdateTime < 0) // If less than 0 then set to default
-  homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
-  else
-  homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
+  if(_homeNetwork_autoUpdateTime < 0 || _homeNetwork_autoUpdateTime > 255 ) { // If less than 0 or bigger than 255 then set to default
+    homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
+    return true;
+  } else {
+    homeNetwork_autoUpdateTime = _homeNetwork_autoUpdateTime;
+    return false;
+  }
 }
 
 void HomeNetwork::autoUpdate()
@@ -80,7 +83,7 @@ void HomeNetwork::autoUpdate()
       uint16_t msgSender = read(&msgContent, &msgType);
       if(debug)
       Serial.print("msgType:");
-      if(msgType == HOME_TYPE_COMMAND || msgType ==  HOME_TYPE_QUESTION){ //A normal Command/question
+      if(msgType == HOME_TYPE_COMMAND || msgType ==  HOME_TYPE_QUESTION){ //A Command/Question w/ confirmation request
         if(debug)
         Serial.print("Normal msgType w/ confirmation->");
         sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION); // Send back confirmation

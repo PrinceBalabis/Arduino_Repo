@@ -25,7 +25,7 @@ int32_t msgContent = -1;
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, &homeNetwork);
+HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   Serial.begin(115200);
@@ -40,7 +40,7 @@ void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
 
   homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
+  homeNetwork.begin(NODEID, &homeNetwork, &homeNetworkMessageReceived);
 
 
   Serial.println(F("RF 433 MHz Controller fully started!"));
