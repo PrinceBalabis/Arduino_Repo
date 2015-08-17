@@ -36,7 +36,7 @@ void setup() {
 // If a thread weirdly crashes then increase the stack value
 static WORKING_AREA(keypadCommandThread, 16); //8 bytes crash - 16 bytes works great
 static WORKING_AREA(keypadUpdaterThread, 64); //32 bytes crash - 64 bytes works great
-static WORKING_AREA(commandExecutioner, 64); //8 bytes crash - 16 bytes works great
+static WORKING_AREA(commandExecutioner, 64); //1 bytes crash - 124 bytes works great
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
@@ -45,7 +45,7 @@ void mainThread() {
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
 
   // Home Network Thread
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   // Keypad threads

@@ -29,8 +29,8 @@ void setup() {
   while (1);
 }
 
-static WORKING_AREA(hNListenThread, 124);
-static WORKING_AREA(commandExecutioner, 124);
+// If a thread weirdly crashes then increase the stack value
+static WORKING_AREA(commandExecutioner, 32); //1 bytes crash - 124 bytes works great
 
 void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
