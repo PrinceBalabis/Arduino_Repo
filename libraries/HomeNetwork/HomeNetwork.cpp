@@ -3,7 +3,7 @@
 */
 
 #include "HomeNetwork.h"
-#include <ChibiOS_AVR.h>
+#include <FreeRTOS_AVR.h>
 #include "homeNetworkConfig.h"
 
 HomeNetwork::HomeNetwork(RF24& _radio, RF24Network& _network): radio(_radio), network(_network)
@@ -13,16 +13,12 @@ HomeNetwork::HomeNetwork(RF24& _radio, RF24Network& _network): radio(_radio), ne
 /**
 *  Thread for the Home Network
 **/
-// Declare a semaphore with an inital counter value of zero.
-static WORKING_AREA(homeNetworkThread, 64); // 32 bytes crash - 64 bytes seems to work
-static msg_t HomeNetworkThread(void *homeNetwork)
+static void HomeNetworkThread(void *homeNetwork)
 {
   // The thread stops at this function, this function has a loop which keeps the network
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
   // This function has to run on a thread or else home network wont work.
   ((HomeNetwork*)homeNetwork)->autoUpdate();
-
-  return 0;
 }
 
 void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
@@ -47,7 +43,8 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
   //Start Network Auto Update thread
   pmsgReceivedF = _pmsgReceivedF;
   homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
-  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, this);
+
+  xTaskCreate(HomeNetworkThread, NULL, configMINIMAL_STACK_SIZE+50, this, 3, NULL);
 }
 
 bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
@@ -69,7 +66,7 @@ void HomeNetwork::autoUpdate()
     if(!autoUpdateStatus){
       currentAutoUpdateStatus = false;
       while(!autoUpdateStatus){
-        chThdSleepMilliseconds(2);  //Check if autoUpdate should unpause every few ms
+        vTaskDelay(((long)2 * configTICK_RATE_HZ) / (long)1000);  //Check if autoUpdate should unpause every few ms
       }
       currentAutoUpdateStatus = true;
     }
@@ -103,8 +100,7 @@ void HomeNetwork::autoUpdate()
         pmsgReceivedF(msgSender, msgType, msgContent); //no confirmation message back, deliver message to Sketch
       }
     }
-
-    chThdSleepMilliseconds(homeNetwork_autoUpdateTime);  //Give other threads some time to run
+    vTaskDelay(((long)homeNetwork_autoUpdateTime * configTICK_RATE_HZ) / (long)1000);  //Give other threads some time to run
   }
 }
 
@@ -116,7 +112,7 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
   if(status){
     // Wait for autoUpdate to pause
     while(!currentAutoUpdateStatus){
-      chThdSleepMilliseconds(1); // Check if autoUpdate status changed every few ms
+      vTaskDelay(((long)1 * configTICK_RATE_HZ) / (long)1000); // Check if autoUpdate status changed every few ms
     }
   }
 }
@@ -276,7 +272,8 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
         Serial.print("not correct->");
       }
     }
-    chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
+
+    vTaskDelay(((long)HOME_SETTING_DEFAULT_TIME_READ * configTICK_RATE_HZ) / (long)1000); // Check every few ms if answer-message is received
   }
   if(debug)
   Serial.print("done read->");
