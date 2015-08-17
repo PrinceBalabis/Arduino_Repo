@@ -125,7 +125,7 @@ static msg_t KeypadCommandThread(void *arg)
     else if (state == RELEASED )
     {
       switch (keyName) {
-        case BUTTON_SPEAKER_POWER:
+        case BUTTON_PC_POWER:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
       }

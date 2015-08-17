@@ -39,7 +39,7 @@ void mainThread() {
   chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 3, CommandExecutioner, NULL);
 
   // Home Network Threads
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("Speaker Controller fully initialized!"));
