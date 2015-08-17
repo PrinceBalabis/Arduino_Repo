@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 // WallSwitchThread
-static void WallSwitchThread(void *arg) {
+
+static msg_t WallSwitchThread(void *arg) {
 
   // Switch state variables
   bool leftSwitchState = 0;
@@ -26,8 +27,9 @@ static void WallSwitchThread(void *arg) {
     }
 
     // Sleep some milliseconds, to make time for other threads and to act as button debouncing
-    vTaskDelay(((long)WALLSWITCH_UPDATEDELAY * configTICK_RATE_HZ) / (long)1000);
+    chThdSleepMilliseconds(WALLSWITCH_UPDATEDELAY);
   }
+  return 0;
 }
 
 
