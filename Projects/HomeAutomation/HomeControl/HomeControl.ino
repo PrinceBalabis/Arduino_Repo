@@ -46,7 +46,7 @@ void mainThread() {
 
   // Home Network Thread
   homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(NODEID, &homeNetwork, &homeNetworkMessageReceived);
+  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   // Keypad threads
   chThdCreateStatic(keypadUpdaterThread, sizeof(keypadUpdaterThread), NORMALPRIO + 1, KeypadUpdaterThread, NULL);

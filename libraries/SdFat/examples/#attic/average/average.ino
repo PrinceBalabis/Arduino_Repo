@@ -1,7 +1,6 @@
 /*
- * Calculate the sum and average of a list of floating point numbers
+ * Calculate the sum and average of a list of floating point numbers 
  */
-#include <SPI.h>
 #include <SdFat.h>
 
 // SD chip select pin
@@ -15,15 +14,13 @@ ArduinoOutStream cout(Serial);
 //------------------------------------------------------------------------------
 void writeTestFile() {
   // open the output file
-  ofstream sdout("AvgTest.txt");
+  ofstream sdout("AVG_TEST.TXT");
 
   // write a series of float numbers
   for (int16_t i = -1001; i < 2000; i += 13) {
     sdout << 0.1 * i << endl;
   }
-  if (!sdout) {
-    sd.errorHalt("sdout failed");
-  }
+  if (!sdout) sd.errorHalt("sdout failed");
 
   sdout.close();
 }
@@ -34,12 +31,10 @@ void calcAverage() {
   double sum = 0;  // sum of input numbers
 
   // open the input file
-  ifstream sdin("AvgTest.txt");
+  ifstream sdin("AVG_TEST.TXT");
 
   // check for an open failure
-  if (!sdin) {
-    sd.errorHalt("sdin failed");
-  }
+  if (!sdin) sd.errorHalt("sdin failed");
 
   // read and sum the numbers
   while (sdin >> num) {
@@ -56,16 +51,14 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {}  // wait for Leonardo
 
-  // F() stores strings in flash to save RAM
-  cout << F("Type any character to start\n");
+  // pstr stores strings in flash to save RAM
+  cout << pstr("Type any character to start\n");
   while (Serial.read() <= 0) {}
   delay(400);  // Catch Due reset problem
 
   // initialize the SD card at SPI_HALF_SPEED to avoid bus errors with
   // breadboards.  use SPI_FULL_SPEED for better performance.
-  if (!sd.begin(chipSelect, SPI_HALF_SPEED)) {
-    sd.initErrorHalt();
-  }
+  if (!sd.begin(chipSelect, SPI_HALF_SPEED)) sd.initErrorHalt();
 
   // write the test file
   writeTestFile();

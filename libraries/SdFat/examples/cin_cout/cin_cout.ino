@@ -1,13 +1,12 @@
 /*
  * Demo of ArduinoInStream and ArduinoOutStream
  */
-#include <SPI.h>
 #include <SdFat.h>
 
 // create serial output stream
 ArduinoOutStream cout(Serial);
 
-// input line buffer
+// input buffer for line
 char cinBuf[40];
 
 // create serial input stream

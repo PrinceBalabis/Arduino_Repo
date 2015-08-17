@@ -1,6 +1,6 @@
-// Benchmark comparing SdFile and StdioStream.
-#include <SPI.h>
+
 #include <SdFat.h>
+#include <StdioStream.h>
 
 // Define PRINT_FIELD nonzero to use printField.
 #define PRINT_FIELD 0
@@ -17,11 +17,10 @@ StdioStream stdioFile;
 
 float f[100];
 char buf[20];
-char* label[] =
-{ "uint8_t 0 to 255, 100 times ", "uint16_t 0 to 20000",
+char* label[] = 
+  {"uint8_t 0 to 255, 100 times ", "uint16_t 0 to 20000",
   "uint32_t 0 to 20000", "uint32_t 1000000000 to 1000010000",
-  "float nnn.ffff, 10000 times"
-};
+  "float nnn.ffff, 10000 times"};
 //------------------------------------------------------------------------------
 void setup() {
   uint32_t m;
@@ -29,27 +28,23 @@ void setup() {
   uint32_t stdioSize;
   uint32_t printTime;
   uint32_t stdioTime;
-
+  
   Serial.begin(9600);
-  while (!Serial) {}
-
   Serial.println(F("Type any character to start"));
   while (!Serial.available());
   Serial.println(F("Starting test"));
-  if (!sd.begin(SD_CS_PIN)) {
-    sd.errorHalt();
-  }
+  if (!sd.begin(SD_CS_PIN)) sd.errorHalt();
 
   for (uint8_t i = 0; i < 100; i++) {
-    f[i] = 123.0 + 0.1234*i;
-  }
+    f[i] = 123.0 + 0.12345*i;
+  }  
 
   for (uint8_t dataType = 0; dataType < 5; dataType++) {
     for (uint8_t fileType = 0; fileType < 2; fileType++) {
       if (!fileType) {
-        if (!printFile.open("print.txt", O_CREAT | O_RDWR | O_TRUNC)) {
+        if (!printFile.open("PRRINT.TXT", O_CREAT | O_RDWR | O_TRUNC)) {
           Serial.println("open fail");
-          return;
+            return;
         }
         printTime = millis();
         switch (dataType) {
@@ -58,122 +53,121 @@ void setup() {
             for (uint8_t j = 0; j < 255; j++) {
               printFile.println(j);
             }
-          }
+          }            
           break;
         case 1:
           for (uint16_t i = 0; i < 20000; i++) {
             printFile.println(i);
           }
           break;
-
+             
         case 2:
           for (uint32_t i = 0; i < 20000; i++) {
             printFile.println(i);
           }
           break;
-
+             
         case 3:
           for (uint16_t i = 0; i < 10000; i++) {
             printFile.println(i + 1000000000UL);
           }
           break;
-
+        
         case 4:
           for (int j = 0; j < 100; j++) {
             for (uint8_t i = 0; i < 100; i++) {
               printFile.println(f[i], 4);
             }
           }
-          break;
+          break;        
         default:
           break;
         }
-        printFile.sync();
+        printFile.sync();        
         printTime = millis() - printTime;
         printFile.rewind();
-        printSize = printFile.fileSize();
+        printSize = printFile.fileSize(); 
 
       } else {
-        if (!stdioFile.fopen("stream.txt", "w+")) {
+        if (!stdioFile.fopen("STREAM.TXT", "w+")) {
           Serial.println("fopen fail");
           return;
         }
         stdioTime = millis();
-
-        switch (dataType) {
+        
+         switch (dataType) {
         case 0:
           for (uint16_t i =0; i < 100; i++) {
             for (uint8_t j = 0; j < 255; j++) {
-#if PRINT_FIELD
+              #if PRINT_FIELD
               stdioFile.printField(j, '\n');
-#else  // PRINT_FIELD
+              #else  // PRINT_FIELD
               stdioFile.println(j);
-#endif  // PRINT_FIELD
+              #endif  // PRINT_FIELD
             }
-          }
+          }            
           break;
         case 1:
           for (uint16_t i = 0; i < 20000; i++) {
-#if PRINT_FIELD
+            #if PRINT_FIELD
             stdioFile.printField(i, '\n');
-#else  // PRINT_FIELD
+            #else  // PRINT_FIELD
             stdioFile.println(i);
-#endif  // PRINT_FIELD
+            #endif  // PRINT_FIELD
           }
           break;
-
+             
         case 2:
           for (uint32_t i = 0; i < 20000; i++) {
-#if PRINT_FIELD
+            #if PRINT_FIELD
             stdioFile.printField(i, '\n');
-#else  // PRINT_FIELD
+            #else  // PRINT_FIELD
             stdioFile.println(i);
-#endif  // PRINT_FIELD
+            #endif  // PRINT_FIELD
           }
           break;
-
+             
         case 3:
           for (uint16_t i = 0; i < 10000; i++) {
-#if PRINT_FIELD
+            #if PRINT_FIELD
             stdioFile.printField(i + 1000000000UL, '\n');
-#else  // PRINT_FIELD
+            #else  // PRINT_FIELD
             stdioFile.println(i + 1000000000UL);
-#endif  // PRINT_FIELD      
+            #endif  // PRINT_FIELD      
           }
           break;
-
+        
         case 4:
           for (int j = 0; j < 100; j++) {
             for (uint8_t i = 0; i < 100; i++) {
-#if PRINT_FIELD
+              #if PRINT_FIELD
               stdioFile.printField(f[i], '\n', 4);
-#else  // PRINT_FIELD
-              stdioFile.println(f[i], 4);
-#endif  // PRINT_FIELD                            
+              #else  // PRINT_FIELD
+              stdioFile.println(f[i], 4);              
+              #endif  // PRINT_FIELD                            
             }
           }
-          break;
+          break;        
         default:
           break;
         }
         stdioFile.fflush();
         stdioTime = millis() - stdioTime;
-        stdioSize = stdioFile.ftell();
+        stdioSize = stdioFile.ftell();   
         if (STDIO_LIST_COUNT) {
           size_t len;
           stdioFile.rewind();
           for (int i = 0; i < STDIO_LIST_COUNT; i++) {
             stdioFile.fgets(buf, sizeof(buf), &len);
-            Serial.print(len);
-            Serial.print(',');
+            Serial.print(len);Serial.print(',');
             Serial.print(buf);
           }
         }
 
       }
-
+     
     }
-    Serial.println(label[dataType]);
+    Serial.println(label[dataType]);    
     if (VERIFY_CONTENT && printSize == stdioSize) {
       printFile.rewind();
       stdioFile.rewind();
@@ -191,7 +185,7 @@ void setup() {
       Serial.print(printSize);
       Serial.print(" != ");
     }
-    Serial.println(stdioSize);
+    Serial.println(stdioSize);    
     Serial.print("print millis: ");
     Serial.println(printTime);
     Serial.print("stdio millis: ");
@@ -199,8 +193,8 @@ void setup() {
     Serial.print("ratio: ");
     Serial.println((float)printTime/(float)stdioTime);
     Serial.println();
-    printFile.close();
-    stdioFile.fclose();
+    printFile.close();     
+    stdioFile.fclose();    
   }
   Serial.println("Done");
 }

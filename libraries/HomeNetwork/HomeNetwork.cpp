@@ -25,7 +25,7 @@ static msg_t HomeNetworkThread(void *homeNetwork)
   return 0;
 }
 
-void HomeNetwork::begin(uint16_t nodeID, HomeNetwork* homeNetwork, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
+void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
   radio.begin(); // Initialize radio
   network.begin(HOME_SETTING_CHANNEL, nodeID); // Start mesh Network
@@ -47,7 +47,7 @@ void HomeNetwork::begin(uint16_t nodeID, HomeNetwork* homeNetwork, void (* _pmsg
   //Start Network Auto Update thread
   pmsgReceivedF = _pmsgReceivedF;
   homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
-  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, homeNetwork);
+  chThdCreateStatic(homeNetworkThread, sizeof(homeNetworkThread), NORMALPRIO + 3, HomeNetworkThread, this);
 }
 
 bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)

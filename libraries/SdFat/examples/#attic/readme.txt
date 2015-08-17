@@ -26,3 +26,5 @@ readlog - Read file. Demo of pathnames and current working directory.
 SD_Size - Determine flash used by SD.h example.
 
 SdFatSize - Determine flash used by SdFat.
+
+TestMkdirRmdir - Test mkdir, rmdir, and directory management.

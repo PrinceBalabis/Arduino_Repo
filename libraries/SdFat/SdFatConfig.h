@@ -24,74 +24,34 @@
 #ifndef SdFatConfig_h
 #define SdFatConfig_h
 #include <stdint.h>
-#ifdef __AVR__
-#include <avr/io.h>
-#endif  // __AVR__
 //------------------------------------------------------------------------------
 /**
- * Set USE_LONG_FILE_NAMES nonzero to use long file names (LFN).
- * Long File Name are limited to a maximum length of 255 characters.
- *
- * This implementation allows 7-bit characters in the range
- * 0X20 to 0X7E except the following characters are not allowed:
- *
- *  < (less than)
- *  > (greater than)
- *  : (colon)
- *  " (double quote)
- *  / (forward slash)
- *  \ (backslash)
- *  | (vertical bar or pipe)
- *  ? (question mark)
- *  * (asterisk)
- *
+ * Set USE_SEPARATE_FAT_CACHE nonzero to use a second 512 byte cache
+ * for FAT table entries.  Improves performance for large writes that
+ * are not a multiple of 512 bytes.
  */
-#define USE_LONG_FILE_NAMES 1
+#ifdef __arm__
+#define USE_SEPARATE_FAT_CACHE 1
+#else  // __arm__
+#define USE_SEPARATE_FAT_CACHE 0
+#endif  // __arm__
 //------------------------------------------------------------------------------
 /**
- * Set ARDUINO_FILE_USES_STREAM nonzero to use Stream as the base class
- * for the Arduino File class.  If ARDUINO_FILE_USES_STREAM is zero, Print
- * will be used as the base class for the Arduino File class.
+ * Set USE_MULTI_BLOCK_SD_IO nonzero to use multi-block SD read/write.
  *
- * You can save some flash if you do not use Stream input functions such as
- * find(), findUntil(), readBytesUntil(), readString(), readStringUntil(),
- * parseInt(), and parseFloat().
+ * Don't use mult-block read/write on small AVR boards.
  */
-#define ARDUINO_FILE_USES_STREAM 1
+#if defined(RAMEND) && RAMEND < 3000
+#define USE_MULTI_BLOCK_SD_IO 0
+#else
+#define USE_MULTI_BLOCK_SD_IO 1
+#endif
 //------------------------------------------------------------------------------
 /**
- * The symbol SD_SPI_CONFIGURATION defines SPI access to the SD card.
- *
- * IF SD_SPI_CONFIGUTATION is define to be zero, only the SdFat class
- * is define and SdFat uses a fast custom SPI implementation.
- *
- * If SD_SPI_CONFIGURATION is define to be one, only the SdFat class is
- * define and SdFat uses the standard Arduino SPI.h library.
- *
- * If SD_SPI_CONFIGURATION is define to be two, only the SdFat class is
- * define and SdFat uses software SPI on the pins defined below.
- *
- * If SD_SPI_CONFIGURATION is define to be three, the three classes, SdFat,
- * SdFatLibSpi, and SdFatSoftSpi are defined.  SdFat uses the fast
- * custom SPI implementation. SdFatLibSpi uses the standard Arduino SPI
- * library.  SdFatSoftSpi is a template class that uses Software SPI. The
- * template parameters define the software SPI pins.  See the ThreeCard
- * example for simultaneous use of all three classes.
+ * Force use of Arduino Standard SPI library if USE_ARDUINO_SPI_LIBRARY
+ * is nonzero.
  */
-#define SD_SPI_CONFIGURATION 0
-//------------------------------------------------------------------------------
-/**
- * If SD_SPI_CONFIGURATION is defined to be two, these definitions
- * will define the pins used for software SPI.
- *
- * The default definition allows Uno shields to be used on other boards.
- */
-/** Software SPI Master Out Slave In pin */
-uint8_t const SOFT_SPI_MOSI_PIN = 11;
-/** Software SPI Master In Slave Out pin */
-uint8_t const SOFT_SPI_MISO_PIN = 12;
-/** Software SPI Clock pin */
-uint8_t const SOFT_SPI_SCK_PIN = 13;
+#define USE_ARDUINO_SPI_LIBRARY 0
 //------------------------------------------------------------------------------
 /**
  * To enable SD card CRC checking set USE_SD_CRC nonzero.
@@ -103,30 +63,13 @@ uint8_t const SOFT_SPI_SCK_PIN = 13;
 #define USE_SD_CRC 0
 //------------------------------------------------------------------------------
 /**
- * Set ENABLE_SPI_TRANSACTION nonzero to enable the SPI transaction feature
- * of the standard Arduino SPI library.  You must include SPI.h in your
- * programs when ENABLE_SPI_TRANSACTION is nonzero.
- */
-#define ENABLE_SPI_TRANSACTION 0
-//------------------------------------------------------------------------------
-/**
- * Set ENABLE_SPI_YIELD nonzero to enable release of the SPI bus during
- * SD card busy waits.
+ * To use multiple SD cards set USE_MULTIPLE_CARDS nonzero.
  *
- * This will allow interrupt routines to access the SPI bus if
- * ENABLE_SPI_TRANSACTION is nonzero.
+ * Using multiple cards costs about 200  bytes of flash.
  *
- * Setting ENABLE_SPI_YIELD will introduce some extra overhead and will
- * slightly slow transfer rates.  A few older SD cards may fail when
- * ENABLE_SPI_YIELD is nonzero.
+ * Each card requires about 550 bytes of SRAM so use of a Mega is recommended.
  */
-#define ENABLE_SPI_YIELD 0
-//------------------------------------------------------------------------------
-/**
- * Set FAT12_SUPPORT nonzero to enable use if FAT12 volumes.
- * FAT12 has not been well tested and requires additional flash.
- */
-#define FAT12_SUPPORT 0
+#define USE_MULTIPLE_CARDS 0
 //------------------------------------------------------------------------------
 /**
  * Set DESTRUCTOR_CLOSES_FILE nonzero to close a file in its destructor.
@@ -134,6 +77,21 @@ uint8_t const SOFT_SPI_SCK_PIN = 13;
  * Causes use of lots of heap in ARM.
  */
 #define DESTRUCTOR_CLOSES_FILE 0
+//------------------------------------------------------------------------------
+/**
+ * For AVR
+ *
+ * Set USE_SERIAL_FOR_STD_OUT nonzero to use Serial (the HardwareSerial class)
+ * for error messages and output from print functions like ls().
+ *
+ * If USE_SERIAL_FOR_STD_OUT is zero, a small non-interrupt driven class
+ * is used to output messages to serial port zero.  This allows an alternate
+ * Serial library like SerialPort to be used with SdFat.
+ *
+ * You can redirect stdOut with SdFat::setStdOut(Print* stream) and
+ * get the current stream with SdFat::stdOut().
+ */
+#define USE_SERIAL_FOR_STD_OUT 0
 //------------------------------------------------------------------------------
 /**
  * Call flush for endl if ENDL_CALLS_FLUSH is nonzero
@@ -155,6 +113,12 @@ uint8_t const SOFT_SPI_SCK_PIN = 13;
 #define ENDL_CALLS_FLUSH 0
 //------------------------------------------------------------------------------
 /**
+ * Allow FAT12 volumes if FAT12_SUPPORT is nonzero.
+ * FAT12 has not been well tested.
+ */
+#define FAT12_SUPPORT 0
+//------------------------------------------------------------------------------
+/**
  * SPI SCK divisor for SD initialization commands.
  * or greater
  */
@@ -165,24 +129,36 @@ const uint8_t SPI_SCK_INIT_DIVISOR = 128;
 #endif
 //------------------------------------------------------------------------------
 /**
- * Set USE_SEPARATE_FAT_CACHE nonzero to use a second 512 byte cache
- * for FAT table entries.  This improves performance for large writes
- * that are not a multiple of 512 bytes.
+ * Define MEGA_SOFT_SPI nonzero to use software SPI on Mega Arduinos.
+ * Default pins used are SS 10, MOSI 11, MISO 12, and SCK 13.
+ * Edit Software Spi pins to change pin numbers.
+ *
+ * MEGA_SOFT_SPI allows an unmodified 328 Shield to be used
+ * on Mega Arduinos.
  */
-#ifdef __arm__
-#define USE_SEPARATE_FAT_CACHE 1
-#else  // __arm__
-#define USE_SEPARATE_FAT_CACHE 0
-#endif  // __arm__
+#define MEGA_SOFT_SPI 0
 //------------------------------------------------------------------------------
 /**
- * Set USE_MULTI_BLOCK_IO nonzero to use multi-block SD read/write.
+ * Define LEONARDO_SOFT_SPI nonzero to use software SPI on Leonardo Arduinos.
+ * Default pins used are SS 10, MOSI 11, MISO 12, and SCK 13.
+ * Edit Software Spi pins to change pin numbers.
  *
- * Don't use mult-block read/write on small AVR boards.
+ * LEONARDO_SOFT_SPI allows an unmodified 328 Shield to be used
+ * on Leonardo Arduinos.
  */
-#if defined(RAMEND) && RAMEND < 3000
-#define USE_MULTI_BLOCK_IO 0
-#else  // RAMEND
-#define USE_MULTI_BLOCK_IO 1
-#endif  // RAMEND
+#define LEONARDO_SOFT_SPI 0
+//------------------------------------------------------------------------------
+/**
+ * Set USE_SOFTWARE_SPI nonzero to always use software SPI on AVR.
+ */
+#define USE_SOFTWARE_SPI 0
+// define software SPI pins so Mega can use unmodified 168/328 shields
+/** Default Software SPI chip select pin */
+uint8_t const SOFT_SPI_CS_PIN = 10;
+/** Software SPI Master Out Slave In pin */
+uint8_t const SOFT_SPI_MOSI_PIN = 11;
+/** Software SPI Master In Slave Out pin */
+uint8_t const SOFT_SPI_MISO_PIN = 12;
+/** Software SPI Clock pin */
+uint8_t const SOFT_SPI_SCK_PIN = 13;
 #endif  // SdFatConfig_h

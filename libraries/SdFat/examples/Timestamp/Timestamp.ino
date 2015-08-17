@@ -1,8 +1,7 @@
 /*
- * This program tests the dateTimeCallback() function
+ * This sketch tests the dateTimeCallback() function
  * and the timestamp() function.
  */
-#include <SPI.h>
 #include <SdFat.h>
 
 SdFat sd;
@@ -16,14 +15,14 @@ const uint8_t chipSelect = SS;
 ArduinoOutStream cout(Serial);
 //------------------------------------------------------------------------------
 // store error strings in flash to save RAM
-#define error(s) sd.errorHalt(F(s))
+#define error(s) sd.errorHalt_P(PSTR(s))
 //------------------------------------------------------------------------------
 /*
  * date/time values for debug
  * normally supplied by a real-time clock or GPS
  */
-// date 1-Oct-14
-uint16_t year = 2014;
+// date 1-Oct-09
+uint16_t year = 2009;
 uint8_t month = 10;
 uint8_t day = 1;
 
@@ -52,23 +51,21 @@ void dateTime(uint16_t* date, uint16_t* time) {
  */
 void printTimestamps(SdFile& f) {
   dir_t d;
-  if (!f.dirEntry(&d)) {
-    error("f.dirEntry failed");
-  }
+  if (!f.dirEntry(&d)) error("f.dirEntry failed");
 
-  cout << F("Creation: ");
+  cout << pstr("Creation: ");
   f.printFatDate(d.creationDate);
   cout << ' ';
   f.printFatTime(d.creationTime);
   cout << endl;
 
-  cout << F("Modify: ");
+  cout << pstr("Modify: ");
   f.printFatDate(d.lastWriteDate);
   cout <<' ';
   f.printFatTime(d.lastWriteTime);
   cout << endl;
 
-  cout << F("Access: ");
+  cout << pstr("Access: ");
   f.printFatDate(d.lastAccessDate);
   cout << endl;
 }
@@ -77,26 +74,24 @@ void setup(void) {
   Serial.begin(9600);
   while (!Serial) {}  // wait for Leonardo
 
-  cout << F("Type any character to start\n");
+  cout << pstr("Type any character to start\n");
   while (!Serial.available());
   delay(400);  // catch Due reset problem
-
+  
   // initialize the SD card at SPI_HALF_SPEED to avoid bus errors with
   // breadboards.  use SPI_FULL_SPEED for better performance.
-  if (!sd.begin(chipSelect, SPI_HALF_SPEED)) {
-    sd.initErrorHalt();
-  }
+  if (!sd.begin(chipSelect, SPI_HALF_SPEED)) sd.initErrorHalt();
 
   // remove files if they exist
-  sd.remove("callback.txt");
-  sd.remove("default.txt");
-  sd.remove("stamp.txt");
+  sd.remove("CALLBACK.TXT");
+  sd.remove("DEFAULT.TXT");
+  sd.remove("STAMP.TXT");
 
   // create a new file with default timestamps
-  if (!file.open("default.txt", O_CREAT | O_WRITE)) {
-    error("open default.txt failed");
+  if (!file.open("DEFAULT.TXT", O_CREAT | O_WRITE)) {
+    error("open DEFAULT.TXT failed");
   }
-  cout << F("\nOpen with default times\n");
+  cout << pstr("\nOpen with default times\n");
   printTimestamps(file);
 
   // close file
@@ -116,8 +111,8 @@ void setup(void) {
   SdFile::dateTimeCallback(dateTime);
 
   // create a new file with callback timestamps
-  if (!file.open("callback.txt", O_CREAT | O_WRITE)) {
-    error("open callback.txt failed");
+  if (!file.open("CALLBACK.TXT", O_CREAT | O_WRITE)) {
+    error("open CALLBACK.TXT failed");
   }
   cout << ("\nOpen with callback times\n");
   printTimestamps(file);
@@ -134,7 +129,7 @@ void setup(void) {
   // force dir update
   file.sync();
 
-  cout << F("\nTimes after write\n");
+  cout << pstr("\nTimes after write\n");
   printTimestamps(file);
 
   // close file
@@ -148,26 +143,26 @@ void setup(void) {
   SdFile::dateTimeCallbackCancel();
 
   // create a new file with default timestamps
-  if (!file.open("stamp.txt", O_CREAT | O_WRITE)) {
-    error("open stamp.txt failed");
+  if (!file.open("STAMP.TXT", O_CREAT | O_WRITE)) {
+    error("open STAMP.TXT failed");
   }
   // set creation date time
-  if (!file.timestamp(T_CREATE, 2014, 11, 10, 1, 2, 3)) {
+  if (!file.timestamp(T_CREATE, 2009, 11, 10, 1, 2, 3)) {
     error("set create time failed");
   }
   // set write/modification date time
-  if (!file.timestamp(T_WRITE, 2014, 11, 11, 4, 5, 6)) {
+  if (!file.timestamp(T_WRITE, 2009, 11, 11, 4, 5, 6)) {
     error("set write time failed");
   }
   // set access date
-  if (!file.timestamp(T_ACCESS, 2014, 11, 12, 7, 8, 9)) {
+  if (!file.timestamp(T_ACCESS, 2009, 11, 12, 7, 8, 9)) {
     error("set access time failed");
   }
-  cout << F("\nTimes after timestamp() calls\n");
+  cout << pstr("\nTimes after timestamp() calls\n");
   printTimestamps(file);
 
   file.close();
-  cout << F("\nDone\n");
+  cout << pstr("\nDone\n");
 }
 
-void loop(void) {}
+void loop(void){}

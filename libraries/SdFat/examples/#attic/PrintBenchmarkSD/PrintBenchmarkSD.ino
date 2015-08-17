@@ -1,8 +1,8 @@
 /*
- * This program is a simple Print benchmark.
+ * This sketch is a simple Print benchmark.
  */
-#include <SPI.h>
 #include <SD.h>
+#include <SPI.h>
 
 // SD chip select pin
 const uint8_t chipSelect = SS;
@@ -34,7 +34,7 @@ void loop() {
 
   while (Serial.read() >= 0) {
   }
-  // F() stores strings in flash to save RAM
+  // pstr stores strings in flash to save RAM
   Serial.println(F("Type any character to start"));
   while (Serial.read() <= 0) {
   }
@@ -42,21 +42,17 @@ void loop() {
 
 
   // initialize the SD card
+  
+  if (!SD.begin(chipSelect)) error("begin");
 
-  if (!SD.begin(chipSelect)) {
-    error("begin");
-  }
-
-
+ 
   Serial.println(F("Starting print test.  Please wait.\n"));
 
   // do write test
   for (int test = 0; test < 2; test++) {
-    file = SD.open("bench.txt", FILE_WRITE);
-
-    if (!file) {
-      error("open failed");
-    }
+    file = SD.open("BENCH.TXT", FILE_WRITE);
+  
+  if (!file) error("open failed");
     switch(test) {
     case 0:
       Serial.println(F("Test of println(uint16_t)"));
@@ -83,16 +79,12 @@ void loop() {
         break;
       }
 
-      if (file.getWriteError()) {
-        error("write failed");
-      }
+//      if (file.writeError) {
+//        error("write failed");
+//      }
       m = micros() - m;
-      if (maxLatency < m) {
-        maxLatency = m;
-      }
-      if (minLatency > m) {
-        minLatency = m;
-      }
+      if (maxLatency < m) maxLatency = m;
+      if (minLatency > m) minLatency = m;
       totalLatency += m;
     }
     file.flush();
@@ -114,7 +106,7 @@ void loop() {
     Serial.print(F(" usec, Avg Latency: "));
     Serial.print(totalLatency/N_PRINT);
     Serial.println(F(" usec\n"));
-    SD.remove("bench.txt");
+    SD.remove("BENCH.TXT");
   }
   file.close();
   Serial.println(F("Done!\n"));

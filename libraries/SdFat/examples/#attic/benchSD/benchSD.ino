@@ -1,9 +1,10 @@
 /*
- * This program is a simple binary write/read benchmark
+ * This sketch is a simple binary write/read benchmark
  * for the standard Arduino SD.h library.
  */
 #include <SPI.h>
 #include <SD.h>
+
 
 // SD chip select pin
 const uint8_t chipSelect = SS;
@@ -13,6 +14,7 @@ const uint8_t chipSelect = SS;
 #define BUF_SIZE 100
 
 uint8_t buf[BUF_SIZE];
+
 
 // test file
 File file;
@@ -25,7 +27,7 @@ void error(char* s) {
 //------------------------------------------------------------------------------
 void setup() {
   Serial.begin(9600);
-  while (!Serial) {} // wait for Leonardo
+  while (!Serial){}  // wait for Leonardo
 }
 //------------------------------------------------------------------------------
 void loop() {
@@ -36,17 +38,16 @@ void loop() {
   // discard any input
   while (Serial.read() >= 0) {}
 
-  // F() stores strings in flash to save RAM
+  // pstr stores strings in flash to save RAM
   Serial.println(F("Type any character to start"));
   while (Serial.read() <= 0) {}
   delay(400);  // catch Due reset problem
-
-  if (!SD.begin(chipSelect)) {
-    error("begin");
-  }
+  
+  if (!SD.begin(chipSelect)) error("begin");
 
   // open or create file - truncate existing file.
-  file = SD.open("Bench.dat", O_RDWR | O_TRUNC | O_CREAT);
+  file = SD.open("BENCH.DAT", FILE_WRITE | O_TRUNC);
+//  file = SD.open("BENCH.DAT", O_CREAT | O_TRUNC | O_CREAT);
   if (!file) {
     error("open failed");
   }
@@ -78,12 +79,8 @@ void loop() {
       error("write failed");
     }
     m = micros() - m;
-    if (maxLatency < m) {
-      maxLatency = m;
-    }
-    if (minLatency > m) {
-      minLatency = m;
-    }
+    if (maxLatency < m) maxLatency = m;
+    if (minLatency > m) minLatency = m;
     totalLatency += m;
   }
   file.flush();
@@ -113,12 +110,8 @@ void loop() {
       error("read failed");
     }
     m = micros() - m;
-    if (maxLatency < m) {
-      maxLatency = m;
-    }
-    if (minLatency > m) {
-      minLatency = m;
-    }
+    if (maxLatency < m) maxLatency = m;
+    if (minLatency > m) minLatency = m;
     totalLatency += m;
     if (buf[BUF_SIZE-1] != '\n') {
       error("data check");
