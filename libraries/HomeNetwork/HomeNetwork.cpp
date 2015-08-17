@@ -174,15 +174,38 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
-
-  // network.write() function returns wether someone picked up a message,
-  // doesn't have to be the node you are trying to send to,
-  // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
-  network.write(header, &msgContent, sizeof(msgContent));
-
-  // Read answer and send back
   int32_t msgResponse;
-  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
+bool answerReceived;
+
+  unsigned long started_waiting_at = millis();
+  while (1) {
+    if (millis() - started_waiting_at > HOME_SETTING_DEFAULT_TIMEOUT_SENDTIME) { // Timeout function
+      if(debug)
+      Serial.print("timeout_send->");
+      answerReceived = false;
+      break;
+    }
+
+    // network.write() function returns wether someone picked up a message,
+    // doesn't have to be the node you are trying to send to,
+    // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
+    network.write(header, &msgContent, sizeof(msgContent));
+
+    // Read answer and send back
+
+    answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
+
+    if(debug)
+    Serial.print("status: ");
+    if(answerReceived)
+    {
+      break; // Success! Go out of resend loop
+    } else {
+      if(debug)
+      Serial.print("retrying_send.."); // Looping another time to retry send
+    }
+    chThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
+  }
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
@@ -258,7 +281,7 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
   unsigned long started_waiting_at = millis();
   while (1) {
     network.update(); // Check the network regularly for the entire network to function properly
-    if (millis() - started_waiting_at > timeout && msgSenderReceived == -1) {
+    if (millis() - started_waiting_at > timeout) {
       if(debug)
       Serial.print("timeout_readanswer->");
       return false;
