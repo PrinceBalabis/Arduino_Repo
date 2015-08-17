@@ -27,8 +27,6 @@ void setup() {
   Serial.println(F("System booted up!"));
 
   vTaskStartScheduler(); // start FreeRTOS
-
-  while (1);
 }
 
 void loop() {

@@ -6,17 +6,17 @@
 static bool commandOrigin = 0;
 static int32_t commandToExecute = 0;
 
-// Declare a semaphore with an inital counter value of zero.
-SEMAPHORE_DECL(cmdExSem, 0);
+// Declare a semaphore handle
+SemaphoreHandle_t cmdExSem;
 
-static msg_t CommandExecutioner(void *arg)
+static void CommandExecutioner(void *arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
 
   while (1)
   {
     // Wait for signal from either HNListenThread or Keypad Thread to continue
-    chSemWait(&cmdExSem);
+        xSemaphoreTake(cmdExSem, portMAX_DELAY);
 
     bool sent = false;
 
@@ -84,7 +84,6 @@ static msg_t CommandExecutioner(void *arg)
       Serial.println(".. Couldn't send!");
     }
   }
-  return 0;
 }
 
 /*
@@ -93,5 +92,5 @@ static msg_t CommandExecutioner(void *arg)
 void executeCommand(int32_t _commandToExecute, bool _commandOrigin) {
   commandToExecute = _commandToExecute;
   commandOrigin = _commandOrigin;
-  chSemSignal(&cmdExSem);
+  xSemaphoreGive(cmdExSem);
 }
