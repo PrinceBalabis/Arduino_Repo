@@ -44,7 +44,8 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
   pmsgReceivedF = _pmsgReceivedF;
   homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
 
-  xTaskCreate(HomeNetworkThread, NULL, 150, this, 3, NULL);
+//If the thread mysteriously crashes, then increase stack size(140 bytes seems to work fine for now)
+  xTaskCreate(HomeNetworkThread, NULL, 140, this, 3, NULL);
 }
 
 bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
