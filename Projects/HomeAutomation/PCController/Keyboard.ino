@@ -140,8 +140,8 @@ void pcSpotifyStartPlaylistDinner() {
 }
 
 void initializeSpotifyStartPlaylist() {
-  pcSpotifyStart(); // Start or focus on Spotify
   pcSetVolumePresetMedium(); //Set volume to Medium
+  pcSpotifyStart(); // Start or focus on Spotify
   delay(7000); // Wait for Spotify to load/start
 
   //Ctrl-L (Give focus to address/search field )

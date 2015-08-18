@@ -14,7 +14,7 @@ NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
 
-  while (1)
+  while (TRUE)
   {
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     nilSemWait(&cmdExSem);

@@ -8,58 +8,55 @@ int32_t commandToExecute = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-static msg_t CommandExecutioner(void *arg)
+NIL_WORKING_AREA(commandExecutioner, 124);
+NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread, waiting for command to be executed"));
 
-  while (1)
+  while (TRUE)
   {
     // Wait for signal to run
-    chSemWait(&cmdExSem);
+    nilSemWait(&cmdExSem);
 
     switch (commandToExecute) {
-      case cmdSetPCDisableMonitors:
+      case HOME_PC_CMD_MONITORS_DISABLE:
         pcDisableMonitors();
         Serial.println(F("Disabled Monitors"));
         break;
-      case cmdSetPCEnableMonitors:
+      case HOME_PC_CMD_MONITORS_ENABLE:
         pcEnableMonitors();
         Serial.println(F("Enabled Monitors"));
         break;
-      case cmdSetPCVolUp:
+      case HOME_PC_CMD_VOLUME_UP_BUNCH:
         pcIncreaseVolume();
         Serial.println(F("Increased Volume"));
         break;
-      case cmdSetPCVolDown:
+      case HOME_PC_CMD_VOLUME_DOWN_BUNCH:
         pcDecreaseVolume();
         Serial.println(F("Decreased Volume"));
         break;
-      case cmdSetPCVolPresetLow:
+      case HOME_PC_CMD_VOLUME_PRESET_LOW:
         pcSetVolumePresetLow();
         Serial.println(F("Decreased Volume"));
         break;
-      case cmdSetPCVolPresetMedium:
+      case HOME_PC_CMD_VOLUME_PRESET_MEDIUM:
         pcSetVolumePresetMedium();
         Serial.println(F("Decreased Volume"));
         break;
-      case cmdSetPCVolPresetMax:
+      case HOME_PC_CMD_VOLUME_PRESET_MAX:
         pcSetVolumePresetMax();
         Serial.println(F("Decreased Volume"));
         break;
-
-
-        
-      case cmdSetPCSpotifyPlaylistWorkout:
+      case HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT:
         pcSpotifyStartPlaylistWorkout();
         Serial.println(F("Started Spotify Workout Playlist"));
         break;
-      case cmdSetPCSpotifyPlaylistDinner:
+      case HOME_PC_CMD_SPOTIFY_PLAYLIST_DINNER:
         pcSpotifyStartPlaylistDinner();
         Serial.println(F("Started Spotify Dinner Playlist"));
         break;
     }
   }
-  return 0;
 }
 
 /*
@@ -67,5 +64,5 @@ static msg_t CommandExecutioner(void *arg)
  */
 void executeCommand(int32_t _commandToExecute) {
   commandToExecute = _commandToExecute;
-  chSemSignal(&cmdExSem);
+  nilSemSignal(&cmdExSem);
 }
