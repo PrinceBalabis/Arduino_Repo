@@ -27,6 +27,7 @@ void setup() {
   Serial.println(F("System booted up!"));
 
   vTaskStartScheduler(); // start FreeRTOS
+  Serial.println(F("Insufficient RAM"));
 }
 
 void loop() {
