@@ -8,31 +8,31 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
           switch (msgContent) {
             case HOME_SPEAKER_CMD_POWER_TOGGLE:
               executeCommand = HOME_SPEAKER_CMD_POWER_TOGGLE;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
             case HOME_SPEAKER_CMD_POWER_ON:
               executeCommand = HOME_SPEAKER_CMD_POWER_ON;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
             case HOME_SPEAKER_CMD_POWER_OFF:
               executeCommand = HOME_SPEAKER_CMD_POWER_OFF;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
             case HOME_SPEAKER_CMD_MUTE_TOGGLE:
               executeCommand = HOME_SPEAKER_CMD_MUTE_TOGGLE;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
             case HOME_SPEAKER_CMD_VOLUME_UP:
               executeCommand = HOME_SPEAKER_CMD_VOLUME_UP;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
             case HOME_SPEAKER_CMD_VOLUME_DOWN:
               executeCommand = HOME_SPEAKER_CMD_VOLUME_DOWN;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
             case HOME_SPEAKER_CMD_MODE_TOGGLE:
               executeCommand = HOME_SPEAKER_CMD_MODE_TOGGLE;
-              chSemSignal(&cmdExSem);
+              nilSemSignal(&cmdExSem);
               break;
           }
           break;
@@ -41,3 +41,17 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
           break;
       }
 }
+
+/**
+*  Thread for the Home Network
+**/
+NIL_WORKING_AREA(homeNetworkThread, 32); // 32 bytes seems to work fine even with Home Network debug on
+NIL_THREAD(HomeNetworkThread, arg)
+{
+  Serial.println("Started HomeNetworkThread");
+  // The thread stops at this function, this function has a loop which keeps the network
+  // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
+  // This function has to run on a thread or else home network wont work.
+  homeNetwork.update();
+}
+

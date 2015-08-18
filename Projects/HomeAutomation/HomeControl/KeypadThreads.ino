@@ -66,7 +66,7 @@ uint8_t getKeyName(char keycode) {
   }
 }
 
-NIL_WORKING_AREA(keypadUpdaterThread, 52); //52 bytes works great
+NIL_WORKING_AREA(keypadUpdaterThread, 64); // 64 bytes works great
 NIL_THREAD(KeypadUpdaterThread, arg) {
   Serial.println(F("Started KeypadUpdaterThread thread"));
 

@@ -8,14 +8,15 @@ int32_t executeCommand = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-static msg_t CommandExecutioner(void *arg)
+NIL_WORKING_AREA(commandExecutioner, 52); //52 bytes works great
+NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("CommandExecutioner thread started"));
 
   while (1)
   {
     // Wait for signal from either HNListenThread or Keypad Thread to run this loop
-    chSemWait(&cmdExSem);
+    nilSemWait(&cmdExSem);
 
     switch (executeCommand) {
       case HOME_SPEAKER_CMD_POWER_TOGGLE:
@@ -47,5 +48,4 @@ static msg_t CommandExecutioner(void *arg)
         break;
     }
   }
-  return 0;
 }

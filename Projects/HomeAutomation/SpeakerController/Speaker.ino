@@ -24,7 +24,7 @@ void sendSpeakerPowerOnCommand(void) {
   if (!getSpeakerPowerSwitchStatus())
   {
     homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_SPEAKERPOWER_ON);
-    chThdSleepMilliseconds(1000); // Wait for 433 MHz controller to turn on speaker power switch
+    nilThdSleepMilliseconds(1000); // Wait for 433 MHz controller to turn on speaker power switch
     sendSpeakerCommand(speakerIRPower); // Send IR power command
     Serial.println(F("Turning on speaker"));
   }
@@ -43,6 +43,7 @@ void sendSpeakerUpVolCommand(void)
 {
   for (int i = 0; i < 2 ; i++)
     sendSpeakerCommand(speakerIRUpVolume);
+  speakerMuteStatus = false;
   Serial.println(F("Increased volume level"));
 }
 
@@ -50,6 +51,7 @@ void sendSpeakerDownVolCommand(void)
 {
   for (int i = 0; i < 2 ; i++)
     sendSpeakerCommand(speakerIRDownVolume);
+  speakerMuteStatus = false;
   Serial.println(F("Dropped volume level"));
 }
 
@@ -57,7 +59,9 @@ void toggleSpeakerMuteCommand(void)
 {
   if (getSpeakerPowerSwitchStatus()) {
     sendSpeakerCommand(speakerIRMute);
-    Serial.println(F("Toggling mute"));
+    speakerMuteStatus = !speakerMuteStatus;
+    Serial.print(F("Toggling mute: "));
+    Serial.println(speakerMuteStatus);
   }
 }
 
@@ -67,7 +71,7 @@ void sendSpeakerMuteOnCommand(void)
   {
     sendSpeakerCommand(speakerIRMute);
     speakerMuteStatus = 1;
-    Serial.println(F("Sent mute command to speaker"));
+    Serial.println(F("Sent mute on command to speaker"));
   }
 }
 
@@ -77,7 +81,7 @@ void sendSpeakerMuteOffCommand(void)
   {
     sendSpeakerCommand(speakerIRMute);
     speakerMuteStatus = 0;
-    Serial.println(F("Sending mute command to speaker!"));
+    Serial.println(F("Sending mute off command to speaker!"));
   }
 }
 
@@ -97,9 +101,9 @@ void setSpeakerModePCCommand(void)
 {
   if (getSpeakerPowerSwitchStatus() && !getSpeakerModeStatus()) {
     sendSpeakerCommand(speakerIRMode);
-    chThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(200);
     sendSpeakerCommand(speakerIRRight);
-    chThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(200);
     sendSpeakerCommand(speakerIROK);
     setSpeakerModeStatus(1);
     Serial.println(F("Set to PC Mode"));
@@ -110,9 +114,9 @@ void setSpeakerModeLineInCommand(void)
 {
   if (getSpeakerPowerSwitchStatus() && getSpeakerModeStatus()) {
     sendSpeakerCommand(speakerIRMode);
-    chThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(200);
     sendSpeakerCommand(speakerIRLeft);
-    chThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(200);
     sendSpeakerCommand(speakerIROK);
     setSpeakerModeStatus(0);
     Serial.println(F("Set to Line In Mode"));
