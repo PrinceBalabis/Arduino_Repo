@@ -8,6 +8,9 @@ HomeNetwork.h - Library for Prince Home Automation & IOT network of RF24 nodes
 #include "RF24Network.h"
 #include "nodesConfig.h"
 
+//Enable NilSerial in both debug messages and Sketch(Sketch inherits defines from h-files)
+#define Serial NilSerial
+
 class RF24;
 class RF24Network;
 
@@ -29,7 +32,7 @@ public:
 
   void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
-  void autoUpdate(); // Used by internal thread, NOT to be used by Sketch!
+  void update(); // Used by internal thread, NOT to be used by Sketch!
 private:
   RF24& radio;
   RF24Network& network;

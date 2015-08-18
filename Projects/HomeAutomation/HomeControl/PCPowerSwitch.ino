@@ -15,7 +15,7 @@ void togglePCPowerSwitch()
 void setPCPowerSwitchOnMomentarily()
 {
   digitalWrite(pcPowerPin, true);
-  chThdSleepMilliseconds(500); // Give enough time for PC to start
+  nilThdSleepMilliseconds(500); // Give enough time for PC to start
   digitalWrite(pcPowerPin, false);
 }
 

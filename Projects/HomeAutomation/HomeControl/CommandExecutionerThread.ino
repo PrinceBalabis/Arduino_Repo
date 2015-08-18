@@ -9,14 +9,15 @@ static int32_t commandToExecute = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-static msg_t CommandExecutioner(void *arg)
+NIL_WORKING_AREA(commandExecutioner, 65); //65 bytes works great
+NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
 
   while (1)
   {
     // Wait for signal from either HNListenThread or Keypad Thread to continue
-    chSemWait(&cmdExSem);
+    nilSemWait(&cmdExSem);
 
     bool sent = false;
 
@@ -77,14 +78,13 @@ static msg_t CommandExecutioner(void *arg)
             break;
         }
     }
-    
+
     if (sent) {
       Serial.println(".. Done!");
     } else if (!sent) {
       Serial.println(".. Couldn't send!");
     }
   }
-  return 0;
 }
 
 /*
@@ -93,5 +93,5 @@ static msg_t CommandExecutioner(void *arg)
 void executeCommand(int32_t _commandToExecute, bool _commandOrigin) {
   commandToExecute = _commandToExecute;
   commandOrigin = _commandOrigin;
-  chSemSignal(&cmdExSem);
+  nilSemSignal(&cmdExSem);
 }

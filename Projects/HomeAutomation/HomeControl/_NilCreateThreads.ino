@@ -10,6 +10,8 @@
  */
 NIL_THREADS_TABLE_BEGIN()
 NIL_THREADS_TABLE_ENTRY(NULL, HomeNetworkThread, NULL, homeNetworkThread, sizeof(homeNetworkThread))
-NIL_THREADS_TABLE_ENTRY(NULL, WallSwitchThread, NULL, wallSwitchThread, sizeof(wallSwitchThread))
+NIL_THREADS_TABLE_ENTRY(NULL, CommandExecutioner, NULL, commandExecutioner, sizeof(commandExecutioner))
+NIL_THREADS_TABLE_ENTRY(NULL, KeypadCommandThread, NULL, keypadCommandThread, sizeof(keypadCommandThread))
+NIL_THREADS_TABLE_ENTRY(NULL, KeypadUpdaterThread, NULL, keypadUpdaterThread, sizeof(keypadUpdaterThread))
 NIL_THREADS_TABLE_END()
 

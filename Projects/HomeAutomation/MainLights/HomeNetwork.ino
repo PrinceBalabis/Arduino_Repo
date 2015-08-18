@@ -33,15 +33,13 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
 /**
 *  Thread for the Home Network
 **/
-// Declare a semaphore with an inital counter value of zero.
-NIL_WORKING_AREA(homeNetworkThread, 30); // 32 bytes crash - 64 bytes seems to work
-NIL_THREAD(HomeNetworkThread, _homeNetwork)
+NIL_WORKING_AREA(homeNetworkThread, 32); // 32 bytes seems to work fine even with Home Network debug on
+NIL_THREAD(HomeNetworkThread, arg)
 {
-  Serial.println("Started homeNetworkThread");
+  Serial.println("Started HomeNetworkThread");
   // The thread stops at this function, this function has a loop which keeps the network
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received
   // This function has to run on a thread or else home network wont work.
-  //((HomeNetwork*)homeNetwork)->autoUpdate();
-  homeNetwork.autoUpdate();
+  homeNetwork.update();
 }
 

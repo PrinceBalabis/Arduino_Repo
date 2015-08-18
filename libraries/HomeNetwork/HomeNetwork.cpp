@@ -3,15 +3,13 @@
 */
 
 #include "HomeNetwork.h"
+#include "homeNetworkConfig.h"
 #include <NilRTOS.h>
 #include <NilSerial.h>
-#include "homeNetworkConfig.h"
-#define Serial NilSerial
 
 HomeNetwork::HomeNetwork(RF24& _radio, RF24Network& _network): radio(_radio), network(_network)
 {
 }
-
 
 void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
@@ -32,7 +30,6 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
   //   chThdSleepMicroseconds(100); // Give system some time to run other stuff
   // }
 
-  //Start Network Auto Update thread
   pmsgReceivedF = _pmsgReceivedF;
   homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
 }
@@ -48,7 +45,7 @@ bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
   }
 }
 
-void HomeNetwork::autoUpdate()
+void HomeNetwork::update()
 {
   while (1) {
 

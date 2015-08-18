@@ -1,12 +1,11 @@
 #include <NilRTOS.h>
 #include <NilSerial.h>
-#include <RF24Network.h>
-#include <RF24.h>
 #include <SPI.h>
+#include <RF24.h>
+#include <RF24Network.h>
 #include <HomeNetwork.h>
 #include "config.h"
 #include <EEPROM.h>
-#define Serial NilSerial
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
@@ -33,8 +32,10 @@ void setup() {
 // Loop is the idle thread.  The idle thread must not invoke any
 // kernel primitive able to change its state to not runnable.
 void loop() {
-  // Not used.
+  printStackInfo(); // Print stack information
+}
 
+void printStackInfo() {
   nilPrintStackSizes(&Serial);
   nilPrintUnusedStack(&Serial);
   Serial.println();
@@ -44,3 +45,4 @@ void loop() {
   // Arduino delay() can also be used in loop().
   nilThdDelayMilliseconds(1000);
 }
+
