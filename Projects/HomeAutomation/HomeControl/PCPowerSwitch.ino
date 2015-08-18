@@ -15,7 +15,7 @@ void togglePCPowerSwitch()
 void setPCPowerSwitchOnMomentarily()
 {
   digitalWrite(pcPowerPin, true);
-  vTaskDelay(((long)100 * configTICK_RATE_HZ) / (long)1000); // Give enough time for PC to start
+  chThdSleepMilliseconds(500); // Give enough time for PC to start
   digitalWrite(pcPowerPin, false);
 }
 

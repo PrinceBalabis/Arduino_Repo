@@ -1,10 +1,12 @@
-#include <FreeRTOS_AVR.h>
+#include <NilRTOS.h>
+#include <NilSerial.h>
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
 #include <HomeNetwork.h>
 #include "config.h"
 #include <EEPROM.h>
+#define Serial NilSerial
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
@@ -18,22 +20,27 @@ void setup() {
 
   SPI.begin(); // SPI is used by homeNetwork
 
-  xTaskCreate(WallSwitchThread, NULL, configMINIMAL_STACK_SIZE, NULL, 2, NULL);
-
   //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
   Serial.println(F("System booted up!"));
 
-  vTaskStartScheduler(); // start FreeRTOS
-  Serial.println(F("Insufficient RAM"));
+  nilSysBegin(); // Start Nil RTOS.
 }
 
+//------------------------------------------------------------------------------
+// Loop is the idle thread.  The idle thread must not invoke any
+// kernel primitive able to change its state to not runnable.
 void loop() {
-  // not used
+  // Not used.
+
+  nilPrintStackSizes(&Serial);
+  nilPrintUnusedStack(&Serial);
+  Serial.println();
+
+  // Delay for one second.
+  // Must not sleep in loop so use nilThdDelayMilliseconds().
+  // Arduino delay() can also be used in loop().
+  nilThdDelayMilliseconds(1000);
 }
-
-
-
-

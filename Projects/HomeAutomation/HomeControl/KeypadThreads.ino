@@ -1,8 +1,8 @@
 //------------------------------------------------------------------------------
 // Thread for listening for keypad presses
 
-// Declare a semaphore handle
-SemaphoreHandle_t cmdKeypadSem;
+// Declare a semaphore with an inital counter value of zero.
+SEMAPHORE_DECL(cmdKeypadSem, 0);
 
 // Needed global Keypad variables
 int state = RELEASED;
@@ -66,7 +66,7 @@ uint8_t getKeyName(char keycode) {
   }
 }
 
-static void KeypadUpdaterThread(void *arg) {
+static msg_t KeypadUpdaterThread(void *arg) {
   Serial.println(F("Started KeypadUpdaterThread thread"));
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
@@ -75,16 +75,17 @@ static void KeypadUpdaterThread(void *arg) {
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
     keypad.getKey();
-    vTaskDelay(((long)keypadUpdateTime * configTICK_RATE_HZ) / (long)1000); // Keypad update frequency
+    chThdSleepMilliseconds(keypadUpdateTime); // Keypad update frequency
   }
+  return 0;
 }
 
-static void KeypadCommandThread(void *arg)
+static msg_t KeypadCommandThread(void *arg)
 {
   Serial.println(F("Started KeypadCommandThread thread"));
   while (1) {
     // Wait for signal from KeypadEvent, it sends a signal whenever keypad status changes
-    xSemaphoreTake(cmdKeypadSem, portMAX_DELAY);
+    chSemWait(&cmdKeypadSem);
 
     // Here are commands to run once when PRESSED
     if (state == PRESSED )
@@ -141,9 +142,10 @@ static void KeypadCommandThread(void *arg)
           break;
       }
       // Some delay in order to execute hold commands in regular intervals
-      vTaskDelay(((long)keypadHoldUpdateTime * configTICK_RATE_HZ) / (long)1000);
+      chThdSleepMilliseconds(keypadHoldUpdateTime);
     }
   }
+  return 0;
 }
 
 /**
@@ -157,21 +159,21 @@ void keypadEvent(KeypadEvent key) {
       Serial.print(F("Pressed key: "));
       Serial.println(keyName);
       state = PRESSED;
-      xSemaphoreGive(cmdKeypadSem);
+      chSemSignal(&cmdKeypadSem);
       break;
 
     case HOLD:
       state = HOLD;
       Serial.print(F("Held key: "));
       Serial.println(keyName);
-      xSemaphoreGive(cmdKeypadSem);
+      chSemSignal(&cmdKeypadSem);
       break;
 
     case RELEASED:
       Serial.print(F("Released key: "));
       Serial.println(keyName);
       state = RELEASED;
-      xSemaphoreGive(cmdKeypadSem);
+      chSemSignal(&cmdKeypadSem);
       break;
   }
 }

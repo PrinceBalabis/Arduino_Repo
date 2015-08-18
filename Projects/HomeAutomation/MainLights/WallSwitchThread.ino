@@ -1,6 +1,11 @@
 //------------------------------------------------------------------------------
 // WallSwitchThread
-static void WallSwitchThread(void *arg) {
+
+// If a thread weirdly crashes then increase the stack value
+NIL_WORKING_AREA(wallSwitchThread, -10); // 4 bytes works great
+NIL_THREAD(WallSwitchThread, arg) {
+
+  Serial.println("Started WallSwitchThread");
 
   // Switch state variables
   bool leftSwitchState = 0;
@@ -14,7 +19,7 @@ static void WallSwitchThread(void *arg) {
   leftSwitchState = digitalRead(WALLSWITCH_PIN_LEFT);
   rightSwitchState = digitalRead(WALLSWITCH_PIN_RIGHT);
 
-  while (1) {
+  while (TRUE) {
     if (leftSwitchState != digitalRead(WALLSWITCH_PIN_LEFT)) {
       Serial.print("Left switch triggered: ");
       toggleLights();
@@ -26,8 +31,6 @@ static void WallSwitchThread(void *arg) {
     }
 
     // Sleep some milliseconds, to make time for other threads and to act as button debouncing
-    vTaskDelay(((long)WALLSWITCH_UPDATEDELAY * configTICK_RATE_HZ) / (long)1000);
+    nilThdSleepMilliseconds(WALLSWITCH_UPDATEDELAY);
   }
 }
-
-
