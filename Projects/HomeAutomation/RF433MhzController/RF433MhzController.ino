@@ -7,21 +7,15 @@
  *
  **/
 
-#include <ChibiOS_AVR.h>
-#include <RF24Network.h>
-#include <RF24.h>
+#include <NilRTOS.h>
+#include <NilSerial.h>
 #include <SPI.h>
+#include <RF24.h>
+#include <RF24Network.h>
 #include <HomeNetwork.h>
 #include <NewRemoteTransmitter.h>
-#include "config.h"
 #include <EEPROM.h>
-
-//Variables which stores the received values from other nodes
-//Regularly check msgReceived variable if a message is received in thread
-bool msgReceived = false;
-uint16_t msgSender = -1;
-unsigned char msgType = 'Z';
-int32_t msgContent = -1;
+#include "config.h"
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
@@ -29,23 +23,29 @@ HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   Serial.begin(115200);
+  Serial.println(F("RF 433 MHz Controller"));
 
-  chBegin(mainThread);
-  // chBegin never returns, main thread continues with mainThread()
-
-  while (1);
-}
-
-void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
 
   homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(NODEID, &homeNetwork, &homeNetworkMessageReceived);
+  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
 
-  Serial.println(F("RF 433 MHz Controller fully started!"));
+  nilSysBegin(); // Start Nil RTOS.
 }
 
 void loop() {
-  // not used
+  printStackInfo(); // Print stack information
+}
+
+void printStackInfo() {
+  nilPrintStackSizes(&Serial);
+  nilPrintUnusedStack(&Serial);
+  Serial.println();
+
+  // Delay for one second.
+  // Must not sleep in loop so use nilThdDelayMilliseconds().
+  // Arduino delay() can also be used in loop().
+  nilThdDelayMilliseconds(1000);
 }

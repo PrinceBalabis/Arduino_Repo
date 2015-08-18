@@ -19,11 +19,12 @@ void setup() {
 
   SPI.begin(); // SPI is used by homeNetwork
 
+  // Initialize Home Network
   //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
-  Serial.println(F("System booted up!"));
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
 
   nilSysBegin(); // Start Nil RTOS.
 }
@@ -32,7 +33,7 @@ void setup() {
 // Loop is the idle thread.  The idle thread must not invoke any
 // kernel primitive able to change its state to not runnable.
 void loop() {
-  printStackInfo(); // Print stack information
+  //printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

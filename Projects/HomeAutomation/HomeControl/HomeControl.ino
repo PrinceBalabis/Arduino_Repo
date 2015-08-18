@@ -32,12 +32,12 @@ void setup() {
 
   SPI.begin(); // SPI is used by homeNetwork
 
-  // Home Network Thread
+  // Initialize Home Network
   homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
-  Serial.println(F("System booted up!"));
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
 
   nilSysBegin(); // Start Nil RTOS.
 }

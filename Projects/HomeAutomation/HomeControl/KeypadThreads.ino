@@ -66,13 +66,14 @@ uint8_t getKeyName(char keycode) {
   }
 }
 
-NIL_WORKING_AREA(keypadUpdaterThread, 52); //bytes works great
+NIL_WORKING_AREA(keypadUpdaterThread, 52); //52 bytes works great
 NIL_THREAD(KeypadUpdaterThread, arg) {
   Serial.println(F("Started KeypadUpdaterThread thread"));
+
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
   keypad.setDebounceTime(1); //Time until a new key is accepted
-
+  
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
     keypad.getKey();
@@ -80,7 +81,7 @@ NIL_THREAD(KeypadUpdaterThread, arg) {
   }
 }
 
-NIL_WORKING_AREA(keypadCommandThread, -12); //bytes works great
+NIL_WORKING_AREA(keypadCommandThread, -12); // -12 bytes works great
 NIL_THREAD(KeypadCommandThread, arg)
 {
   Serial.println(F("Started KeypadCommandThread thread"));
