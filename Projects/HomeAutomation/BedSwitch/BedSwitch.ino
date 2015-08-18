@@ -30,11 +30,9 @@ void setup() {
 
   nilSysBegin(); // Start Nil RTOS.
 }
-
+NIL_WORKING_AREA(buttonThread, 100);
 NIL_WORKING_AREA(apartmentStatusUpdater, 100);
-NIL_WORKING_AREA(buttonThread, 50);
 NIL_WORKING_AREA(apartmentStatusLEDThread, 0);
-
 
 void loop() {
   //printStackInfo(); // Print stack information

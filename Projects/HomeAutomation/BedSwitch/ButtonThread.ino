@@ -15,6 +15,7 @@ NIL_THREAD(ButtonThread, arg) {
       Serial.println("Pressed button..");
 
       apartmentStatusUpdaterPaused = true; // Pause the apartment status polling
+      apartmentStatusUpdaterPauseExecuted = true;
       while (!apartmentStatusUpdaterPauseExecuted) // Wait for the pause to happen
         nilThdSleepMilliseconds(10);
 
@@ -34,7 +35,7 @@ NIL_THREAD(ButtonThread, arg) {
 
     } else if (!buttonStatus && lastButtonStatus) {
       lastButtonStatus = LOW;
-      Serial.print("Disable button for ");
+      Serial.print("Disabled button for ");
       Serial.print(buttonRepressTime);
       Serial.println(" seconds");
       nilThdSleepMilliseconds(buttonRepressTime); // Wait 10 seconds before able to press button again
