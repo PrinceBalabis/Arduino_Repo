@@ -1,4 +1,4 @@
-static msg_t ButtonThread(void *arg) {
+NIL_THREAD(ButtonThread, arg) {
 
   const int buttonPin = 2;     // the number of the pushbutton pin
   pinMode(buttonPin, INPUT);
@@ -8,7 +8,7 @@ static msg_t ButtonThread(void *arg) {
 
   Serial.println(F("Started Button listener Thread"));
 
-  while (1) {
+  while (TRUE) {
     buttonStatus = digitalRead(buttonPin);
 
     if (buttonStatus && !lastButtonStatus) {
@@ -16,7 +16,7 @@ static msg_t ButtonThread(void *arg) {
 
       apartmentStatusUpdaterPaused = true; // Pause the apartment status polling
       while (!apartmentStatusUpdaterPauseExecuted) // Wait for the pause to happen
-        chThdSleepMilliseconds(10);
+        nilThdSleepMilliseconds(10);
 
       if (askApartmentStatus()) {
         shutdownApartment();
@@ -28,7 +28,7 @@ static msg_t ButtonThread(void *arg) {
         Serial.println("Started up apartment");
       }
       lastButtonStatus = HIGH;
-      chThdSleepMilliseconds(buttonDebounceTime);
+      nilThdSleepMilliseconds(buttonDebounceTime);
 
       apartmentStatusUpdaterPaused = false; // Resume the apartment status polling
 
@@ -37,12 +37,11 @@ static msg_t ButtonThread(void *arg) {
       Serial.print("Disable button for ");
       Serial.print(buttonRepressTime);
       Serial.println(" seconds");
-      chThdSleepMilliseconds(buttonRepressTime); // Wait 10 seconds before able to press button again
+      nilThdSleepMilliseconds(buttonRepressTime); // Wait 10 seconds before able to press button again
       Serial.println("Button is enabled again!");
     }
 
-    chThdSleepMilliseconds(buttonReadUpdateTime);
+    nilThdSleepMilliseconds(buttonReadUpdateTime);
   }
-  return 0;
 }
 

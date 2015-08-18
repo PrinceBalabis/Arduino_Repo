@@ -1,14 +1,14 @@
 bool apartmentStatusUpdaterPaused = false;
 bool apartmentStatusUpdaterPauseExecuted = false;
 
-static msg_t ApartmentStatusUpdater(void *arg) {
+NIL_THREAD(ApartmentStatusUpdater, arg) {
   Serial.println(F("Started Apartment Status Updater Thread"));
 
   while (1) {
     // Get stuck in this loop while its ment to be paused
     while (apartmentStatusUpdaterPaused) {
       apartmentStatusUpdaterPauseExecuted = true;
-      chThdSleepMilliseconds(1000);
+      nilThdSleepMilliseconds(1000);
     }
 
     // Reset the apartment status updater execute flag if its true
@@ -26,10 +26,8 @@ static msg_t ApartmentStatusUpdater(void *arg) {
       setLED(LOW);
       Serial.println(F("Apartment just went offline, switching LED off!"));
     }
-    chThdSleepMilliseconds(apartmentStatusUpdateTime);
+    nilThdSleepMilliseconds(apartmentStatusUpdateTime);
   }
-
-  return 0;
 }
 
 
@@ -37,7 +35,7 @@ static msg_t ApartmentStatusUpdater(void *arg) {
 bool askApartmentStatus() {
 
   int32_t mainLightStatus;
-  if (!homeNetwork.sendQuestion(nodeMainLights, cmdGetLightsStatus, &mainLightStatus)) {
+  if (!homeNetwork.sendQuestion(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS, &mainLightStatus)) {
     Serial.println(F("Couldn't get an answer from Main Lights Node!"));
     mainLightStatus = 0;
   }
@@ -48,7 +46,7 @@ bool askApartmentStatus() {
 
 
   int32_t paintingLightsStatus;
-  if (!homeNetwork.sendQuestion(nodeRF433MHz, cmdGetPaintingLightsStatus, &paintingLightsStatus)) {
+  if (!homeNetwork.sendQuestion(HOME_RF433MHZ_ID, HOME_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS, &paintingLightsStatus)) {
     Serial.println(F("Couldn't get an answer from RF433MHz Node!"));
     paintingLightsStatus = 0;
   }
@@ -58,7 +56,7 @@ bool askApartmentStatus() {
   }
 
   int32_t speakerPowerSwitchStatus;
-  if (!homeNetwork.sendQuestion(nodeRF433MHz, cmdGetSpeakerPowerStatus, &speakerPowerSwitchStatus)) {
+  if (!homeNetwork.sendQuestion(HOME_RF433MHZ_ID, HOME_RF433MHZ_QSN_SPEAKER_POWER_STATUS, &speakerPowerSwitchStatus)) {
     Serial.println(F("Couldn't get an answer from RF433MHz Node!"));
     speakerPowerSwitchStatus = 0;
   }
@@ -72,21 +70,21 @@ bool askApartmentStatus() {
 }
 
 bool shutdownApartment() {
-  chThdSleepMilliseconds(100); // Give some time
-  homeNetwork.sendCommand(nodeMainLights, cmdToggleLights);
-  homeNetwork.sendCommand(nodeRF433MHz, cmdSetPaintingLightsOff);
-  homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerPowerOff);
-  homeNetwork.sendCommand(nodePC, cmdSetPCDisableMonitors);
+  nilThdSleepMilliseconds(100); // Give some time
+  homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
+  homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_OFF);
+  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
+  homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
 }
 
 bool startupApartment() {
-  chThdSleepMilliseconds(100);
-  homeNetwork.sendCommand(nodePC, cmdSetPCEnableMonitors); // Turn on PC monitors!
-  homeNetwork.sendCommand(nodeMainLights, cmdSetLightsOn); // Turn on main lights!
+  nilThdSleepMilliseconds(100);
+  homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
+  homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_ON); // Turn on main lights!
 
-  chThdSleepMilliseconds(4000); // Give some time for PC to wake before doing any more PC controls
-  homeNetwork.sendCommand(nodePC, cmdSetPCSpotifyPlaylistWorkout); // Start Workout Playlist!!
+  nilThdSleepMilliseconds(4000); // Give some time for PC to wake before doing any more PC controls
+  homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT); // Start Workout Playlist!!
 
-  chThdSleepMilliseconds(5000); // Give some time for Spotify to start playlist
-  homeNetwork.sendCommand(nodeSpeaker, cmdSetSpeakerPowerOn); // Turn on speaker!
+  nilThdSleepMilliseconds(5000); // Give some time for Spotify to start playlist
+  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON); // Turn on speaker!
 }

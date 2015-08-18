@@ -18,6 +18,7 @@
 #include <NewRemoteTransmitter.h>
 #include <HomeNetwork.h>
 #include "config.h"
+#define Serial NilSerial
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);

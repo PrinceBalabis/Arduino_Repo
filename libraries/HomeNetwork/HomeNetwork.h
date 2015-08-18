@@ -8,9 +8,6 @@ HomeNetwork.h - Library for Prince Home Automation & IOT network of RF24 nodes
 #include "RF24Network.h"
 #include "nodesConfig.h"
 
-//Enable NilSerial in both debug messages and Sketch(Sketch inherits defines from h-files)
-//#define Serial NilSerial
-
 class RF24;
 class RF24Network;
 

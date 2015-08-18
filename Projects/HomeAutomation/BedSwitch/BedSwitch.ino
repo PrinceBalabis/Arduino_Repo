@@ -1,4 +1,5 @@
-#include <ChibiOS_AVR.h>
+#include <NilRTOS.h>
+#include <NilSerial.h>
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
@@ -6,55 +7,48 @@
 #include "homeNetworkConfig.h"
 #include "apartmentStatusLEDConfig.h"
 #include "buttonConfig.h"
-
-//Variables which stores the received values from other nodes
-//Regularly check msgReceived variable if a message is received in thread
-bool msgReceived = false;
-uint16_t msgSender = -1;
-unsigned char msgType = 'Z';
-int32_t msgContent = -1;
+#define Serial NilSerial
 
 bool ledStatus = HIGH;
 
-RF24 radio(homeNetworkCEPin, homeNetworkCSNPin);
+RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, &homeNetwork);
+HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-//  Serial.begin(115200);
+  Serial.begin(115200);
+  Serial.println(F("BedSwitch Node"));
 
-  chBegin(mainThread);
-  // chBegin never returns, main thread continues with mainThread()
-  while (1);
-}
-
-static WORKING_AREA(buttonThread, 64);
-static WORKING_AREA(apartmentStatusLEDThread, 64);
-static WORKING_AREA(apartmentStatusUpdater, 64);
-
-void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
-  chThdSleepMilliseconds(1000);
 
-  homeNetwork.begin(nodeID, &msgReceived, &msgSender, &msgType, &msgContent);
-  chThdSleepMilliseconds(1000);
+  // Initialize Home Network
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.begin(NODEID, NULL);
+  homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
-  chThdCreateStatic(apartmentStatusUpdater, sizeof(apartmentStatusUpdater), NORMALPRIO + 1, ApartmentStatusUpdater, NULL);
-  chThdSleepMilliseconds(1000);
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
 
-  chThdCreateStatic(buttonThread, sizeof(buttonThread), NORMALPRIO + 2, ButtonThread, NULL);
-  chThdSleepMilliseconds(1000);
-
-  chThdCreateStatic(apartmentStatusLEDThread, sizeof(apartmentStatusLEDThread), NORMALPRIO + 1, ApartmentStatusLEDThread, NULL);
-  chThdSleepMilliseconds(1000);
-
-  Serial.println(F("BedSwitch has fully initialized!"));
-
-  while (1);
+  nilSysBegin(); // Start Nil RTOS.
 }
+
+NIL_WORKING_AREA(apartmentStatusUpdater, 100);
+NIL_WORKING_AREA(buttonThread, 50);
+NIL_WORKING_AREA(apartmentStatusLEDThread, 0);
+
 
 void loop() {
-  // not used
+  //printStackInfo(); // Print stack information
+}
+
+void printStackInfo() {
+  nilPrintStackSizes(&Serial);
+  nilPrintUnusedStack(&Serial);
+  Serial.println();
+
+  // Delay for one second.
+  // Must not sleep in loop so use nilThdDelayMilliseconds().
+  // Arduino delay() can also be used in loop().
+  nilThdDelayMilliseconds(1000);
 }
 
 

@@ -16,6 +16,7 @@
 #include <NewRemoteTransmitter.h>
 #include <EEPROM.h>
 #include "config.h"
+#define Serial NilSerial
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
@@ -27,7 +28,7 @@ void setup() {
 
   SPI.begin(); // SPI is used by homeNetwork
 
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));
@@ -36,7 +37,7 @@ void setup() {
 }
 
 void loop() {
-  printStackInfo(); // Print stack information
+  //printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

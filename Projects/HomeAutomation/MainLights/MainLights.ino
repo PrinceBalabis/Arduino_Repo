@@ -6,6 +6,7 @@
 #include <HomeNetwork.h>
 #include "config.h"
 #include <EEPROM.h>
+#define Serial NilSerial
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
@@ -33,7 +34,7 @@ void setup() {
 // Loop is the idle thread.  The idle thread must not invoke any
 // kernel primitive able to change its state to not runnable.
 void loop() {
-  //printStackInfo(); // Print stack information
+ // printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

@@ -1,11 +1,10 @@
 uint8_t ledBrightness = minLEDBrightness;
 
-static msg_t ApartmentStatusLEDThread(void *arg) {
+NIL_THREAD(ApartmentStatusLEDThread, arg) {
   pinMode(ledPin, OUTPUT);
   Serial.println(F("Started Apartment Status LED Thread"));
 
-  while (1) {
-
+  while (TRUE) {
     if (ledStatus) {
       // change the brightness for next time through the loop:
       ledBrightness = ledBrightness + fadeAmount;
@@ -15,11 +14,11 @@ static msg_t ApartmentStatusLEDThread(void *arg) {
       // reverse the direction of the fading at the ends of the fade:
       if (ledBrightness <= minLEDBrightness) {
         fadeAmount = -fadeAmount;
-        chThdSleepMilliseconds(1000);
+        nilThdSleepMilliseconds(1000);
       }
       else if (ledBrightness >= maxLEDBrightness) {
         fadeAmount = -fadeAmount;
-        chThdSleepMilliseconds(1000);
+        nilThdSleepMilliseconds(1000);
       }
 
     } else {
@@ -30,13 +29,11 @@ static msg_t ApartmentStatusLEDThread(void *arg) {
         ledBrightness = ledBrightness + fadeAmount;
         analogWrite(ledPin, ledBrightness);
       } else if (ledBrightness == 0) {
-        chThdSleepMilliseconds(200); // Idle when LED has shut down
+        nilThdSleepMilliseconds(200); // Idle when LED has shut down
       }
     }
-    chThdSleepMilliseconds(fadeTime);
+    nilThdSleepMilliseconds(fadeTime);
   }
-
-  return 0;
 }
 
 void setLED(bool state) {

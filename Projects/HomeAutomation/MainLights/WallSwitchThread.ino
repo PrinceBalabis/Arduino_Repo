@@ -2,7 +2,7 @@
 // WallSwitchThread
 
 // If a thread weirdly crashes then increase the stack value
-NIL_WORKING_AREA(wallSwitchThread, -10); // -10 bytes works great
+NIL_WORKING_AREA(wallSwitchThread, 0); // 0 bytes works great
 NIL_THREAD(WallSwitchThread, arg) {
 
   Serial.println("Started WallSwitchThread");
