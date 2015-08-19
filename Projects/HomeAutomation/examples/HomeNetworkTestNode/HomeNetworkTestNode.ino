@@ -1,4 +1,7 @@
-#include <ChibiOS_AVR.h>
+// If a thread weirdly crashes then increase the stack value
+
+#include <NilRTOS.h>
+#include <NilSerial.h>
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
@@ -7,7 +10,7 @@
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network, &homeNetwork);
+HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   Serial.begin(115200);
@@ -17,31 +20,31 @@ void setup() {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
 
-  chBegin(mainThread);
-  // chBegin never returns, main thread continues with mainThread()
-
-  while (1);
-}
-
-// If a thread weirdly crashes then increase the stack value
-static WORKING_AREA(commandExecutioner, 64);
-static WORKING_AREA(exampleSendThread, 64);
-
-void mainThread() {
   SPI.begin(); // SPI is used by homeNetwork
 
-  chThdCreateStatic(commandExecutioner, sizeof(commandExecutioner), NORMALPRIO + 2, CommandExecutioner, NULL);
-  
+  // Initialize Home Network
   homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
-
-  chThdCreateStatic(exampleSendThread, sizeof(exampleSendThread), NORMALPRIO + 1, ExampleSendThread, NULL);
-
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
-  Serial.println(F("System booted up!"));
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
+
+  nilSysBegin(); // Start Nil RTOS.
 }
 
 void loop() {
-  // not used
+  printStackInfo(); // Print stack information
 }
+
+void printStackInfo() {
+  nilPrintStackSizes(&Serial);
+  nilPrintUnusedStack(&Serial);
+  Serial.println();
+
+  // Delay for one second.
+  // Must not sleep in loop so use nilThdDelayMilliseconds().
+  // Arduino delay() can also be used in loop().
+  nilThdDelayMilliseconds(1000);
+}
+
+

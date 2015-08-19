@@ -1,7 +1,7 @@
 /**
 *  Thread for the Home Network
 **/
-NIL_WORKING_AREA(homeNetworkThread, 50); // bytes seems to work fine even with Home Network debug on
+NIL_WORKING_AREA(homeNetworkThread, 50); // 50 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
 {
   Serial.println("Started HomeNetworkThread");
