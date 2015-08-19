@@ -26,9 +26,9 @@ NIL_THREAD(ApartmentStatusUpdater, arg) {
     } else if (!apartmentStatus && ledStatus) {
       setLED(LOW);
       Serial.println(F("Apartment just went offline, switching LED off!"));
-    } else if(apartmentStatus){
+    } else if (apartmentStatus) {
       Serial.println(F("Apartment still ONLINE"));
-    } else if(!apartmentStatus){
+    } else if (!apartmentStatus) {
       Serial.println(F("Apartment still OFFLINE"));
     }
     nilThdSleepMilliseconds(apartmentStatusUpdateTime);
@@ -75,21 +75,19 @@ bool askApartmentStatus() {
 }
 
 bool shutdownApartment() {
-  nilThdSleepMilliseconds(100); // Give some time
-  homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
+  homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_OFF);
   homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_OFF);
   homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
-  //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
+  homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
 }
 
 bool startupApartment() {
-  nilThdSleepMilliseconds(100);
   homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
   homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_ON); // Turn on main lights!
 
   //nilThdSleepMilliseconds(4000); // Give some time for PC to wake before doing any more PC controls
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT); // Start Workout Playlist!!
-
+  
   //nilThdSleepMilliseconds(5000); // Give some time for Spotify to start playlist
   homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON); // Turn on speaker!
 }
