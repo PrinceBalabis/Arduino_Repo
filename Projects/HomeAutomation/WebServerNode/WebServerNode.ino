@@ -1,3 +1,27 @@
+/*
+ *
+ * Before running this sketch you must configure ESP-05 to connect to your network at boot
+ * Also it must run at 38400 baud
+ * Set WiFi Mode to only STA
+ *    AT+CWMODE=1
+ * Join Access Point
+ *    AT+CWJAP="Router","kungarike"
+ * Enable watchdog, this restarts the module when an error occured
+ *    AT+CSYSWDTENABLE
+ * Set to 38400 baud
+ *    AT+CIOBAUD=38400
+ * Restart to save settings
+ *    AT+RST
+ *
+ * * Make sure the ESP-05 has at least 200-300 mA!!!! (by using separate power supply)
+ * Runs at 3.3V
+ * 
+ * If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
+ *
+ * How to Send a GET HTTP Request from a simple internet browser:
+ * Enter this in browser to send command 13
+ * http://princehome.duckdns.org:9500?c13
+ */
 // If a thread weirdly crashes then increase the stack value
 
 #include <NilRTOS.h>
@@ -7,14 +31,19 @@
 #include <SPI.h>
 #include <HomeNetwork.h>
 #include "config.h"
+#include <SoftwareSerial.h>
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
+SoftwareSerial esp8266(2, 3);
+
 void setup() {
   Serial.begin(115200);
   Serial.println(F("Home Network Testing Node"));
+
+  esp8266.begin(38400); // your esp's baud rate might be different
 
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
@@ -23,7 +52,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
@@ -33,7 +62,7 @@ void setup() {
 }
 
 void loop() {
- // printStackInfo(); // Print stack information
+  printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {
