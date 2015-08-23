@@ -28,4 +28,5 @@
 // Webserver Commands
 #define CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
 #define QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status
-
+#define CMD_APARTMENT_SHUTDOWN 3 // Toggle mainlights
+#define CMD_APARTMENT_STARTUP 4 // Toggle mainlights
