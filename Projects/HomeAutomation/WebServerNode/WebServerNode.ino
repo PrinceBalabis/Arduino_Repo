@@ -19,8 +19,8 @@
  * If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
  *
  * How to Send a GET HTTP Request from a simple internet browser:
- * Enter this in browser to send command 12
- * http://princehome.duckdns.org:9500?c12
+ * Enter this in browser to send command 1
+ * http://princehome.duckdns.org:9500?c1
  */
 // If a thread weirdly crashes then increase the stack value
 
