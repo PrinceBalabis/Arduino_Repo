@@ -19,8 +19,8 @@
  * If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
  *
  * How to Send a GET HTTP Request from a simple internet browser:
- * Enter this in browser to send command 13
- * http://princehome.duckdns.org:9500?c13
+ * Enter this in browser to send command 12
+ * http://princehome.duckdns.org:9500?c12
  */
 // If a thread weirdly crashes then increase the stack value
 
@@ -37,6 +37,8 @@ RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
+#define Serial NilSerial
+
 SoftwareSerial esp8266(2, 3);
 
 void setup() {
@@ -44,10 +46,6 @@ void setup() {
   Serial.println(F("Home Network Testing Node"));
 
   esp8266.begin(38400); // your esp's baud rate might be different
-
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for Leonardo only
-  }
 
   SPI.begin(); // SPI is used by homeNetwork
 

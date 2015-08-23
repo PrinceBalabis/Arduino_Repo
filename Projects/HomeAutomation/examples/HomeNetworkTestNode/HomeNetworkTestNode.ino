@@ -12,6 +12,8 @@ RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
+#define Serial NilSerial
+
 void setup() {
   Serial.begin(115200);
   Serial.println(F("Home Network Testing Node"));

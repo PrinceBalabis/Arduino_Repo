@@ -18,13 +18,14 @@
 // How often to auto update network. Should be short because this node is parent for many child nodes
 #define HOME_SETTING_TIME_NETWORKAUTOUPDATE 5
 
+/*
+*  ------------------------------------
+ *  Webserver
+ *  ------------------------------------
+ */
+#define DEBUG_TOGGLE 1
 
-// TESTING
-#define TESTING_SEND_DELAY 2000
-#define TESTING_CHOSEN_COMMAND TESTING_CMD_433MHZ_PAINTINGLIGHTS_STATUS
+// Webserver Commands
+#define CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
+#define QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status
 
-#define TESTING_CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
-#define TESTING_QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status
-#define TESTING_CMD_SPEAKER_MUTE_TOGGLE 3 // Toggle mute on Speaker Node
-#define TESTING_CMD_433MHZ_PAINTINGLIGHTS_TOGGLE 4 // toggle painting lights on 433MHz Node
-#define TESTING_CMD_433MHZ_PAINTINGLIGHTS_STATUS 5 // Ask status of painting lights on 433MHz Node

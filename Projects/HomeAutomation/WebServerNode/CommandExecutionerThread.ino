@@ -22,23 +22,20 @@ NIL_THREAD(CommandExecutioner, arg)
     int32_t status = -999;
     bool sent = false;
 
-    switch (commandToExecute) {
-      case TESTING_CMD_MAINLIGHTS_TOGGLE:
-        sent = homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
-        break;
-      case TESTING_QSN_MAINLIGHTS_STATUS:
-        sent = homeNetwork.sendQuestion(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS, &status);
-        break;
-      case TESTING_CMD_SPEAKER_MUTE_TOGGLE:
-        sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
-        break;
-      case TESTING_CMD_433MHZ_PAINTINGLIGHTS_TOGGLE:
-        sent = homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE);
-        break;
-      case TESTING_CMD_433MHZ_PAINTINGLIGHTS_STATUS:
-        sent = homeNetwork.sendQuestion(HOME_RF433MHZ_ID, HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS, &status);
-        break;
+switch(commandOrigin){
+  case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // Command that came from the internet
+    switch(commandToExecute){
+      case CMD_MAINLIGHTS_TOGGLE:
+      sent = homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
     }
+  break;
+  case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Command that came from HomeNetwork
+      switch (commandToExecute) {
+    }
+  break;
+}
+
+
     Serial.print(F("Sent: "));
     Serial.print(sent);
     if (status != -999) { // If the status variable was used in the example, print it out
