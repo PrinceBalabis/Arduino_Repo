@@ -1,3 +1,4 @@
+
 NIL_WORKING_AREA(webServerThread, 100);
 
 NIL_THREAD(WebServerThread, arg) {
@@ -41,6 +42,7 @@ NIL_THREAD(WebServerThread, arg) {
         Serial.print(",Command:");
         Serial.println(command);
 
+
         // Send command to commandExecutioner to run
         executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
@@ -51,17 +53,8 @@ NIL_THREAD(WebServerThread, arg) {
         //
         //      sendHTTPResponse(connectionId, content);
 
-        // Dont need close command as timeout is only 1 second, doesnt work anyway!
-        // make close command
-        String closeCommand = "AT+CIPCLOSE=";
-        closeCommand += connectionId; // append connection id
-        closeCommand += "\r\n";
-        char tmpCloseCommandCharArray[32];
-        closeCommand.toCharArray(tmpCloseCommandCharArray, 32);
-        Serial.println("test");
-        Serial.println(closeCommand);
-        Serial.println(tmpCloseCommandCharArray);
-        sendCommand(tmpCloseCommandCharArray, 1000, DEBUG_TOGGLE); // close connection
+        // Make close command, in order to close connection with HTTP Client
+        //sendCommand("AT+CIPCLOSE=0", 1000, DEBUG_TOGGLE); // close connection
       }
     }
 
@@ -76,42 +69,33 @@ NIL_THREAD(WebServerThread, arg) {
 * Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
 * Returns: The response from the esp8266 (if there is a reponse)
 */
-void sendData(String command, const int timeout, boolean debug)
-{
-  String response = "";
-
-  int dataSize = command.length();
-  char data[dataSize];
-  command.toCharArray(data, dataSize);
-
-  esp8266.write(data, dataSize); // send the read character to the esp8266
-  if (debug)
-  {
-    Serial.println("\r\n====== HTTP Response From Arduino ======");
-    Serial.write(data, dataSize);
-    Serial.println("\r\n========================================");
-  }
-
-  long int time = millis();
-
-  while ( (time + timeout) > millis())
-  {
-    while (esp8266.available())
-    {
-
-      // The esp has data so display its output to the serial window
-      char c = esp8266.read(); // read the next character.
-      response += c;
-      nilThdSleepMicroseconds(100);
-    }
-    nilThdSleepMicroseconds(100);
-  }
-
-  if (debug)
-  {
-    Serial.print(response);
-  }
-}
+//void sendData(String command, const int timeout, boolean debug)
+//{
+//  String response = "";
+//
+//  int dataSize = command.length();
+//  char data[dataSize];
+//  command.toCharArray(data, dataSize);
+//
+//  esp8266.write(data, dataSize); // send the read character to the esp8266
+//  if (debug)
+//  {
+//    Serial.println("\r\n====== HTTP Response From Arduino ======");
+//    Serial.write(data, dataSize);
+//    Serial.println("\r\n========================================");
+//  }
+//
+//  unsigned long startTime = millis();
+//
+//  while ((startTime + timeout) > millis()) {
+//    if (esp8266.available()) { // When serial data is available from ESP-05
+//      if (debug)
+//        Serial.write(esp8266.read()); // Write to serial
+//      else
+//        esp8266.read(); // Throw out data
+//    }
+//  }
+//}
 
 /*
 * Name: sendHTTPResponse
@@ -160,9 +144,12 @@ void sendCommand(char cmd[], const int timeout, const boolean debug) {
   unsigned long startTime = millis();
 
   while ((startTime + timeout) > millis()) {
-    if (esp8266.available()) // input from the esp8266
+    if (esp8266.available()) { // When serial data is available from ESP-05
       if (debug)
-        Serial.write(esp8266.read()); // write to host
+        Serial.write(esp8266.read()); // Write to serial
+      else
+        esp8266.read(); // Throw out data
+    }
   }
 }
 
@@ -172,7 +159,7 @@ void initESP8266() {
   sendCommand("AT+CIFSR", 1000, DEBUG_TOGGLE); // Print ip address
   sendCommand("AT+CIPMUX=1", 1000, DEBUG_TOGGLE); // configure for multiple connections
   sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 9500
-  sendCommand("AT+CIPSTO=1", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
+  sendCommand("AT+CIPSTO=5", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
   Serial.println("Server Ready and waiting clients");
 }
