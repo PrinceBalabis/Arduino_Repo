@@ -1,4 +1,4 @@
-NIL_WORKING_AREA(webServerThread, 50);
+NIL_WORKING_AREA(webServerThread, 100);
 
 NIL_THREAD(WebServerThread, arg) {
   Serial.println(F("Started WebServerThread"));
@@ -44,18 +44,6 @@ NIL_THREAD(WebServerThread, arg) {
         // Send command to commandExecutioner to run
         executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
-        //Read the command
-        //        String strPinNumber = "";
-        //        while (1) {
-        //          char temp = esp8266.read();
-        //          if (temp == ' ') // If read() returned space(' '), then we read the whole command, exit out of loop
-        //            break;
-        //          strPinNumber += temp - 48; // Store char in String beacuse of ASCII error
-        //        }
-        //        int pinNumber = strPinNumber.toInt(); // Convert to int
-        //        Serial.print(",Command:");
-        //        Serial.println(pinNumber);
-
         // Build string that is send back to client that sent command
         //      String content;
         //      content = "Command: ";
@@ -65,13 +53,15 @@ NIL_THREAD(WebServerThread, arg) {
 
         // Dont need close command as timeout is only 1 second, doesnt work anyway!
         // make close command
-        //      String closeCommand = "AT+CIPCLOSE=";
-        //      closeCommand += connectionId; // append connection id
-        //      closeCommand += "\r\n";
-        //
-        //      sendCommand(closeCommand, 1000, debugToggle); // close connection
-
-        //
+        String closeCommand = "AT+CIPCLOSE=";
+        closeCommand += connectionId; // append connection id
+        closeCommand += "\r\n";
+        char tmpCloseCommandCharArray[32];
+        closeCommand.toCharArray(tmpCloseCommandCharArray, 32);
+        Serial.println("test");
+        Serial.println(closeCommand);
+        Serial.println(tmpCloseCommandCharArray);
+        sendCommand(tmpCloseCommandCharArray, 1000, DEBUG_TOGGLE); // close connection
       }
     }
 
@@ -86,7 +76,7 @@ NIL_THREAD(WebServerThread, arg) {
 * Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
 * Returns: The response from the esp8266 (if there is a reponse)
 */
-String sendData(String command, const int timeout, boolean debug)
+void sendData(String command, const int timeout, boolean debug)
 {
   String response = "";
 
@@ -121,8 +111,6 @@ String sendData(String command, const int timeout, boolean debug)
   {
     Serial.print(response);
   }
-
-  return response;
 }
 
 /*
@@ -161,12 +149,13 @@ String sendData(String command, const int timeout, boolean debug)
 //  sendData(data, 1000, DEBUG_TOGGLE);
 //}
 
-
-
-// ISSUE: SendCommand function does not send command to ESP-05
-//void sendCommand(char cmdCharArray[], const int timeout, const boolean debug) {
+/*
+* Name: sendCommand
+* Description: Function used to send data to ESP8266.
+* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+* Returns: The response from the esp8266 (if there is a reponse)
+*/
 void sendCommand(char cmd[], const int timeout, const boolean debug) {
-  Serial.println(cmd);
   esp8266.println(cmd); // Send to ESP-05
   unsigned long startTime = millis();
 
@@ -177,50 +166,13 @@ void sendCommand(char cmd[], const int timeout, const boolean debug) {
   }
 }
 
-/*
-* Name: sendCommand
-* Description: Function used to send data to ESP8266.
-* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
-* Returns: The response from the esp8266 (if there is a reponse)
-*/
-//String sendCommand(String command, const int timeout, boolean debug)
-//{
-//  String response = "";
-//  esp8266.print(command); // send the read character to the esp8266
-//  long int time = millis();
-//  while ( (time + timeout) > millis())
-//  {
-//    while (esp8266.available())
-//    {
-//
-//      // The esp has data so display its output to the serial window
-//      char c = esp8266.read(); // read the next character.
-//      response += c;
-//      nilThdSleepMicroseconds(100);
-//    }
-//    nilThdSleepMicroseconds(100);
-//  }
-//
-//  if (debug)
-//  {
-//    Serial.print(response);
-//  }
-//
-//  //  if (response.indexOf("busy p...") > 0) {
-//  //    Serial.print("ESP8266 hanged, reinitializing...");
-//  //    initESP8266();
-//  //  }
-//
-//  return response;
-//}
-
 void initESP8266() {
   sendCommand("AT+RST", 2000, DEBUG_TOGGLE); // Reset module
   nilThdSleepMilliseconds(5000); // Wait for module to connect to network
   sendCommand("AT+CIFSR", 1000, DEBUG_TOGGLE); // Print ip address
   sendCommand("AT+CIPMUX=1", 1000, DEBUG_TOGGLE); // configure for multiple connections
-  sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 80
-  sendCommand("AT+CIPSTO=1", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after 5 seconds
+  sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 9500
+  sendCommand("AT+CIPSTO=1", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
   Serial.println("Server Ready and waiting clients");
 }

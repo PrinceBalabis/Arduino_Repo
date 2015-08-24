@@ -23,7 +23,7 @@
  *  Webserver
  *  ------------------------------------
  */
-#define DEBUG_TOGGLE 1
+#define DEBUG_TOGGLE 0
 
 // Webserver Commands
 #define CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
