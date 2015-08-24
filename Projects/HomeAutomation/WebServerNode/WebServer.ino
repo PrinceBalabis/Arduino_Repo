@@ -1,4 +1,5 @@
 NIL_WORKING_AREA(webServerThread, 50);
+
 NIL_THREAD(WebServerThread, arg) {
   Serial.println(F("Started WebServerThread"));
 
@@ -163,12 +164,10 @@ String sendData(String command, const int timeout, boolean debug)
 
 
 // ISSUE: SendCommand function does not send command to ESP-05
-void sendCommand(char cmdCharArray[], const int timeout, const boolean debug) {
-//void sendCommand(String cmdString, const int timeout, const boolean debug) {
-  //char cmdCharArray[32];
-  //cmdString.toCharArray(cmdCharArray, 32);
-  esp8266.println(cmdCharArray); // Send to ESP-05
-  Serial.println(cmdCharArray); // write to host
+//void sendCommand(char cmdCharArray[], const int timeout, const boolean debug) {
+void sendCommand(char cmd[], const int timeout, const boolean debug) {
+  Serial.println(cmd);
+  esp8266.println(cmd); // Send to ESP-05
   unsigned long startTime = millis();
 
   while ((startTime + timeout) > millis()) {
