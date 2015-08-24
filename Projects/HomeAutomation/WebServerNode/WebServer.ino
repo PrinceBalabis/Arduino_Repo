@@ -128,36 +128,54 @@ String sendData(String command, const int timeout, boolean debug)
 * Name: sendHTTPResponse
 * Description: Function that sends HTTP 200, HTML UTF-8 response
 */
-void sendHTTPResponse(int connectionId, String content)
-{
+//void sendHTTPResponse(int connectionId, String content)
+//{
+//
+//  // build HTTP response
+//  String httpResponse;
+//  String httpHeader;
+//  // HTTP Header
+//  httpHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n";
+//  httpHeader += "Content-Length: ";
+//  httpHeader += content.length();
+//  httpHeader += "\r\n";
+//  httpHeader += "Connection: close\r\n\r\n";
+//  httpResponse = httpHeader + content + " "; // There is a bug in this code: the last character of "content" is not sent, I cheated by adding this extra space
+//  sendCIPData(connectionId, httpResponse);
+//}
+//
+///*
+//* Name: sendCIPDATA
+//* Description: sends a CIPSEND=<connectionId>,<data> command
+//*
+//*/
+//void sendCIPData(int connectionId, String data)
+//{
+//  String cipSend = "AT+CIPSEND=";
+//  cipSend += connectionId;
+//  cipSend += ",";
+//  cipSend += data.length();
+//  cipSend += "\r\n";
+//  sendCommand(cipSend, 1000, DEBUG_TOGGLE);
+//  sendData(data, 1000, DEBUG_TOGGLE);
+//}
 
-  // build HTTP response
-  String httpResponse;
-  String httpHeader;
-  // HTTP Header
-  httpHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n";
-  httpHeader += "Content-Length: ";
-  httpHeader += content.length();
-  httpHeader += "\r\n";
-  httpHeader += "Connection: close\r\n\r\n";
-  httpResponse = httpHeader + content + " "; // There is a bug in this code: the last character of "content" is not sent, I cheated by adding this extra space
-  sendCIPData(connectionId, httpResponse);
-}
 
-/*
-* Name: sendCIPDATA
-* Description: sends a CIPSEND=<connectionId>,<data> command
-*
-*/
-void sendCIPData(int connectionId, String data)
-{
-  String cipSend = "AT+CIPSEND=";
-  cipSend += connectionId;
-  cipSend += ",";
-  cipSend += data.length();
-  cipSend += "\r\n";
-  sendCommand(cipSend, 1000, DEBUG_TOGGLE);
-  sendData(data, 1000, DEBUG_TOGGLE);
+
+// ISSUE: SendCommand function does not send command to ESP-05
+void sendCommand(char cmdCharArray[], const int timeout, const boolean debug) {
+//void sendCommand(String cmdString, const int timeout, const boolean debug) {
+  //char cmdCharArray[32];
+  //cmdString.toCharArray(cmdCharArray, 32);
+  esp8266.println(cmdCharArray); // Send to ESP-05
+  Serial.println(cmdCharArray); // write to host
+  unsigned long startTime = millis();
+
+  while ((startTime + timeout) > millis()) {
+    if (esp8266.available()) // input from the esp8266
+      if (debug)
+        Serial.write(esp8266.read()); // write to host
+  }
 }
 
 /*
@@ -166,44 +184,44 @@ void sendCIPData(int connectionId, String data)
 * Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
 * Returns: The response from the esp8266 (if there is a reponse)
 */
-String sendCommand(String command, const int timeout, boolean debug)
-{
-  String response = "";
-  esp8266.print(command); // send the read character to the esp8266
-  long int time = millis();
-  while ( (time + timeout) > millis())
-  {
-    while (esp8266.available())
-    {
-
-      // The esp has data so display its output to the serial window
-      char c = esp8266.read(); // read the next character.
-      response += c;
-      nilThdSleepMicroseconds(100);
-    }
-    nilThdSleepMicroseconds(100);
-  }
-
-  if (debug)
-  {
-    Serial.print(response);
-  }
-
-  //  if (response.indexOf("busy p...") > 0) {
-  //    Serial.print("ESP8266 hanged, reinitializing...");
-  //    initESP8266();
-  //  }
-
-  return response;
-}
+//String sendCommand(String command, const int timeout, boolean debug)
+//{
+//  String response = "";
+//  esp8266.print(command); // send the read character to the esp8266
+//  long int time = millis();
+//  while ( (time + timeout) > millis())
+//  {
+//    while (esp8266.available())
+//    {
+//
+//      // The esp has data so display its output to the serial window
+//      char c = esp8266.read(); // read the next character.
+//      response += c;
+//      nilThdSleepMicroseconds(100);
+//    }
+//    nilThdSleepMicroseconds(100);
+//  }
+//
+//  if (debug)
+//  {
+//    Serial.print(response);
+//  }
+//
+//  //  if (response.indexOf("busy p...") > 0) {
+//  //    Serial.print("ESP8266 hanged, reinitializing...");
+//  //    initESP8266();
+//  //  }
+//
+//  return response;
+//}
 
 void initESP8266() {
-  sendCommand("AT+RST\r\n", 2000, DEBUG_TOGGLE); // Reset module
+  sendCommand("AT+RST", 2000, DEBUG_TOGGLE); // Reset module
   nilThdSleepMilliseconds(5000); // Wait for module to connect to network
-  sendCommand("AT+CIFSR\r\n", 1000, DEBUG_TOGGLE); // Print ip address
-  sendCommand("AT+CIPMUX=1\r\n", 1000, DEBUG_TOGGLE); // configure for multiple connections
-  sendCommand("AT+CIPSERVER=1,9500\r\n", 1000, DEBUG_TOGGLE); // turn on server on port 80
-  sendCommand("AT+CIPSTO=1\r\n", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after 5 seconds
+  sendCommand("AT+CIFSR", 1000, DEBUG_TOGGLE); // Print ip address
+  sendCommand("AT+CIPMUX=1", 1000, DEBUG_TOGGLE); // configure for multiple connections
+  sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 80
+  sendCommand("AT+CIPSTO=1", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after 5 seconds
 
   Serial.println("Server Ready and waiting clients");
 }
