@@ -1,5 +1,5 @@
 
-NIL_WORKING_AREA(webServerThread, 100);
+NIL_WORKING_AREA(webServerThread, 50);
 
 NIL_THREAD(WebServerThread, arg) {
   Serial.println(F("Started WebServerThread"));
