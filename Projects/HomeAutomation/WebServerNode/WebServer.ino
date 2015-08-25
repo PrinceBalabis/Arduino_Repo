@@ -57,7 +57,7 @@ NIL_THREAD(WebServerThread, arg) {
         //
         //      sendHTTPResponse(connectionId, content);
 
-         nilThdSleepMilliseconds(1100); // Dont get another HTTP Request for so many seconds, in order to fix HTTP Client GET Request resends when they time out
+        nilThdSleepMilliseconds(1100); // Dont get another HTTP Request for so many seconds, in order to fix HTTP Client GET Request resends when they time out
         // Make close command, in order to close connection with HTTP Client.
         // DOES ONLY WORK FIRST TIME THIS COMMAND RUNS, THE SECOND TIME IT DOESNT, FIRMWARE BUG!!! CANNOT FIX
         //sendCommand("AT+CIPCLOSE=0", 1000, DEBUG_TOGGLE); // close connection
@@ -173,13 +173,24 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
 void initESP8266() {
   if (sendCommand("AT+RST", 3000, DEBUG_TOGGLE)) { // Reset module
     digitalWrite(DEBUG_LED, HIGH);   // turn the LED on to indicate start successfull
+    nilThdSleepMilliseconds(5000); // Wait for module to connect to network
+    sendCommand("AT+CIFSR", 1000, DEBUG_TOGGLE); // Print ip address
+    sendCommand("AT+CIPMUX=1", 2000, DEBUG_TOGGLE); // configure for multiple connections
+    sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 9500
+    sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
+    
+    //Blink LED
+    digitalWrite(DEBUG_LED, HIGH);
+    nilThdSleepMilliseconds(100);
+    digitalWrite(DEBUG_LED, HIGH);
+    
+    Serial.println("Server Ready and waiting clients");
+  } else {
+    digitalWrite(DEBUG_LED, LOW);   // turn the LED on to indicate start successfull
+    Serial.println("ESP-05 initialization failed!");
+    while(1);
   }
-  nilThdSleepMilliseconds(5000); // Wait for module to connect to network
-  sendCommand("AT+CIFSR", 1000, DEBUG_TOGGLE); // Print ip address
-  sendCommand("AT+CIPMUX=1", 2000, DEBUG_TOGGLE); // configure for multiple connections
-  sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 9500
-  sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
-  Serial.println("Server Ready and waiting clients");
+
 }
 

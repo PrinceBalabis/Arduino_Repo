@@ -17,6 +17,8 @@
  * Runs at 3.3V
  * 
  * If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
+ * Make sure you connect the 200-300mA power supply to boot the ESP-05 first before connecting Arduino to Computer
+ * Also give some seconds before connecting the Arduino to Computer, to give the ESP-05 some time to boot
  *
  * How to Send a GET HTTP Request from a simple internet browser:
  * Enter this in browser to send command 1
