@@ -24,6 +24,7 @@
  *  ------------------------------------
  */
 #define DEBUG_TOGGLE 1
+#define DEBUG_LED A0
 
 // Webserver Commands
 #define CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights

@@ -4,6 +4,10 @@ NIL_WORKING_AREA(webServerThread, 100);
 NIL_THREAD(WebServerThread, arg) {
   Serial.println(F("Started WebServerThread"));
 
+  // initialize digital pin 13 as an output.
+  pinMode(DEBUG_LED, OUTPUT);
+  digitalWrite(DEBUG_LED, LOW); // Turn LED off to indicate Webserver is not started
+
   Serial.println(F("Initializing ESP-05.."));
   nilThdSleepMilliseconds(5000);
   initESP8266();
@@ -53,7 +57,9 @@ NIL_THREAD(WebServerThread, arg) {
         //
         //      sendHTTPResponse(connectionId, content);
 
-        // Make close command, in order to close connection with HTTP Client
+         nilThdSleepMilliseconds(1100); // Dont get another HTTP Request for so many seconds, in order to fix HTTP Client GET Request resends when they time out
+        // Make close command, in order to close connection with HTTP Client.
+        // DOES ONLY WORK FIRST TIME THIS COMMAND RUNS, THE SECOND TIME IT DOESNT, FIRMWARE BUG!!! CANNOT FIX
         //sendCommand("AT+CIPCLOSE=0", 1000, DEBUG_TOGGLE); // close connection
       }
     }
@@ -139,27 +145,40 @@ NIL_THREAD(WebServerThread, arg) {
 * Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
 * Returns: The response from the esp8266 (if there is a reponse)
 */
-void sendCommand(char cmd[], const int timeout, const boolean debug) {
-  esp8266.println(cmd); // Send to ESP-05
-  unsigned long startTime = millis();
+bool sendCommand(char cmd[], const int timeout, const boolean debug) {
 
+  bool answerReceived = false;
+
+  // Clear Serial communication before sending command
+  while (esp8266.available()) { // When serial data is available from ESP-05
+    esp8266.read(); // Throw out data
+  }
+
+  esp8266.println(cmd); // Send to ESP-05
+
+  // Receive response from ESP-05
+  unsigned long startTime = millis();
   while ((startTime + timeout) > millis()) {
     if (esp8266.available()) { // When serial data is available from ESP-05
+      answerReceived = true;
       if (debug)
         Serial.write(esp8266.read()); // Write to serial
       else
         esp8266.read(); // Throw out data
     }
   }
+  return answerReceived;
 }
 
 void initESP8266() {
-  sendCommand("AT+RST", 2000, DEBUG_TOGGLE); // Reset module
+  if (sendCommand("AT+RST", 3000, DEBUG_TOGGLE)) { // Reset module
+    digitalWrite(DEBUG_LED, HIGH);   // turn the LED on to indicate start successfull
+  }
   nilThdSleepMilliseconds(5000); // Wait for module to connect to network
   sendCommand("AT+CIFSR", 1000, DEBUG_TOGGLE); // Print ip address
-  sendCommand("AT+CIPMUX=1", 1000, DEBUG_TOGGLE); // configure for multiple connections
+  sendCommand("AT+CIPMUX=1", 2000, DEBUG_TOGGLE); // configure for multiple connections
   sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 9500
-  sendCommand("AT+CIPSTO=5", 1000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
+  sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
   Serial.println("Server Ready and waiting clients");
 }
