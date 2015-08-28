@@ -99,7 +99,10 @@
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
 #define HOME_TEST_ID 05
 
-
+// Command(message type: typeCommand)
+#define HOME_TEST_CMD 1
+// Question
+#define HOME_TEST_STATUS 1
 //***********************Other Nodes****************************************************************************
 //static const uint16_t nodeNAS = 02;
 //static const uint16_t nodeRaspberryPi = 03;

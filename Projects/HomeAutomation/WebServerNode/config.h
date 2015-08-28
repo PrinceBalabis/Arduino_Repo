@@ -34,5 +34,5 @@
 #define CMD_APARTMENT_TOGGLE 5 // Toggle Apartment
 #define CMD_SPEAKER_MUTE_TOGGLE 6 // Toggle speaker mute
 #define CMD_SPEAKER_MODE_TOGGLE 7 // Toggle speaker mode
-#define CMD_PAINTINGLIGHTS_TOGGLE 8 // Toggle Apartment
-#define CMD_APARTMENT_MOOD_TOGGLE 9 // Toggle Apartment
+#define CMD_PAINTINGLIGHTS_TOGGLE 8 // Toggle Painting Lights 
+#define CMD_APARTMENT_MOOD_TOGGLE 9 // Toggle Apartment mood

@@ -9,7 +9,7 @@ NIL_THREAD(ExampleSendThread, arg) {
 
   while (TRUE) {
     nilThdSleepMilliseconds(TESTING_SEND_DELAY); // Redo this send program every few moments, give enough time for other threads to run
-    executeCommand(TESTING_CHOSEN_COMMAND, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+    executeCommand(TESTING_CHOSEN_COMMAND);
   }
 }
 
