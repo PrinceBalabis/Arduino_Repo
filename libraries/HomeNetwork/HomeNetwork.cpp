@@ -36,7 +36,7 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
 
 bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
 {
-  if(_homeNetwork_autoUpdateTime < 0 || _homeNetwork_autoUpdateTime > 255 ) { // If less than 0 or bigger than 255 then set to default
+  if(_homeNetwork_autoUpdateTime < 0 || _homeNetwork_autoUpdateTime > 127 ) { // If its a negative value, or outside the boundaries of int8_t, then set to default
     homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
     return true;
   } else {
@@ -53,7 +53,7 @@ void HomeNetwork::update()
     if(!autoUpdateStatus){
       currentAutoUpdateStatus = false;
       while(!autoUpdateStatus){
-        nilThdSleepMilliseconds(2);  //Check if autoUpdate should unpause every few ms
+        nilThdSleepMilliseconds(1);  //Check if autoUpdate should unpause every few ms
       }
       currentAutoUpdateStatus = true;
     }
@@ -114,7 +114,7 @@ void HomeNetwork::setDebug(bool status){
 }
 
 /**
-* sendRAW
+* sendFast
 * This function sends the message to a receiver, both which are set in parameter
 * This function differs from send function by that this sends a message WITHOUT
 * waiting for a confirmation-message back from the receiver of the initial message

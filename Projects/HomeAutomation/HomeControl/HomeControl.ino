@@ -25,7 +25,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   Serial.println(F("HomeControl Node"));
 
   // PC Power switch setup
@@ -34,9 +34,9 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
-  homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
+  homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));
 
@@ -44,7 +44,7 @@ void setup() {
 }
 
 void loop() {
-  printStackInfo(); // Print stack information
+  //printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

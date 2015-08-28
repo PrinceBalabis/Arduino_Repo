@@ -20,7 +20,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  Serial.begin(9600); // This needs to be commented out in order to be stable
+  //Serial.begin(9600); // This needs to be commented out in order to be stable
 
   //  while (!Serial) {
   //    ; // wait for serial port to connect. Needed for Leonardo only
@@ -29,7 +29,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
@@ -39,7 +39,7 @@ void setup() {
 }
 
 void loop() {
-  printStackInfo(); // Print stack information
+  //printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {
