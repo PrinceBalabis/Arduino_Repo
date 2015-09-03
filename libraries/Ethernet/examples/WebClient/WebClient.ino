@@ -11,8 +11,6 @@
  by David A. Mellis
  modified 9 Apr 2012
  by Tom Igoe, based on work by Adrian McEwen
- modified 15 Jul 2014
- by Soohwan Kim 
 
  */
 
@@ -21,25 +19,14 @@
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
-
-//#define __USE_DHCP__
-
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 // if you don't want to use DNS (and reduce your sketch size)
 // use the numeric IP instead of the name for the server:
 //IPAddress server(74,125,232,128);  // numeric IP for Google (no DNS)
 char server[] = "www.google.com";    // name address for Google (using DNS)
 
 // Set the static IP address to use if the DHCP fails to assign
-IPAddress ip(192,168,1, 177);
-IPAddress gateway(192,168,1, 1);
-IPAddress subnet(255, 255, 255, 0); 
-// fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8); // google puble dns
+IPAddress ip(192, 168, 0, 177);
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -53,21 +40,13 @@ void setup() {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
 
-  // initialize the ethernet device
-#if defined __USE_DHCP__
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin();
-#else
-  Ethernet.begin(mac);
-#endif  
-#else
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-  Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
-#endif 
-
+  // start the Ethernet connection:
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("Failed to configure Ethernet using DHCP");
+    // no point in carrying on, so do nothing forevermore:
+    // try to congifure using IP address instead of DHCP:
+    Ethernet.begin(mac, ip);
+  }
   // give the Ethernet shield a second to initialize:
   delay(1000);
   Serial.println("connecting...");

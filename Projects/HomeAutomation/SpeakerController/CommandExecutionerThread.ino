@@ -3,12 +3,12 @@
  ** Executes commands
  **/
 
-int32_t executeCommand = 0;
+static int32_t commandToExecute = 0;
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 52); //52 bytes works great
+NIL_WORKING_AREA(commandExecutioner, 100); //52 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("CommandExecutioner thread started"));
@@ -18,7 +18,7 @@ NIL_THREAD(CommandExecutioner, arg)
     // Wait for signal from either HNListenThread or Keypad Thread to run this loop
     nilSemWait(&cmdExSem);
 
-    switch (executeCommand) {
+    switch (commandToExecute) {
       case HOME_SPEAKER_CMD_POWER_TOGGLE:
         toggleSpeakerPower();
         break;
@@ -48,4 +48,12 @@ NIL_THREAD(CommandExecutioner, arg)
         break;
     }
   }
+}
+
+/*
+ * Run this function to enable CommandExecutionerThread to run
+ */
+void executeCommand(int32_t _commandToExecute) {
+  commandToExecute = _commandToExecute;
+  nilSemSignal(&cmdExSem);
 }

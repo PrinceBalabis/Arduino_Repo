@@ -19,34 +19,23 @@
 
  created 31 July 2010
  by Tom Igoe
- modified 15 Jul 2014
- by Soohwan Kim 
  */
 
 #include <Ethernet.h>
 // the sensor communicates using SPI, so include the library:
 #include <SPI.h>
 
-void getData(); 
-void listenForEthernetClients(); 
-void writeRegister(byte registerName, byte registerValue); 
-unsigned int readRegister(byte registerName, int numBytes);
-
-//#define __USE_DHCP__
 
 // assign a MAC address for the ethernet controller.
 // fill in your address here:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+};
 // assign an IP address for the controller:
 IPAddress ip(192, 168, 1, 20);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
-// fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8); // google puble dns
+
 
 // Initialize the Ethernet server library
 // with the IP address and port you want to use
@@ -59,7 +48,7 @@ const int PRESSURE = 0x1F;      //3 most significant bits of pressure
 const int PRESSURE_LSB = 0x20;  //16 least significant bits of pressure
 const int TEMPERATURE = 0x21;   //16 bit temperature reading
 
-// pins used for the connection with the sensorau BufRead,BufNewFile *.pde set filetype=arduin
+// pins used for the connection with the sensor
 // the others you need are controlled by the SPI library):
 const int dataReadyPin = 6;
 const int chipSelectPin = 7;
@@ -72,21 +61,8 @@ void setup() {
   // start the SPI library:
   SPI.begin();
 
-  // initialize the ethernet device
-#if defined __USE_DHCP__
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin();
-#else
-  Ethernet.begin(mac);
-#endif  
-#else
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-  Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
-#endif
   // start the Ethernet connection and the server:
+  Ethernet.begin(mac, ip);
   server.begin();
 
   // initalize the  data ready and chip select pins:
@@ -105,6 +81,7 @@ void setup() {
 
   //Set the sensor to high resolution mode tp start readings:
   writeRegister(0x03, 0x0A);
+
 }
 
 void loop() {

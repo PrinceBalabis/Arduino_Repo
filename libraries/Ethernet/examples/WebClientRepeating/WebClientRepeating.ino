@@ -16,10 +16,8 @@
  by Tom Igoe
  modified 21 Jan 2014
  by Federico Vanzati
- modified 15 Jul 2014
- by Soohwan Kim 
 
- http://arduino.cc/en/Tutorial/WebClientRepeating
+ http://www.arduino.cc/en/Tutorial/WebClientRepeating
  This code is in the public domain.
 
  */
@@ -27,25 +25,17 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-void httpRequest(); 
-
 // assign a MAC address for the ethernet controller.
 // fill in your address here:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
-
-//#DEFINE __USE_DHCP__
-
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+};
 // fill in an available IP address on your network here,
 // for manual configuration:
-IPAddress ip(192,168,1, 177);
-IPAddress gateway(192,168,1, 1);
-IPAddress subnet(255, 255, 255, 0); 
+IPAddress ip(192, 168, 1, 177);
+
 // fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8);// google puble dns
+IPAddress myDns(1, 1, 1, 1);
 
 // initialize the library instance:
 EthernetClient client;
@@ -66,22 +56,8 @@ void setup() {
 
   // give the ethernet module time to boot up:
   delay(1000);
-
-  // initialize the ethernet device
-#if defined __USE_DHCP__
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin();
-#else
-  Ethernet.begin(mac);
-#endif  
-#else
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-  Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
-#endif 
-
+  // start the Ethernet connection using a fixed IP address and DNS server:
+  Ethernet.begin(mac, ip, myDns);
   // print the Ethernet board/shield's IP address:
   Serial.print("My IP address: ");
   Serial.println(Ethernet.localIP());

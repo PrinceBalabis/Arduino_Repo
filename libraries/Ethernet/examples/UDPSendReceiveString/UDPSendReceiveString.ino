@@ -8,8 +8,6 @@
 
  created 21 Aug 2010
  by Michael Margolis
- modified 15 Jul 2014
- by Soohwan Kim 
 
  This code is in the public domain.
  */
@@ -22,19 +20,10 @@
 
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
-
-//#define __USE_DHCP__
-
+byte mac[] = {
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+};
 IPAddress ip(192, 168, 1, 177);
-IPAddress gateway(192,168,1, 1);
-IPAddress subnet(255, 255, 255, 0); 
-// fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8); // google puble dns
 
 unsigned int localPort = 8888;      // local port to listen on
 
@@ -46,23 +35,8 @@ char  ReplyBuffer[] = "acknowledged";       // a string to send back
 EthernetUDP Udp;
 
 void setup() {
-
-  // initialize the ethernet device
-#if defined __USE_DHCP__
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin();
-#else
-  Ethernet.begin(mac);
-#endif  
-#else
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-  Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
-#endif 
-  
   // start the Ethernet and UDP:
+  Ethernet.begin(mac, ip);
   Udp.begin(localPort);
 
   Serial.begin(9600);

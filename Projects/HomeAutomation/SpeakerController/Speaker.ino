@@ -101,9 +101,11 @@ void setSpeakerModePCCommand(void)
 {
   if (getSpeakerPowerSwitchStatus() && !getSpeakerModeStatus()) {
     sendSpeakerCommand(speakerIRMode);
-    nilThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(300);
     sendSpeakerCommand(speakerIRRight);
-    nilThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(300);
+    sendSpeakerCommand(speakerIROK);
+    nilThdSleepMilliseconds(300);
     sendSpeakerCommand(speakerIROK);
     setSpeakerModeStatus(1);
     Serial.println(F("Set to PC Mode"));
@@ -114,9 +116,11 @@ void setSpeakerModeLineInCommand(void)
 {
   if (getSpeakerPowerSwitchStatus() && getSpeakerModeStatus()) {
     sendSpeakerCommand(speakerIRMode);
-    nilThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(300);
     sendSpeakerCommand(speakerIRLeft);
-    nilThdSleepMilliseconds(200);
+    nilThdSleepMilliseconds(300);
+    sendSpeakerCommand(speakerIROK);
+    nilThdSleepMilliseconds(300);
     sendSpeakerCommand(speakerIROK);
     setSpeakerModeStatus(0);
     Serial.println(F("Set to Line In Mode"));

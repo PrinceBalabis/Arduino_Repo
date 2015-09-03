@@ -124,7 +124,7 @@ bool askApartmentStatus() {
   return false;
 }
 
-bool toggleApartmentMood() {
+void toggleApartmentMood() {
   int32_t status;
 
   if (!homeNetwork.sendQuestion(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS, &status)) {
@@ -134,18 +134,17 @@ bool toggleApartmentMood() {
     Serial.print(F("Main lights are on!->"));
     homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_OFF);
     homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_ON);
-    return true;
   }
-
-  if (!homeNetwork.sendQuestion(HOME_RF433MHZ_ID, HOME_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS, &status)) {
+  else if (!homeNetwork.sendQuestion(HOME_RF433MHZ_ID, HOME_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS, &status)) {
     Serial.print(F("Couldn't get an answer from RF433MHz Node!->"));
   }
   else if (status) {
     Serial.print(F("Painting lights are on!->"));
     homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_ON);
     homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_OFF);
-    return false;
+  } else {
+    //If both Main lights and painting lights are off, toggle painting lights on
+    homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_ON);
   }
-  return false;
 }
 

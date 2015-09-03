@@ -15,8 +15,6 @@
  modified 9 Apr 2012
  by Tom Igoe
  Based on ChatServer example by David A. Mellis
- modified 15 Jul 2014
- by Soohwan Kim 
 
  */
 
@@ -26,17 +24,12 @@
 // Enter a MAC address and IP address for your controller below.
 // The IP address will be dependent on your local network.
 // gateway and subnet are optional:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
-
+byte mac[] = {
+  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02
+};
 IPAddress ip(192, 168, 1, 177);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 0, 0);
-// fill in your Domain Name Server address here:
-IPAddress myDns(8, 8, 8, 8); // google puble dns
 
 // telnet defaults to port 23
 EthernetServer server(23);
@@ -53,18 +46,10 @@ void setup() {
 
   // start the Ethernet connection:
   Serial.println("Trying to get an IP address using DHCP");
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  if (Ethernet.begin() == 0) {
-#else
   if (Ethernet.begin(mac) == 0) {
-#endif  
     Serial.println("Failed to configure Ethernet using DHCP");
     // initialize the ethernet device not using DHCP:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-    Ethernet.begin(ip, myDns, gateway, subnet);
-#else
-    Ethernet.begin(mac, ip, myDns, gateway, subnet);
-#endif  
+    Ethernet.begin(mac, ip, gateway, subnet);
   }
   // print your local IP address:
   Serial.print("My IP address: ");

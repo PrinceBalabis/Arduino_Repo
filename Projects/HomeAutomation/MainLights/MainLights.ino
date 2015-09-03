@@ -13,7 +13,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   Serial.println(F("MainLights Node"));
 
   initLights();
@@ -34,7 +34,7 @@ void setup() {
 // Loop is the idle thread.  The idle thread must not invoke any
 // kernel primitive able to change its state to not runnable.
 void loop() {
- // printStackInfo(); // Print stack information
+ //printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

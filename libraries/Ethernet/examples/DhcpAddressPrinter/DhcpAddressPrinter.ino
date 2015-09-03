@@ -11,8 +11,6 @@
  created 12 April 2011
  modified 9 Apr 2012
  by Tom Igoe
- modified 15 Jul 2014
- by Soohwan Kim 
 
  */
 
@@ -21,11 +19,9 @@
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-;
-#else
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
-#endif
+byte mac[] = {
+  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02
+};
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server
@@ -41,11 +37,7 @@ void setup() {
   }
 
   // start the Ethernet connection:
-#if defined(WIZ550io_WITH_MACADDRESS) // Use assigned MAC address of WIZ550io
-  if (Ethernet.begin() == 0) {
-#else
   if (Ethernet.begin(mac) == 0) {
-#endif  
     Serial.println("Failed to configure Ethernet using DHCP");
     // no point in carrying on, so do nothing forevermore:
     for (;;)
