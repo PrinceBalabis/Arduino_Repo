@@ -20,8 +20,9 @@
 
 
 // TESTING
-#define TESTING_SEND_DELAY 2000
-#define TESTING_CHOSEN_COMMAND TESTING_CMD_433MHZ_PAINTINGLIGHTS_STATUS
+#define TESTING_SEND_DELAY 400 // How often to send the testing command
+#define TESTING_ANSWER_TIMEOUT 200 // How long to wait for answer before timeout
+#define TESTING_CHOSEN_COMMAND TESTING_QSN_MAINLIGHTS_STATUS // Command chosen to test
 
 #define TESTING_CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
 #define TESTING_QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status

@@ -1,3 +1,4 @@
+NIL_WORKING_AREA(buttonThread, 0); // 50 bytes seems to work fine
 NIL_THREAD(ButtonThread, arg) {
 
   const int buttonPin = 2;     // the number of the pushbutton pin
@@ -19,15 +20,8 @@ NIL_THREAD(ButtonThread, arg) {
       while (!apartmentStatusUpdaterPauseExecuted) // Wait for the pause to happen
         nilThdSleepMilliseconds(10);
 
-      if (askApartmentStatus()) {
-        shutdownApartment();
-        setLED(LOW);
-        Serial.println("Shut down apartment");
-      } else {
-        startupApartment();
-        setLED(HIGH);
-        Serial.println("Started up apartment");
-      }
+      executeCommand(CMD_APARTMENT_TOGGLE);
+
       lastButtonStatus = HIGH;
       nilThdSleepMilliseconds(buttonDebounceTime);
 

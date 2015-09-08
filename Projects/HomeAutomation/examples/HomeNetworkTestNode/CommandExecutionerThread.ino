@@ -8,6 +8,8 @@ static uint16_t commandFromNode = 0;
 static char commandType = 'Q';
 static uint16_t commandToExecute = 0;
 
+int32_t count = 0;
+
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
@@ -23,6 +25,7 @@ NIL_THREAD(CommandExecutioner, arg)
 
     int32_t status = -999;
     bool sent = false;
+    Serial.print(count++);
 
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL:
@@ -31,7 +34,7 @@ NIL_THREAD(CommandExecutioner, arg)
             sent = homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
             break;
           case TESTING_QSN_MAINLIGHTS_STATUS:
-            sent = homeNetwork.sendQuestion(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS, &status);
+            sent = homeNetwork.sendQuestion(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS, &status, TESTING_ANSWER_TIMEOUT);
             break;
           case TESTING_CMD_SPEAKER_MUTE_TOGGLE:
             sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);

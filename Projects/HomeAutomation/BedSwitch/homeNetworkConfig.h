@@ -9,3 +9,8 @@
 
 // How often to auto update network. Should be short because this node is parent for many child nodes
 #define HOME_AUTOUPDATE_DELAY 5
+
+#define HOME_QUESTION_TIMEOUT 100
+
+#define CMD_UPDATE_LED 1
+#define CMD_APARTMENT_TOGGLE 2

@@ -22,7 +22,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, NULL);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
@@ -30,12 +30,9 @@ void setup() {
 
   nilSysBegin(); // Start Nil RTOS.
 }
-NIL_WORKING_AREA(buttonThread, 100); // 100 bytes seems to work fine
-NIL_WORKING_AREA(apartmentStatusUpdater, 100); // 100 bytes seems to work fine
-NIL_WORKING_AREA(apartmentStatusLEDThread, 0); // 0 bytes seems to work fine
 
 void loop() {
-  printStackInfo(); // Print stack information
+  //printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

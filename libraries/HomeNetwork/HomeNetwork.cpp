@@ -1,5 +1,7 @@
 /**
 *  HomeNetwork.cpp
+* BE CAREFUL WITH SERIAL PRINTS!
+* TOO MANY SERIAL PRINTS AND COMMANDS WONT WORK CORRECTLY!!
 */
 
 #include "HomeNetwork.h"
@@ -13,11 +15,14 @@ HomeNetwork::HomeNetwork(RF24& _radio, RF24Network& _network): radio(_radio), ne
 
 void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsigned char,int32_t))
 {
+  delay(2000); //Give some time for capacitor to charge up and stabilize before initializing RF24 module!
   radio.begin(); // Initialize radio
   network.begin(HOME_SETTING_CHANNEL, nodeID); // Start mesh Network
   // Radio settings must be run after network.begin
   radio.setPALevel(HOME_SETTING_POWERAMPLIFIERLEVEL);
   radio.setDataRate(HOME_SETTING_DATARATE);
+  network.txTimeout = 0; // Set to 0 to use the normal auto retry period defined by radio.setRetries()
+  radio.setRetries(HOME_SETTING_RETRY_DELAY, HOME_SETTING_RETRY_TIMES);
 
   //Clear all incoming queued messages that was received by RF24 module before Arduino completed boot
   // while(1){
@@ -65,26 +70,25 @@ void HomeNetwork::update()
       unsigned char msgType;
       int32_t msgContent;
       uint16_t msgSender = read(&msgContent, &msgType);
-      if(debug)
-      Serial.print("msgType:");
       if(msgType == HOME_TYPE_COMMAND || msgType ==  HOME_TYPE_QUESTION){ //A Command/Question w/ confirmation request
         if(debug)
-        Serial.print("Normal msgType w/ confirmation->");
-        sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION); // Send back confirmation
+        Serial.print(F("msgType: Normal msgType w/ confirmation->"));
+        // SPAM CONFIRMATION MESSAGE BACK TO MAKE SURE IT GET RECEIVED!!!
+        for(uint8_t i=0 ; i<HOME_SETTING_DEFAULT_SPAM_CONFIRMATION_TIMES ; i++){
+          sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION); // Send back confirmation
+        }
         pmsgReceivedF(msgSender, msgType, msgContent); // deliver message to Sketch
       } else if(msgType == HOME_TYPE_COMMAND_FAST){ // Fast command, no confirmation message back
         if(debug)
-        Serial.print("Command fast->");
+        Serial.print(F("Command fast->"));
         pmsgReceivedF(msgSender, HOME_TYPE_COMMAND, msgContent); // deliver message to Sketch
       } else if(msgType ==  HOME_TYPE_QUESTION_FAST){// Fast question, no confirmation message back
         if(debug)
-        Serial.print("Question fast->");
+        Serial.print(F("Question fast->"));
         pmsgReceivedF(msgSender, HOME_TYPE_QUESTION, msgContent); // deliver message to Sketch
       }
-      else { // default
-        if(debug)
-        Serial.print("default msgType->");
-        pmsgReceivedF(msgSender, msgType, msgContent); //no confirmation message back, deliver message to Sketch
+      else {
+        // Useless spam or trash talk gets here
       }
     }
 
@@ -121,9 +125,6 @@ void HomeNetwork::setDebug(bool status){
 **/
 void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
-  if(debug)
-  Serial.print("sendFast()->");
-
   switch(msgType){
     case HOME_TYPE_COMMAND:
     msgType = HOME_TYPE_COMMAND_FAST;
@@ -151,19 +152,20 @@ void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
   if(debug)
-  Serial.print("send()->");
+  Serial.print(F("send()->"));
 
   setNetworkUpdateStatus(false); // Pause autoUpdate
 
   // Set receiver of message
   RF24NetworkHeader header(msgReceiver, msgType);
 
+  int32_t msgResponse;
+
   // network.write() function returns wether someone picked up a message,
   // doesn't have to be the node you are trying to send to,
   // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
   network.write(header, &msgContent, sizeof(msgContent));
 
-  int32_t msgResponse;
   // Read answer and send back
   const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
 
@@ -178,7 +180,7 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
   if(debug)
-  Serial.print("sendCommand()->");
+  Serial.print(F("sendCommand()->"));
   return send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
 }
 
@@ -188,43 +190,39 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
 * A response is expected
 * returns whether answer was received or not
 **/
-bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
-  if(debug)
-  Serial.print("sendQuestion()->");
+bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse, uint16_t timeout){
 
   setNetworkUpdateStatus(false); // Pause autoUpdate
 
+  if(debug)
+  Serial.print(F("sendQuestion()->"));
   // Send question
   // bool questionSent = send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
   sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION_FAST); // Send question
-  if(debug){
-    Serial.print("Question sent");
-    // Serial.print(":");
-    // Serial.print(questionSent);
-    Serial.print("->");
-  }
-  bool answerReceived = false;
   // if(questionSent){
   // Read answer and send back
-  answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, HOME_SETTING_DEFAULT_TIMEOUT_ANSWER);
+  bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, timeout);
   // }
   if(debug){
-    Serial.print("Answer received:");
-    Serial.print(answerReceived);
-    Serial.print("->");
+    if(answerReceived){
+      Serial.print(F("Answer received->"));
+    }
   }
-
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
   // if(!questionSent || !answerReceived){
   if(!answerReceived){
-
     return false;
   } else {
     return true;
   }
 }
+
+bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
+  sendQuestion(msgReceiver, msgContent, pmsgResponse);
+}
+
 
 /**
 * readAnswer
@@ -232,8 +230,6 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 **/
 bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType, int32_t *pmsgResponse, uint16_t timeout)
 {
-  if(debug)
-  Serial.print("readAnswer()->");
   int32_t msgSenderReceived = -1;
   unsigned char msgTypeReceived = 'Z';
   int32_t msgReceived = 0;
@@ -243,27 +239,26 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
     network.update(); // Check the network regularly for the entire network to function properly
     if (millis() - started_waiting_at > timeout) {
       if(debug)
-      Serial.print("timeout_readanswer->");
+      Serial.print(F("TIMED OUT! NO ANSWER RECEIVED!->"));
       return false;
     }
     if(network.available())
     {
       msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-      if(debug)
-      Serial.print("received answer: ");
       if(msgSenderReceived == *pmsgReceiver && msgTypeReceived == msgType){
-        if(debug)
-        Serial.print("correct->");
         break;
-      } else {
+      } else if(msgSenderReceived != *pmsgReceiver){
         if(debug)
-        Serial.print("not correct->");
+        Serial.print(F("MESSAGE RECEIVED WAS NOT FROM CORRECT NODE!->"));
+        return false;
+      } else if(msgTypeReceived != msgType){
+        if(debug)
+        Serial.print(F("MESSAGE RECEIVED HAS WRONG MESSAGE TYPE!->"));
+        return false;
       }
     }
     nilThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
   }
-  if(debug)
-  Serial.print("done read->");
 
   *pmsgResponse = msgReceived; // Save answer to variable
 
@@ -272,7 +267,7 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
 
 void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
   if(debug)
-  Serial.print("respondToQuestion()->");
+  Serial.print(F("respondToQuestion()->"));
   sendFast(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
 }
 

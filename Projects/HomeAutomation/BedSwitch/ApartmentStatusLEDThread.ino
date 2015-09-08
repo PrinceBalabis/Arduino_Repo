@@ -1,5 +1,5 @@
 uint8_t ledBrightness = minLEDBrightness;
-
+NIL_WORKING_AREA(apartmentStatusLEDThread, 0); // 0 bytes seems to work fine
 NIL_THREAD(ApartmentStatusLEDThread, arg) {
   pinMode(ledPin, OUTPUT);
   Serial.println(F("Started Apartment Status LED Thread"));
