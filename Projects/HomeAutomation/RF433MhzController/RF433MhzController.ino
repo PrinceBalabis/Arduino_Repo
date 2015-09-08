@@ -23,13 +23,14 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   Serial.println(F("RF 433 MHz Controller"));
 
   SPI.begin(); // SPI is used by homeNetwork
 
   //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
+  homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));
 

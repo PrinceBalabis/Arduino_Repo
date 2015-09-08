@@ -14,6 +14,7 @@
 #define HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION 100 // The amount of time to wait for a confirmation after sending command(A very fast node can take minimum 100ms to respond, make sure its at least that)
 #define HOME_SETTING_DEFAULT_SPAM_CONFIRMATION_TIMES 5 // The amount of times to spam confirmation return message in order to make sure the confirmation message is received. Too low and the confirmation message maybe wont reach, too many and it will be overkill and block other communications!
 #define HOME_SETTING_DEFAULT_SPAM_ANSWER_TIMES 5 // The amount of times to spam answer return message in order to make sure the answer message is received. Too low and the confirmation message maybe wont reach, too many and it will be overkill and block other communications!
+#define HOME_SETTING_DEFAULT_SEND_RETRY_TIMES 5 // The amount of times to try and send a message w/ confirmation
 #define HOME_SETTING_DEFAULT_TIMEOUT_ANSWER 300 // The amount of time to wait for an answer after sending question
 #define HOME_SETTING_DEFAULT_TIME_READ 1 // How often to check if a confirmation or answer has been received after sending either command or question
 #define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 5 // How often to update the RF24 Home Network

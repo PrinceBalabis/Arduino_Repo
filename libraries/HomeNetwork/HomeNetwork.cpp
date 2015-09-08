@@ -149,7 +149,7 @@ void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned ch
 * This function differs from send function by that this sends a message AND
 * waits for a confirmation-message back from the receiver of the initial message
 **/
-bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
+bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType, uint8_t retryTimes, uint16_t timeout)
 {
   if(debug)
   Serial.print(F("send()->"));
@@ -160,14 +160,23 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
   RF24NetworkHeader header(msgReceiver, msgType);
 
   int32_t msgResponse;
+  bool answerReceived;
 
-  // network.write() function returns wether someone picked up a message,
-  // doesn't have to be the node you are trying to send to,
-  // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
-  network.write(header, &msgContent, sizeof(msgContent));
+  for(uint8_t i=0 ; i<retryTimes ; i++){
+    // network.write() function returns wether someone picked up a message,
+    // doesn't have to be the node you are trying to send to,
+    // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
+    network.write(header, &msgContent, sizeof(msgContent));
 
-  // Read answer and send back
-  const bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
+    // Read answer and send back
+    answerReceived = readAnswer(&msgReceiver, HOME_TYPE_CONFIRMATION, &msgResponse, timeout);
+    if(answerReceived){
+      break; // when answer is received stop resending message
+    } else {
+      if(debug)
+      Serial.print(F("FAILED to send...Resending->"));
+    }
+  }
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
@@ -178,10 +187,21 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
   }
 }
 
+// This function acts as a default send function but with default retry time and timeout
+bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType){
+  return send(msgReceiver, msgContent, msgType, HOME_SETTING_DEFAULT_SEND_RETRY_TIMES, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
+}
+
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
   if(debug)
   Serial.print(F("sendCommand()->"));
   return send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
+}
+
+bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t retryTimes, uint16_t timeout){
+  if(debug)
+  Serial.print(F("sendCommand()->"));
+  return send(msgReceiver, msgContent, HOME_TYPE_COMMAND, retryTimes, timeout);
 }
 
 /**

@@ -23,7 +23,9 @@ public:
 
   void sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
+  bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType, uint8_t retryTimes, uint16_t timeout);
   bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
+  bool sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t retryTimes, uint16_t timeout);
   bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
   bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse, uint16_t timeout);
 

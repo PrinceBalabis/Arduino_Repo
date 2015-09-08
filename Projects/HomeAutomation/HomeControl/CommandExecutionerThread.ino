@@ -9,7 +9,7 @@ static int32_t commandToExecute = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 100); //65 bytes works great
+NIL_WORKING_AREA(commandExecutioner, 130); //65 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
@@ -45,7 +45,7 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.print(F("Toggling Main Lights"));
             break;
           case BUTTON_PAINTINGLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE);
+            sent = homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE, 1, 1000); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
             Serial.print(F("Toggling Painting Lights"));
             break;
           case BUTTON_SPEAKER_POWER:

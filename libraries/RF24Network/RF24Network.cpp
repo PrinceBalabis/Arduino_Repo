@@ -499,13 +499,13 @@ void RF24Network::sleepNode( unsigned int cycles, int interruptPin ){
   #else
   WDTCSR |= _BV(WDIE);
   #endif
-  
+
   while(sleep_cycles_remaining){
     sleep_mode();                        // System sleeps here
   }                                     // The WDT_vect interrupt wakes the MCU from here
   sleep_disable();                     // System continues execution here when watchdog timed out
   detachInterrupt(interruptPin);
-  
+
   #if defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
 	WDTCR &= ~_BV(WDIE);
   #else
