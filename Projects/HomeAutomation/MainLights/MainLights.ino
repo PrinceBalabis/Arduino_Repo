@@ -13,7 +13,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   Serial.println(F("MainLights Node"));
 
   initLights();
@@ -21,7 +21,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 

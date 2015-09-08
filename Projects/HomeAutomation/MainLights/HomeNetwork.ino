@@ -3,7 +3,7 @@
  * This function is executed automatically by the HomeNetwork Library when a message is received.
  */
 
-uint8_t count = 0;
+int32_t count = 0;
 
 void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
   Serial.print(F("New Message.. "));

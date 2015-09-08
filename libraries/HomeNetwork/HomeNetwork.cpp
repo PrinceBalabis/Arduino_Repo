@@ -88,7 +88,7 @@ void HomeNetwork::update()
         pmsgReceivedF(msgSender, HOME_TYPE_QUESTION, msgContent); // deliver message to Sketch
       }
       else {
-        // Useless spam or trash talk gets here
+        // Useless spam or trash talk gets here, like HOME_TYPE_CONFIRMATION-messages or HOME_TYPE_RESPONSE-messages
       }
     }
 
@@ -197,30 +197,24 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
   if(debug)
   Serial.print(F("sendQuestion()->"));
   // Send question
-  // bool questionSent = send(msgReceiver, msgContent, HOME_TYPE_QUESTION); // Send question
   sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION_FAST); // Send question
-  // if(questionSent){
-  // Read answer and send back
-  bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, timeout);
-  // }
-  if(debug){
-    if(answerReceived){
-      Serial.print(F("Answer received->"));
-    }
-  }
+  bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, timeout); // Read answer and send back
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
-  // if(!questionSent || !answerReceived){
-  if(!answerReceived){
-    return false;
-  } else {
+  if(answerReceived){
+    if(debug)
+    Serial.print(F("Answer received->"));
     return true;
+  } else {
+    if(debug)
+    Serial.print(F("NO ANSWER WAS RECEIVED! ->"));
+    return false;
   }
 }
 
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse){
-  sendQuestion(msgReceiver, msgContent, pmsgResponse);
+  sendQuestion(msgReceiver, msgContent, pmsgResponse, HOME_SETTING_DEFAULT_TIMEOUT_ANSWER);
 }
 
 
@@ -268,7 +262,10 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
 void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
   if(debug)
   Serial.print(F("respondToQuestion()->"));
-  sendFast(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
+  // SPAM ANSWER MESSAGE BACK TO MAKE SURE IT GET RECEIVED!!!
+  for(uint8_t i=0 ; i<HOME_SETTING_DEFAULT_SPAM_ANSWER_TIMES ; i++){
+    sendFast(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
+  }
 }
 
 
