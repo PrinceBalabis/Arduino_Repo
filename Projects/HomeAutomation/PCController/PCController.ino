@@ -21,10 +21,9 @@ HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   //Serial.begin(9600); // This needs to be commented out in order to be stable
-
-  //  while (!Serial) {
-  //    ; // wait for serial port to connect. Needed for Leonardo only
-  //  }
+   // while (!Serial) {
+     // ; // wait for serial port to connect. Needed for Leonardo only
+    //}
 
   SPI.begin(); // SPI is used by homeNetwork
 

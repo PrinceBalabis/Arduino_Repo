@@ -16,7 +16,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   Serial.println(F("Speaker Controller"));
   SPI.begin(); // SPI is used by homeNetwork
 

@@ -37,13 +37,13 @@ static void Thread2(void* arg) {
     digitalWrite(LED_PIN, HIGH);
 
     // Sleep for 200 milliseconds.
-    vTaskDelay((1000L * configTICK_RATE_HZ) / 1000L);
+    vTaskDelay((200L * configTICK_RATE_HZ) / 1000L);
 
     // Signal thread 1 to turn LED off.
     xSemaphoreGive(sem);
 
     // Sleep for 200 milliseconds.
-    vTaskDelay((1000L * configTICK_RATE_HZ) / 1000L);
+    vTaskDelay((200L * configTICK_RATE_HZ) / 1000L);
   }
 }
 //------------------------------------------------------------------------------
