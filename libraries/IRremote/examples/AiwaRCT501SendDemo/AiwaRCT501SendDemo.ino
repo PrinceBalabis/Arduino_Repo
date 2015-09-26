@@ -6,18 +6,21 @@
  * http://arcfn.com
  */
 
+#include "IRremote.h"
 
-#include <IRremote.h>
+#define POWER 0x7F80
+#define AIWA_RC_T501
 
 IRsend irsend;
 
-void setup()
-{
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Arduino Ready");
 }
 
 void loop() {
-	
-		irsend.sendNEC(0xFF02FD, 32);
-		delay(1000);
-	
+  if (Serial.read() != -1) {
+    irsend.sendAiwaRCT501(POWER);
+    delay(60); // Optional
+  }
 }

@@ -71,30 +71,6 @@
 #define HOME_SPEAKER_CMD_MODE_PC 10
 #define HOME_SPEAKER_CMD_MODE_LINEIN 11
 
-//***********************PC Controller************************************************************
-//Fourth child of Home Control
-#define HOME_PC_ID 041
-
-// Command(message type: typeCommand)
-#define HOME_PC_CMD_MUTE_ON 1
-#define HOME_PC_CMD_MUTE_OFF 2
-#define HOME_PC_CMD_MUTE_TOGGLE 3
-#define HOME_PC_CMD_MEDIA_PLAYPAUSE 4
-#define HOME_PC_CMD_MEDIA_STOP 5
-#define HOME_PC_CMD_MEDIA_NEXT 6
-#define HOME_PC_CMD_MEDIA_PREVIOUS 7
-#define HOME_PC_CMD_MONITORS_DISABLE 8
-#define HOME_PC_CMD_MONITORS_ENABLE 9
-#define HOME_PC_CMD_VOLUME_UP 10
-#define HOME_PC_CMD_VOLUME_DOWN 11
-#define HOME_PC_CMD_VOLUME_UP_BUNCH 12
-#define HOME_PC_CMD_VOLUME_DOWN_BUNCH 13
-#define HOME_PC_CMD_VOLUME_PRESET_MAX 14
-#define HOME_PC_CMD_VOLUME_PRESET_MEDIUM 15
-#define HOME_PC_CMD_VOLUME_PRESET_LOW 16
-#define HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT 17
-#define HOME_PC_CMD_SPOTIFY_PLAYLIST_DINNER 18
-#define HOME_PC_CMD_SPOTIFY_PLAYLIST_MORNING 19
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
 #define HOME_TEST_ID 05
