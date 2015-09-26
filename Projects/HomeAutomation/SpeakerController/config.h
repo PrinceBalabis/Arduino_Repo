@@ -15,14 +15,14 @@
  *  ------------------------------------
  */
 // NEXTBASE IR codes
-const unsigned long speakerIRPower = 0xFFC23D;
-const unsigned long speakerIRMute = 0xFF02FD;
-const unsigned long speakerIRUpVolume = 0xFFF00F;
-const unsigned long speakerIRDownVolume = 0xFF708F;
-const unsigned long speakerIRMode = 0xFF40BF;
-const unsigned long speakerIRLeft = 0xFF22DD;
-const unsigned long speakerIRRight = 0xFF32CD;
-const unsigned long speakerIROK = 0xFF926D;
+#define SPEAKER_IR_POWER 0xFFC23D
+#define SPEAKER_IR_MUTE 0xFF02FD
+#define SPEAKER_IR_UPVOLUME 0xFFF00F
+#define SPEAKER_IR_DOWNVOLUME 0xFF708F
+#define SPEAKER_IR_MODE 0xFF40BF
+#define SPEAKER_IR_LEFT 0xFF22DD
+#define SPEAKER_IR_RIGHT 0xFF32CD
+#define SPEAKER_IR_OK 0xFF926D
 
 //Connect 940 nm IR LED with a resistor to pin 3
 
@@ -31,4 +31,4 @@ const unsigned long speakerIROK = 0xFF926D;
  *  EEPROM Addresses
  *  ------------------------------------
  */
-const uint8_t speakerModeAddress = 0;
+#define SPEAKER_EEPROM_MODE_ADDRESS 0

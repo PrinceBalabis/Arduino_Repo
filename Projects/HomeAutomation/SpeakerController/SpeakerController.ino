@@ -8,12 +8,15 @@
 #include <SPI.h>
 #include <HomeNetwork.h>
 #include "config.h"
-#include <CIRremote.h>
+#include <IRLib.h>
 #include <EEPROM.h>
 
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
+
+// Instance of the IRsend class
+IRsend irsend;
 
 void setup() {
   //Serial.begin(115200);

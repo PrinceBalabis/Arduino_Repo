@@ -15,7 +15,7 @@ NIL_THREAD(CommandExecutioner, arg)
 
   while (1)
   {
-    // Wait for signal from either HNListenThread or Keypad Thread to run this loop
+    //Wait for signal from either HNListenThread or Keypad Thread to run this loop
     nilSemWait(&cmdExSem);
 
     switch (commandToExecute) {
