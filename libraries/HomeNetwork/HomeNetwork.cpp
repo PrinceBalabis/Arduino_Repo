@@ -217,8 +217,13 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
   if(debug)
   Serial.print(F("sendQuestion()->"));
   // Send question
-  sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION_FAST); // Send question
-  bool answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, timeout); // Read answer and send back
+  bool answerReceived;
+  for(int i = 0; i < HOME_SETTING_DEFAULT_QUESTION_RETRY_TIMES; i++){
+    sendFast(msgReceiver, msgContent, HOME_TYPE_QUESTION_FAST); // Send question
+    answerReceived = readAnswer(&msgReceiver, HOME_TYPE_RESPONSE, pmsgResponse, timeout); // Read answer and send back
+    if(answerReceived)
+      break;
+  }
 
   setNetworkUpdateStatus(true); // Resume autoUpdate
 
