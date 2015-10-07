@@ -23,7 +23,6 @@
  *  Webserver
  *  ------------------------------------
  */
-#define RESET_PIN A1
 #define DEBUG_TOGGLE 1
 #define DEBUG_LED A0
 
