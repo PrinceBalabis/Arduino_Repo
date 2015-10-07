@@ -24,7 +24,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Home Network
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));

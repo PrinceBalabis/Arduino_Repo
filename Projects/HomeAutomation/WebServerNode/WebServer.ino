@@ -170,6 +170,35 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
   return answerReceived;
 }
 
+//void sendGetRequest(String command) {
+  // Clear Serial communication before sending command
+//  while (esp8266.available()) { // When serial data is available from ESP-05
+//    esp8266.read(); // Throw out data
+ // }
+
+  //send
+  //Serial1.print("AT+CIPSEND=");
+ // Serial1.println(sendcommand.length());
+
+  //debug the command
+ // Serial.print("AT+CIPSEND=");
+ // Serial.println(sendcommand.length());
+
+ // esp8266.println("AT+CIPSTART=\"TCP\",\"192.168.1.2\", 5060"); // Send to ESP-05
+
+  // Receive response from ESP-05
+ // unsigned long startTime = millis();
+ // while ((startTime + 5000) > millis()) {
+  //  if (esp8266.available()) { // When serial data is available from ESP-05
+  //    answerReceived = true;
+ //     if (debug)
+ //       Serial.write(esp8266.read()); // Write to serial
+ //     else
+ //       esp8266.read(); // Throw out data
+ //   }
+ // }
+//}
+
 void initESP8266() {
   if (sendCommand("AT+RST", 3000, DEBUG_TOGGLE)) { // Reset module
     digitalWrite(DEBUG_LED, HIGH);   // turn the LED on to indicate start successfull
@@ -178,17 +207,17 @@ void initESP8266() {
     sendCommand("AT+CIPMUX=1", 2000, DEBUG_TOGGLE); // configure for multiple connections
     sendCommand("AT+CIPSERVER=1,9500", 1000, DEBUG_TOGGLE); // turn on server on port 9500
     sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
-    
+
     //Blink LED
     digitalWrite(DEBUG_LED, HIGH);
     nilThdSleepMilliseconds(100);
     digitalWrite(DEBUG_LED, HIGH);
-    
+
     Serial.println("Server Ready and waiting clients");
   } else {
     digitalWrite(DEBUG_LED, LOW);   // turn the LED on to indicate start successfull
     Serial.println("ESP-05 initialization failed!");
-    while(1);
+    while (1);
   }
 
 
