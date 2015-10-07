@@ -171,32 +171,32 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
 }
 
 //void sendGetRequest(String command) {
-  // Clear Serial communication before sending command
+// Clear Serial communication before sending command
 //  while (esp8266.available()) { // When serial data is available from ESP-05
 //    esp8266.read(); // Throw out data
- // }
+// }
 
-  //send
-  //Serial1.print("AT+CIPSEND=");
- // Serial1.println(sendcommand.length());
+//send
+//Serial1.print("AT+CIPSEND=");
+// Serial1.println(sendcommand.length());
 
-  //debug the command
- // Serial.print("AT+CIPSEND=");
- // Serial.println(sendcommand.length());
+//debug the command
+// Serial.print("AT+CIPSEND=");
+// Serial.println(sendcommand.length());
 
- // esp8266.println("AT+CIPSTART=\"TCP\",\"192.168.1.2\", 5060"); // Send to ESP-05
+// esp8266.println("AT+CIPSTART=\"TCP\",\"192.168.1.2\", 5060"); // Send to ESP-05
 
-  // Receive response from ESP-05
- // unsigned long startTime = millis();
- // while ((startTime + 5000) > millis()) {
-  //  if (esp8266.available()) { // When serial data is available from ESP-05
-  //    answerReceived = true;
- //     if (debug)
- //       Serial.write(esp8266.read()); // Write to serial
- //     else
- //       esp8266.read(); // Throw out data
- //   }
- // }
+// Receive response from ESP-05
+// unsigned long startTime = millis();
+// while ((startTime + 5000) > millis()) {
+//  if (esp8266.available()) { // When serial data is available from ESP-05
+//    answerReceived = true;
+//     if (debug)
+//       Serial.write(esp8266.read()); // Write to serial
+//     else
+//       esp8266.read(); // Throw out data
+//   }
+// }
 //}
 
 void initESP8266() {
@@ -215,9 +215,11 @@ void initESP8266() {
 
     Serial.println("Server Ready and waiting clients");
   } else {
-    digitalWrite(DEBUG_LED, LOW);   // turn the LED on to indicate start successfull
-    Serial.println("ESP-05 initialization failed!");
-    while (1);
+    Serial.println("ESP-05 initialization failed! RESETTING ARDUINO....");
+    //digitalWrite(DEBUG_LED, LOW);   // turn the LED on to indicate start successfull
+    //while (1);
+    pinMode(RESET_PIN, OUTPUT);
+    digitalWrite(RESET_PIN, LOW);
   }
 
 

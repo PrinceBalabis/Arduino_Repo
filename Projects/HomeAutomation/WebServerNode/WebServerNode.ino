@@ -44,6 +44,7 @@ HomeNetwork homeNetwork(radio, network);
 SoftwareSerial esp8266(2, 3);
 
 void setup() {
+  digitalWrite(RESET_PIN, HIGH);
   Serial.begin(115200);
   Serial.println(F("Home Network Testing Node"));
 
