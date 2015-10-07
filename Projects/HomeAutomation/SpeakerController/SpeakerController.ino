@@ -19,12 +19,12 @@ HomeNetwork homeNetwork(radio, network);
 IRsend irsend;
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   Serial.println(F("Speaker Controller"));
   SPI.begin(); // SPI is used by homeNetwork
 
   // Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));

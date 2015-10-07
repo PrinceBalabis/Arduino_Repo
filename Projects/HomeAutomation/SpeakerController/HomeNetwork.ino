@@ -21,7 +21,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
 /**
 *  Thread for the Home Network
 **/
-NIL_WORKING_AREA(homeNetworkThread, 80); // 32 bytes seems to work fine even with Home Network debug on
+NIL_WORKING_AREA(homeNetworkThread, 100); // 32 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
 {
   Serial.println("Started HomeNetworkThread");
