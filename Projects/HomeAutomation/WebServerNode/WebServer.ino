@@ -215,7 +215,7 @@ void initESP8266() {
 
     Serial.println("Server Ready and waiting clients");
   } else {
-    Serial.println("ESP-05 initialization failed! RESETTING ARDUINO....");
+    Serial.println("ESP-05 initialization failed! PLEASE RESET POWER SWITCH....");
     digitalWrite(DEBUG_LED, LOW);   // turn the LED off to indicate start unsuccessfull
     while (1);
   }
