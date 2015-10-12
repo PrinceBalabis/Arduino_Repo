@@ -1,6 +1,6 @@
 /**
- * http://192.168.1.18:60000/12
- * http://192.168.1.18:60000/3
+ * http://192.168.1.18:9500/12
+ * http://192.168.1.18:9500/3
  */
 
 #include <SoftwareSerial.h>
@@ -104,7 +104,7 @@ uint8_t checkNewClient() {
 
   delay(100); // Let the module think for a while
 
-  hc21.find("60000,0"); // advance cursor to "new line" in order to skip first row of server information
+  hc21.find(",0"); // advance cursor to "new line" in order to skip first row of server information
   hc21.read(); // Jump over \n
   hc21.read(); // Jump over \n
 
@@ -155,7 +155,7 @@ void initHC21() {
   Serial.print(F("Configuring module as server..."));
   initCommand("AT+ATM=!1\n\r");
   Serial.print(F("Starting server..."));
-  initCommand("AT+SKCT=0,1,0,60000\n\r");
+  initCommand("AT+SKCT=0,1,0,9500\n\r");
 
   Serial.println(F("Server initalized and idle.."));
 }
