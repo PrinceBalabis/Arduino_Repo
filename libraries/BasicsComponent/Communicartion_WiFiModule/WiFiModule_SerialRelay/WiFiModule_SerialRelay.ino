@@ -8,8 +8,8 @@
  * Restart to save settings
  *    AT+RST
  *
- * Make sure the ESP-05 has at least 200-300 mA!!!! (by using separate power supply)
- * Runs at 3.3V
+ * Make sure the Wi-Fi module has at least 200-300 mA!!!! (by using separate power supply)
+ * Both ESP-05 and HC-21 runs at 3.3V
  * 
  * If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
  */
@@ -19,7 +19,7 @@ SoftwareSerial mySerial(2, 3);
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("starting esp8266 com sketch");
+  Serial.println("Started Wi-Fi module Serial Relay Sketch");
 
   // set the data rate for the SoftwareSerial port
   mySerial.begin(38400);
