@@ -4,12 +4,12 @@
  * 
  * How to Send a GET HTTP Request from a simple internet browser:
  * Enter this in browser to send command 1
- * http://princehome.duckdns.org:9500?c1
+ * http://princehome.duckdns.org:9500/1
  */
 // If a thread weirdly crashes then increase the stack value
 
 #include <NilRTOS.h>
-#include <NilSerial.h>
+//#include <NilSerial.h>
 #include <RF24Network.h>
 #include <RF24.h>
 #include <SPI.h>
@@ -21,15 +21,15 @@ RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
-#define Serial NilSerial
+//#define Serial NilSerial
 
-SoftwareSerial esp8266(2, 3);
+SoftwareSerial hc21(2, 3);
 
 void setup() {
   Serial.begin(115200);
   Serial.println(F("Home Network Testing Node"));
 
-  esp8266.begin(38400); // your esp's baud rate might be different
+  hc21.begin(38400); // your esp's baud rate might be different
 
   SPI.begin(); // SPI is used by homeNetwork
 
