@@ -2,13 +2,13 @@
 NIL_WORKING_AREA(webServerThread, 90);
 
 NIL_THREAD(WebServerThread, arg) {
-  Serial.println(F("Started WebServerThread"));
+  DEBUG_PRINTLN(F("Started WebServerThread"));
 
   // initialize digital pin 13 as an output.
   pinMode(DEBUG_LED, OUTPUT);
   digitalWrite(DEBUG_LED, LOW); // Turn LED off to indicate Webserver is not started
 
-  Serial.println(F("Initializing HC-21.."));
+  DEBUG_PRINTLN(F("Initializing HC-21.."));
   initHC21();
 
   while (1) {
@@ -17,8 +17,8 @@ NIL_THREAD(WebServerThread, arg) {
     if (newClient != 0) { // What happens when a new client has connected and sent a GET Request
       int16_t requestGET = readGetRequest(); // Save GET Reqeust
 
-      Serial.print(F("GET Request: "));
-      Serial.println(requestGET);
+      DEBUG_PRINT(F("GET Request: "));
+      DEBUG_PRINTLN(requestGET);
 
       // Respond to GET Request
       hc21.print("AT+SKSND=2,32\n\r"); // Notify Module that a message with max characters should be sent to client
@@ -74,6 +74,7 @@ int16_t readGetRequest() {
  * Returns clients socket number, returns 0 if no client is connected
  */
 uint8_t checkNewClient() {
+  hc21.flush(); // Clean serial buffer before sending command
   char answerReceived[64];
   uint8_t i = 0;
 
@@ -88,8 +89,8 @@ uint8_t checkNewClient() {
   if ((uint8_t)(hc21.peek() - 48) < 100) {
     uint8_t newClient = hc21.peek() - 48;
     hc21.flush(); // Throw out remaining data
-    Serial.print(F("New Client: "));
-    Serial.println(newClient);
+    DEBUG_PRINT(F("New Client: "));
+    DEBUG_PRINTLN(newClient);
     return newClient;
   } else {
     hc21.flush(); // Throw out remaining data
@@ -97,58 +98,60 @@ uint8_t checkNewClient() {
   }
 }
 
-bool initCommand(char cmd[]) {
-  hc21.println(cmd); // Send command to HC-21
+void initCommand(char cmd[]) {
+  while (1) {
+    hc21.flush(); // Clean serial buffer before sending command
+    hc21.println(cmd); // Send command to HC-21
 
-  // Receive response from HC-21
-  char answerReceived;
-  int8_t i = -1;
-  unsigned long startTime = millis();
-  while ((startTime + 5000) > millis()) {
-    if (hc21.available()) { // When serial data is available from HC-21
-      nilThdSleepMilliseconds(1000); // Let buffer fill
-      hc21.find("O"); // advance cursor to "O"
-      answerReceived = hc21.read(); // Save received character, which is hopefully K to return variable
-      hc21.flush(); // Throw out remaining serial data in buffer
-      break; // Get out of waiting loop
+    // Receive response from HC-21
+    char answerReceived;
+    int8_t i = -1;
+    unsigned long startTime = millis();
+    while ((startTime + 5000) > millis()) {
+      if (hc21.available()) { // When serial data is available from HC-21
+        nilThdSleepMilliseconds(1000); // Let buffer fill
+        hc21.find("O"); // advance cursor to "O"
+        answerReceived = hc21.read(); // Save received character, which is hopefully K to return variable
+        hc21.flush(); // Throw out remaining serial data in buffer
+        break; // Get out of waiting loop
+      }
     }
-  }
 
-  nilThdSleepMilliseconds(5000);
+    nilThdSleepMilliseconds(5000);
 
-  if (answerReceived == 'K') {
-    Serial.println(F("Done"));
-    return 1;
-  } else {
-    Serial.println(F("ERROR"));
-    return 0;
+    if (answerReceived == 'K') {
+      DEBUG_PRINTLN(F("Done"));
+      break; // Exit out of init loop
+    } else {
+      DEBUG_PRINT(F("ERROR"));
+      digitalWrite(DEBUG_LED, HIGH);
+      nilThdSleepMilliseconds(50);
+      digitalWrite(DEBUG_LED, LOW);
+      nilThdSleepMilliseconds(50);
+      digitalWrite(DEBUG_LED, HIGH);
+      nilThdSleepMilliseconds(50);
+      digitalWrite(DEBUG_LED, LOW);
+      DEBUG_PRINTLN();
+      DEBUG_PRINTLN();
+      resetFunc();  //Reset Arduino
+    }
   }
 }
 
 void initHC21() {
   nilThdSleepMilliseconds(5000);
 
-  Serial.print(F("Resetting module..."));
+  DEBUG_PRINT(F("Resetting module..."));
   initCommand("AT+Z\n\r");
-  Serial.print(F("Configuring module as server..."));
+  DEBUG_PRINT(F("Configuring module as server..."));
   initCommand("AT+ATM=!1\n\r");
-  Serial.print(F("Starting server..."));
+  DEBUG_PRINT(F("Starting server..."));
   initCommand("AT+SKCT=0,1,0,9500\n\r");
 
-  Serial.print(F("Testing if server initalized correctly..."));
-  if (initCommand("AT+SKSTT=1\n\r")) { // Check if server initialized correctly
-    Serial.println();
-    Serial.println(F("Server initalized and idle.."));
-    Serial.println();
-    digitalWrite(DEBUG_LED, HIGH); // Turn LED on to indicate Webserver is started
-  } else {
-    Serial.println(F("Server FALED TO INITIALIZED......"));
-    Serial.println(F("Server FALED TO INITIALIZED......"));
-    while (1){ // Stop Arduino from continuing to run and blink LED
-      digitalWrite(DEBUG_LED, HIGH);
-      nilThdSleepMilliseconds(50);
-      digitalWrite(DEBUG_LED, LOW); 
-      nilThdSleepMilliseconds(50);
-    }
-  }
+  DEBUG_PRINT(F("Testing if server initalized correctly..."));
+  initCommand("AT+SKSTT=1\n\r"); // Check if server initialized correctly
+  DEBUG_PRINTLN();
+  DEBUG_PRINTLN(F("Server initalized and idle.."));
+  DEBUG_PRINTLN();
+  digitalWrite(DEBUG_LED, HIGH); // Turn LED on to indicate Webserver is started
 }

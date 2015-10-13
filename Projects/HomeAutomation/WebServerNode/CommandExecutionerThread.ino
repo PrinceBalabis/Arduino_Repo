@@ -12,7 +12,7 @@ SEMAPHORE_DECL(cmdExSem, 0);
 NIL_WORKING_AREA(commandExecutioner, 140); // bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
-  Serial.println(F("Started CommandExecutioner thread"));
+  DEBUG_PRINTLN(F("Started CommandExecutioner thread"));
 
   while (TRUE)
   {
@@ -23,22 +23,22 @@ NIL_THREAD(CommandExecutioner, arg)
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // Command that came from the internet
         switch (commandToExecute) {
           case CMD_MAINLIGHTS_TOGGLE:
-            Serial.println(F("Toggle Main Lights command!"));
+            DEBUG_PRINTLN(F("Toggle Main Lights command!"));
             homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
             break;
           case QSN_MAINLIGHTS_STATUS:
 
             break;
           case CMD_APARTMENT_SHUTDOWN:
-            Serial.println(F("Shut-down Apartment Command!"));
+            DEBUG_PRINTLN(F("Shut-down Apartment Command!"));
             shutdownApartment();
             break;
           case CMD_APARTMENT_STARTUP:
-            Serial.println(F("Start-up Apartment Command!"));
+            DEBUG_PRINTLN(F("Start-up Apartment Command!"));
             startupApartment();
             break;
           case CMD_APARTMENT_TOGGLE:
-            Serial.println(F("Toggle Apartment Command!"));
+            DEBUG_PRINTLN(F("Toggle Apartment Command!"));
             if (askApartmentStatus()) {
               shutdownApartment();
             } else {
@@ -46,19 +46,19 @@ NIL_THREAD(CommandExecutioner, arg)
             }
             break;
           case CMD_PAINTINGLIGHTS_TOGGLE:
-            Serial.println(F("Painting Lights Toggle Command!"));
+            DEBUG_PRINTLN(F("Painting Lights Toggle Command!"));
             homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE);
             break;
           case CMD_SPEAKER_MUTE_TOGGLE:
-            Serial.println(F("Speaker Mute Toggle Command!"));
+            DEBUG_PRINTLN(F("Speaker Mute Toggle Command!"));
             homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
             break;
           case CMD_SPEAKER_MODE_TOGGLE:
-            Serial.println(F("Speaker Mode Toggle Command!"));
+            DEBUG_PRINTLN(F("Speaker Mode Toggle Command!"));
             homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MODE_TOGGLE);
             break;
           case CMD_APARTMENT_MOOD_TOGGLE:
-            Serial.println(F("Apartment Mood Toggle Command!"));
+            DEBUG_PRINTLN(F("Apartment Mood Toggle Command!"));
             toggleApartmentMood();
             break;
         }
@@ -84,14 +84,14 @@ void shutdownApartment() {
   homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_OFF);
   homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_OFF);
   homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
-  Serial.println(F("Shut-down Apartment!"));
+  DEBUG_PRINTLN(F("Shut-down Apartment!"));
 }
 
 void startupApartment() {
   homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_ON); // Turn on main lights!
   homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON); // Turn on speaker!
   homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON); // Turn on PC!
-  Serial.println(F("Started-up Apartment!"));
+  DEBUG_PRINTLN(F("Started-up Apartment!"));
 }
 
 bool askApartmentStatus() {

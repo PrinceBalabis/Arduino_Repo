@@ -23,7 +23,7 @@
  *  Webserver
  *  ------------------------------------
  */
-#define DEBUG_TOGGLE 1
+#define DEBUG // Comment this out to disable Serial
 #define DEBUG_LED A0
 
 // Webserver Commands
