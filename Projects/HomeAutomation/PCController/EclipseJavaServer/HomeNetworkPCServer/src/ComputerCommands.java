@@ -1,3 +1,6 @@
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 /**
@@ -7,11 +10,30 @@ import java.io.IOException;
  *
  */
 public class ComputerCommands {
-	
+
 	/**
-	 * Constructor
+	 * Enable monitors
 	 */
-	public ComputerCommands() {
+	public void enableMonitors() {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				Robot robot;
+				try {
+					robot = new Robot();
+
+					robot.keyPress(KeyEvent.VK_CAPS_LOCK);
+					robot.keyRelease(KeyEvent.VK_CAPS_LOCK);
+
+					robot.keyPress(KeyEvent.VK_CAPS_LOCK);
+					robot.keyRelease(KeyEvent.VK_CAPS_LOCK);
+
+				} catch (AWTException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
 	/**
@@ -22,13 +44,38 @@ public class ComputerCommands {
 	}
 
 	/**
-	 * Method which takes on a link to a local .exe file and runs it in an isolated thread
+	 * Start Spotify Chill Playlist
+	 */
+	
+	public void spotifyChillPlaylist() {
+		executeComputerExecutable("\"AutoHotKey/ChillPlaylist.exe\" ");
+	}
+	
+	/**
+	 * Start Spotify Dinner Playlist
+	 */
+	
+	public void spotifyDinnerPlaylist() {
+		executeComputerExecutable("\"AutoHotKey/DinnerPlaylist.exe\" ");
+	}
+	
+	/**
+	 * Start Spotify Workout Playlist
+	 */
+	
+	public void spotifyWorkoutPlaylist() {
+		executeComputerExecutable("\"AutoHotKey/WorkoutPlaylist.exe\" ");
+	}
+	
+	/**
+	 * Method which takes on a link to a local .exe file and runs it in an
+	 * isolated thread
 	 * 
 	 * @param command
 	 *            link to .exe file
 	 */
 	private void executeComputerExecutable(String command) {
-		new Thread(new Runnable(){
+		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
