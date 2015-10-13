@@ -8,6 +8,8 @@ NIL_THREAD(WebServerThread, arg) {
   pinMode(DEBUG_LED, OUTPUT);
   digitalWrite(DEBUG_LED, LOW); // Turn LED off to indicate Webserver is not started
 
+  blinkLED(1000);
+
   DEBUG_PRINTLN(F("Initializing HC-21.."));
   initHC21();
 
@@ -121,16 +123,14 @@ void initCommand(char cmd[]) {
 
     if (answerReceived == 'K') {
       DEBUG_PRINTLN(F("Done"));
+      blinkLED(1000);
       break; // Exit out of init loop
     } else {
       DEBUG_PRINT(F("ERROR"));
-      digitalWrite(DEBUG_LED, HIGH);
-      nilThdSleepMilliseconds(50);
-      digitalWrite(DEBUG_LED, LOW);
-      nilThdSleepMilliseconds(50);
-      digitalWrite(DEBUG_LED, HIGH);
-      nilThdSleepMilliseconds(50);
-      digitalWrite(DEBUG_LED, LOW);
+      blinkLED(500);
+      blinkLED(500);
+      blinkLED(500);
+      blinkLED(500);
       DEBUG_PRINTLN();
       DEBUG_PRINTLN();
       resetFunc();  //Reset Arduino
@@ -155,3 +155,11 @@ void initHC21() {
   DEBUG_PRINTLN();
   digitalWrite(DEBUG_LED, HIGH); // Turn LED on to indicate Webserver is started
 }
+
+void blinkLED(uint16_t time) {
+  digitalWrite(DEBUG_LED, !bitRead(PORTC, 0));
+  nilThdSleepMilliseconds(time);
+  digitalWrite(DEBUG_LED, !bitRead(PORTC, 0));
+  nilThdSleepMilliseconds(time);
+}
+

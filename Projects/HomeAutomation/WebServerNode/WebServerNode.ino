@@ -35,9 +35,9 @@ SoftwareSerial hc21(2, 3);
 
 void setup() {
 
-  #ifdef DEBUG
+#ifdef DEBUG
   Serial.begin(115200);
-  #endif
+#endif
 
   DEBUG_PRINTLN(F("Home Network Testing Node"));
 
