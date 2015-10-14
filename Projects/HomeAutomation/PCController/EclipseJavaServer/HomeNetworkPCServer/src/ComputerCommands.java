@@ -40,7 +40,7 @@ public class ComputerCommands {
 	 * Disable monitors
 	 */
 	public void disableMonitors() {
-		executeComputerExecutable("\"NirCmd/nircmd.exe\" monitor async_off");
+		executeComputerExecutable("\"Addons/nircmd.exe\" monitor async_off");
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class ComputerCommands {
 	 */
 	
 	public void spotifyChillPlaylist() {
-		executeComputerExecutable("\"AutoHotKey/ChillPlaylist.exe\" ");
+		executeComputerExecutable("\"Addons/ChillPlaylist.exe\" ");
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class ComputerCommands {
 	 */
 	
 	public void spotifyDinnerPlaylist() {
-		executeComputerExecutable("\"AutoHotKey/DinnerPlaylist.exe\" ");
+		executeComputerExecutable("\"Addons/DinnerPlaylist.exe\" ");
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class ComputerCommands {
 	 */
 	
 	public void spotifyWorkoutPlaylist() {
-		executeComputerExecutable("\"AutoHotKey/WorkoutPlaylist.exe\" ");
+		executeComputerExecutable("\"Addons/WorkoutPlaylist.exe\" ");
 	}
 	
 	/**

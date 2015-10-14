@@ -33,7 +33,13 @@ public class WebServer {
 			e.printStackTrace();
 		}
 		
-		while(true); // Never end this server software
+		while(true){ // Never end this server software
+			try {
+				Thread.sleep(Long.MAX_VALUE);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
     }
 
     /**
