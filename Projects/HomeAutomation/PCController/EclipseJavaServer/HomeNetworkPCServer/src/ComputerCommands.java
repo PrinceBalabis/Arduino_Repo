@@ -68,6 +68,14 @@ public class ComputerCommands {
 	}
 	
 	/**
+	 * Start Spotify Work Playlist
+	 */
+	
+	public void spotifyWorkPlaylist() {
+		executeComputerExecutable("\"Addons/WorkPlaylist.exe\" ");
+	}
+	
+	/**
 	 * Method which takes on a link to a local .exe file and runs it in an
 	 * isolated thread
 	 * 

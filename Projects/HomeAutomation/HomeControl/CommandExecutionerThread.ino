@@ -33,12 +33,20 @@ NIL_THREAD(CommandExecutioner, arg)
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
         switch (commandToExecute) {
           case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
-            sent = homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT);
+            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT);
             Serial.print(F("Starting Spotify Workout Playlist"));
             break;
           case BUTTON_PC_SPOTIFYPLAYLIST_DINNER:
-            sent = homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_SPOTIFY_PLAYLIST_DINNER);
+            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_DINNER);
             Serial.print(F("Starting Spotify Dinner Playlist"));
+            break;
+          case BUTTON_PC_SPOTIFYPLAYLIST_CHILL:
+            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_CHILL);
+            Serial.print(F("Starting Spotify Chill Playlist"));
+            break;
+          case BUTTON_PC_SPOTIFYPLAYLIST_WORK:
+            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORK);
+            Serial.print(F("Starting Spotify Work Playlist"));
             break;
           case BUTTON_MAINLIGHTS_TOGGLE:
             sent = homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
@@ -73,7 +81,7 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.print(F("Toggling PC Power Switch"));
             break;
           case BUTTON_PC_MONITOR_DISABLE:
-            sent = homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
+            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_MONITOR_DISABLE);
             Serial.print(F("Disabling Monitors"));
             break;
         }

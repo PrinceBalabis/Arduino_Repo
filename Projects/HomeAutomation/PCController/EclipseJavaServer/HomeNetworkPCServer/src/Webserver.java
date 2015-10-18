@@ -26,6 +26,7 @@ public class WebServer {
 	        server.createContext("/3", new SpotifyChillPlaylist());
 	        server.createContext("/4", new SpotifyDinnerPlaylist());
 	        server.createContext("/5", new SpotifyWorkoutPlaylist());
+	        server.createContext("/6", new SpotifyWorkPlaylist());
 	        server.setExecutor(null); // creates a default executor
 	        server.start();
         	System.out.println("Started Webserver");
@@ -109,6 +110,20 @@ public class WebServer {
         	sendResponse(t, "Started Spotify Workout playlist");
         	System.out.println("Started Spotify Workout playlist");
         	new ComputerCommands().spotifyWorkoutPlaylist();;;
+        }
+    }
+    
+    /**
+     * Start Spotify Work playlist
+     * @author Prince
+     *
+     */
+    static class SpotifyWorkPlaylist implements HttpHandler {
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+        	sendResponse(t, "Started Spotify Work playlist");
+        	System.out.println("Started Spotify Work playlist");
+        	new ComputerCommands().spotifyWorkPlaylist();;;
         }
     }
     

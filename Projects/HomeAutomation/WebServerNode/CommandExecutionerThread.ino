@@ -64,8 +64,55 @@ NIL_THREAD(CommandExecutioner, arg)
         }
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Command that came from HomeNetwork
+        pauseWebserver = true;
+        while (!webserverIsPaused)
+          nilThdSleepMilliseconds(5); // Give time for webserver to pause
+          
         switch (commandToExecute) {
+          case HOME_WEBSERVER_CMD_MONITOR_DISABLE:
+            if (!sendGetRequest(1, 192, 168, 1, 2, 5060)) {
+              DEBUG_PRINTLN("Couldnt connect to server!");
+            } else {
+              DEBUG_PRINTLN("Disabled Monitors!");
+            }
+            break;
+          case HOME_WEBSERVER_CMD_MONITOR_ENABLE:
+            if (!sendGetRequest(2, 192, 168, 1, 2, 5060)) {
+              DEBUG_PRINTLN("Couldnt connect to server!");
+            } else {
+              DEBUG_PRINTLN("Enabled Monitors!");
+            }
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_CHILL:
+            if (!sendGetRequest(3, 192, 168, 1, 2, 5060)) {
+              DEBUG_PRINTLN("Couldnt connect to server!");
+            } else {
+              DEBUG_PRINTLN("Started Spotify Chill Playlist!");
+            }
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_DINNER:
+            if (!sendGetRequest(4, 192, 168, 1, 2, 5060)) {
+              DEBUG_PRINTLN("Couldnt connect to server!");
+            } else {
+              DEBUG_PRINTLN("Started Spotify Dinner Playlist!");
+            }
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT:
+            if (!sendGetRequest(5, 192, 168, 1, 2, 5060)) {
+              DEBUG_PRINTLN("Couldnt connect to server!");
+            } else {
+              DEBUG_PRINTLN("Started Spotify Workout Playlist!");
+            }
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_WORK:
+            if (!sendGetRequest(6, 192, 168, 1, 2, 5060)) {
+              DEBUG_PRINTLN("Couldnt connect to server!");
+            } else {
+              DEBUG_PRINTLN("Started Spotify Work Playlist!");
+            }
+            break;
         }
+        pauseWebserver = false;
         break;
     }
   }

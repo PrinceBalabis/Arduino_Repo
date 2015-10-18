@@ -33,13 +33,16 @@ HomeNetwork homeNetwork(radio, network);
 
 SoftwareSerial hc21(2, 3);
 
+bool pauseWebserver = false;
+bool webserverIsPaused = false;
+
 void setup() {
 
 #ifdef DEBUG
   Serial.begin(115200);
 #endif
 
-  DEBUG_PRINTLN(F("Home Network Testing Node"));
+  DEBUG_PRINTLN(F("Home Network Webserver Node"));
 
   hc21.begin(38400); // Your modules baud rate might be different
 

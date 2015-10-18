@@ -25,7 +25,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   Serial.println(F("HomeControl Node"));
 
   // PC Power switch setup

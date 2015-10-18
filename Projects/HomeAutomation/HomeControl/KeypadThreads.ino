@@ -73,7 +73,7 @@ NIL_THREAD(KeypadUpdaterThread, arg) {
   keypad.addEventListener(keypadEvent); // Add an event listener for this keypad
   keypad.setHoldTime(10); // Makes sure "PRESSED" commands doesn't runs twice
   keypad.setDebounceTime(1); //Time until a new key is accepted
-  
+
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
     keypad.getKey();
@@ -109,6 +109,12 @@ NIL_THREAD(KeypadCommandThread, arg)
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
         case BUTTON_PC_SPOTIFYPLAYLIST_DINNER:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          break;
+        case BUTTON_PC_SPOTIFYPLAYLIST_CHILL:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          break;
+        case BUTTON_PC_SPOTIFYPLAYLIST_WORK:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
         case BUTTON_SPEAKER_POWER:

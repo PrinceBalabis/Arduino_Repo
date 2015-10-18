@@ -38,7 +38,8 @@
 #define BUTTON_PC_MONITOR_DISABLE 11
 #define BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT 6
 #define BUTTON_PC_SPOTIFYPLAYLIST_DINNER 5
-
+#define BUTTON_PC_SPOTIFYPLAYLIST_CHILL 7
+#define BUTTON_PC_SPOTIFYPLAYLIST_WORK 8
 /*
 *  ------------------------------------
  *  Keypad Performance
