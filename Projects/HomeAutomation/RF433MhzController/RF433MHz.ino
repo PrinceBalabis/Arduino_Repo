@@ -33,33 +33,3 @@ void togglePaintingLights() {
   transmitter.sendUnit(paintingLightsCode, tempStatus);
   setPaintingLightStatus(tempStatus);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-bool getSpeakerPowerSwitchStatus() {
-  return EEPROM.read(speakerPowerSwitchAddress);
-}
-
-bool setSpeakerPowerSwitchStatus(bool status) {
-  EEPROM.write(speakerPowerSwitchAddress, status);
-}
-
-void setSpeakerPowerSwitchOn() {
-  if (!getSpeakerPowerSwitchStatus()) {
-    transmitter.sendUnit(speakerCode, true);
-    setSpeakerPowerSwitchStatus(true);
-  }
-}
-
-void setSpeakerPowerSwitchOff() {
-  if (getSpeakerPowerSwitchStatus()) {
-    transmitter.sendUnit(speakerCode, false);
-    setSpeakerPowerSwitchStatus(false);
-  }
-}
-
-void toggleSpeakerPowerSwitch() {
-  bool speakerPowerSwitchStatus = !getSpeakerPowerSwitchStatus();
-  transmitter.sendUnit(speakerCode, speakerPowerSwitchStatus);
-  setSpeakerPowerSwitchStatus(speakerPowerSwitchStatus);
-}

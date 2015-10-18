@@ -16,7 +16,6 @@
  *  ------------------------------------
  */
 const uint8_t paintingLightsCode = 1;
-const uint8_t speakerCode = 2;
 
 /*
 *  ------------------------------------
@@ -24,4 +23,3 @@ const uint8_t speakerCode = 2;
  *  ------------------------------------
  */
 const uint8_t paintingLightsAddress = 0;
-const uint8_t speakerPowerSwitchAddress = 1;

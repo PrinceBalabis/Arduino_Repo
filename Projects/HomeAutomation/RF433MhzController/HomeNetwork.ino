@@ -18,18 +18,6 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
           togglePaintingLights();
           Serial.println(F("Toggled Painting Lights"));
           break;
-        case HOME_RF433MHZ_CMD_SPEAKERPOWER_ON:
-          setSpeakerPowerSwitchOn();
-          Serial.println(F("Turned Speaker on"));
-          break;
-        case HOME_RF433MHZ_CMD_SPEAKERPOWER_OFF:
-          setSpeakerPowerSwitchOff();
-          Serial.println(F("Turned Speaker off"));
-          break;
-        case HOME_RF433MHZ_CMD_SPEAKERPOWER_TOGGLE:
-          toggleSpeakerPowerSwitch();
-          Serial.println(F("Toggled Speaker"));
-          break;
       }
       break;
     case HOME_TYPE_QUESTION: // If its a question
@@ -37,10 +25,6 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
         case HOME_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS:
           homeNetwork.respondToQuestion(msgSender, getPaintingLightStatus());
           Serial.println(F("Answered Painting lights status"));
-          break;
-        case HOME_RF433MHZ_QSN_SPEAKER_POWER_STATUS:
-          homeNetwork.respondToQuestion(msgSender, getSpeakerPowerSwitchStatus());
-          Serial.println(F("Answered Speaker status"));
           break;
       }
       break;

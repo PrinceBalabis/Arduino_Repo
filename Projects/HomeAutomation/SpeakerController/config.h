@@ -32,3 +32,10 @@
  *  ------------------------------------
  */
 #define SPEAKER_EEPROM_MODE_ADDRESS 0
+
+/*
+*  ------------------------------------
+ *  Relay for Speaker power switch
+ *  ------------------------------------
+ */
+ #define SPEAKER_POWER_RELAY_PIN 4

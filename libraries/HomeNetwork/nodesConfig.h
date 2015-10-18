@@ -40,19 +40,23 @@
 
 // Question
 #define HOME_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS 1
-#define HOME_RF433MHZ_QSN_SPEAKER_POWER_STATUS 2
 
 // Command
 #define HOME_RF433MHZ_CMD_PAINTINGLIGHTS_ON 1
 #define HOME_RF433MHZ_CMD_PAINTINGLIGHTS_OFF 2
 #define HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE 3
-#define HOME_RF433MHZ_CMD_SPEAKERPOWER_ON 4
-#define HOME_RF433MHZ_CMD_SPEAKERPOWER_OFF 5
-#define HOME_RF433MHZ_CMD_SPEAKERPOWER_TOGGLE 6
 
 //***********************Bed Switch************************************************************
 //Second child of Home Control
-#define HOME_BEDSWITCH_ID 02
+#define HOME_WEBSERVER_ID 021
+
+// Command
+#define HOME_WEBSERVER_CMD_MONITOR_DISABLE 1
+#define HOME_WEBSERVER_CMD_MONITOR_ENABLE 2
+#define HOME_WEBSERVER_CMD_SPOTIFY_CHILL 3
+#define HOME_WEBSERVER_CMD_SPOTIFY_DINNER 4
+#define HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT 5
+#define HOME_WEBSERVER_CMD_SPOTIFY_WORK 6
 
 //***********************Speaker************************************************************
 //Third child of Home Control
@@ -71,6 +75,9 @@
 #define HOME_SPEAKER_CMD_MODE_PC 10
 #define HOME_SPEAKER_CMD_MODE_LINEIN 11
 
+//***********************Bed Switch************************************************************
+//Second child of Main Room Lights
+#define HOME_BEDSWITCH_ID 02
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
 #define HOME_TEST_ID 05
