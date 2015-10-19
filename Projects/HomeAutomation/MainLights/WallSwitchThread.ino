@@ -11,20 +11,25 @@ NIL_THREAD(WallSwitchThread, arg) {
   bool leftSwitchState = 0;
   bool rightSwitchState = 0;
 
-  // Setup switch pins
-  pinMode(WALLSWITCH_PIN_LEFT, INPUT);
-  pinMode(WALLSWITCH_PIN_RIGHT, INPUT);
-
+  // Setup switch pins as inputs
+  //pinMode(4, INPUT);
+  //pinMode(5, INPUT);
+  DDRD &= ~B00110000;
+  PORTD |= _BV(PD4); // Set pullup 
+  PORTD |= _BV(PD5); // Set pullup 
+  
   // Switch setup
-  leftSwitchState = digitalRead(WALLSWITCH_PIN_LEFT);
-  rightSwitchState = digitalRead(WALLSWITCH_PIN_RIGHT);
+  //  leftSwitchState = digitalRead(WALLSWITCH_PIN_LEFT);
+  //  rightSwitchState = digitalRead(WALLSWITCH_PIN_RIGHT);
+  leftSwitchState = LEFT_BUTTON_READ;
+  rightSwitchState = RIGHT_BUTTON_READ;
 
-  while (TRUE) {
-    if (leftSwitchState != digitalRead(WALLSWITCH_PIN_LEFT)) {
+  while (1) {
+    if (leftSwitchState != LEFT_BUTTON_READ) {
       Serial.print("Left switch triggered: ");
       toggleLights();
       leftSwitchState = !leftSwitchState;
-    } else if (rightSwitchState != digitalRead(WALLSWITCH_PIN_RIGHT)) {
+    } else if (rightSwitchState != RIGHT_BUTTON_READ) {
       Serial.print("Right switch triggered: ");
       toggleLights();
       rightSwitchState = !rightSwitchState;

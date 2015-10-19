@@ -50,9 +50,9 @@ const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when ho
 
 /*
 *  ------------------------------------
- *  Components pins
+ *  FastDigitalIO
  *  ------------------------------------
  */
-// PC Power pin pin
-const uint8_t pcPowerPin = 6;
-
+ #define PC_POWER_SWITCH_ON PORTD |= _BV(PD6)
+ #define PC_POWER_SWITCH_OFF PORTD &= ~_BV(PD6)
+ 

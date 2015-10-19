@@ -1,3 +1,11 @@
+/*
+ *  
+ *  Relay/Main Lights
+ *  Ceiling lights relay/ceiling light pin to A0
+ *  Left button to 4
+ *  Right button to 5
+ */
+
 #include <NilRTOS.h>
 #include <NilSerial.h>
 #include <SPI.h>
@@ -13,7 +21,7 @@ RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   Serial.println(F("MainLights Node"));
 
   initLights();

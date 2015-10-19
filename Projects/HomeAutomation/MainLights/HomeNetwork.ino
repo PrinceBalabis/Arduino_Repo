@@ -3,11 +3,8 @@
  * This function is executed automatically by the HomeNetwork Library when a message is received.
  */
 
-int32_t count = 0;
-
 void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
   Serial.print(F("New Message.. "));
-  Serial.print(count++);
   switch (msgType) {
     case HOME_TYPE_COMMAND: // If its a simple command
       switch (msgContent) {

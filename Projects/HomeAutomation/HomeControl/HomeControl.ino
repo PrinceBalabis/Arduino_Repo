@@ -2,7 +2,7 @@
  *  This Sketch is to make a "universal home control".
  *  Controlling PC, lights, speaker & other home electronics
  *  Hardware needed:
- *  - NPN transistor for PC Power switch
+ *  - NPN transistor for PC Power switch to pin 6
  *
  * WARNING: Don't use Digital Pin 10 even if its not used, its reserved by SPI library!
  */

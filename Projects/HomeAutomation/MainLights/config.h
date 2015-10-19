@@ -17,27 +17,18 @@
 
 /*
  *  ------------------------------------
+ *  DigitalIO Fast
+ *  ------------------------------------
+ */
+ #define LEFT_BUTTON_READ  ((PIND & (1 << 4)) > 0)
+ #define RIGHT_BUTTON_READ ((PIND & (1 << 5)) > 0)
+
+/*
+ *  ------------------------------------
  *  EEPROM Addresses
  *  ------------------------------------
  */
 #define EEPROM_MAINLIGHTS 0
 
-/*
- *  ------------------------------------
- *  Wall switches
- *  ------------------------------------
- */
-// Variables for switch pins
-#define WALLSWITCH_PIN_LEFT 4
-#define WALLSWITCH_PIN_RIGHT 5
-
 // How often to check for wall switch changes
-#define WALLSWITCH_UPDATEDELAY 100
-
-/*
- *  ------------------------------------
- *  Relay/Main Lights
- *  ------------------------------------
- */
-// Ceiling lights relay/ceiling light pin
-#define MAINLIGHTS_PIN A0
+#define WALLSWITCH_UPDATEDELAY 50
