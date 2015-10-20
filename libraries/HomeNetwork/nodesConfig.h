@@ -62,6 +62,9 @@
 //Third child of Home Control
 #define HOME_SPEAKER_ID 031
 
+// Question
+#define HOME_SPEAKER_QSN_POWER_STATUS 1
+
 // Command
 #define HOME_SPEAKER_CMD_POWER_TOGGLE 1
 #define HOME_SPEAKER_CMD_POWER_ON 2
