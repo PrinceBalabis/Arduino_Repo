@@ -34,18 +34,18 @@ NIL_THREAD(WebServerThread, arg) {
       // Respond to GET Request
       // Notify Module that a message with max characters should be sent to client
       hc21FlushSerialBuffer();
-      hc21.print("AT+SKSND=");
+      hc21.print(F("AT+SKSND="));
       hc21.print(newClient);
-      hc21.println(",18\n\r");
+      hc21.println(F(",18\n\r"));
       hc21WaitForSerialData();
       hc21FlushSerialBuffer();
 
       // Send message
-      hc21.println("HTTP/1.0 204\r\n");
+      hc21.println(F("HTTP/1.0 204\r\n"));
       hc21FlushSerialBuffer();
 
       // Close connection to client
-      hc21.print("AT+SKCLS=");
+      hc21.print(F("AT+SKCLS="));
       hc21.println(newClient);
       hc21WaitForSerialData();
       hc21FlushSerialBuffer();
@@ -68,44 +68,45 @@ NIL_THREAD(WebServerThread, arg) {
 bool sendGetRequest(uint8_t command, uint8_t ip1, uint8_t ip2, uint8_t ip3, uint8_t ip4, uint16_t port) {
   // Create connection to server
   hc21FlushSerialBuffer();
-  hc21.print("AT+SKCT=");
-  hc21.print("0,0,");
+  hc21.print(F("AT+SKCT="));
+  hc21.print(F("0,0,"));
   hc21.print(ip1);
-  hc21.print(".");
+  hc21.print(F("."));
   hc21.print(ip2);
-  hc21.print(".");
+  hc21.print(F("."));
   hc21.print(ip3);
-  hc21.print(".");
+  hc21.print(F("."));
   hc21.print(ip4);
-  hc21.print(",");
+  hc21.print(F(","));
   hc21.print(port);
-  hc21.println("\n\r");
+  hc21.println(F("\n\r"));
   hc21WaitForSerialData();
   hc21.read(); // Skip first character which is just a '+'
   if ((char)hc21.read() == 'E') // If the message returned says error(E), then return false
     return false;
+  nilThdSleepMilliseconds(20); // Wait for the serial buffer to fill up (read all the serial data)
   hc21.find("=");  // Set pointer to find Connection Socket value
   uint8_t connectionSocket = (uint8_t)(hc21.read() - 48); // Save the Connection Socket
   hc21FlushSerialBuffer();
 
   // Notify module that a message will be sent
-  hc21.print("AT+SKSND=");
+  hc21.print(F("AT+SKSND="));
   hc21.print(connectionSocket);
-  hc21.println(",100\n\r");
+  hc21.println(F(",100\n\r"));
   hc21WaitForSerialData();
   hc21FlushSerialBuffer();
 
   // Send GET Request
-  hc21.print("GET /");
+  hc21.print(F("GET /"));
   hc21.print(command);
-  hc21.println(" HTTP/1.0\r\n\r\n");
+  hc21.println(F(" HTTP/1.0\r\n\r\n"));
   hc21WaitForSerialData();
   hc21FlushSerialBuffer();
 
   // Close connection
-  hc21.print("AT+SKCLS=");
+  hc21.print(F("AT+SKCLS="));
   hc21.print(connectionSocket);
-  hc21.println("\n\r");
+  hc21.println(F("\n\r"));
   hc21WaitForSerialData();
   hc21FlushSerialBuffer();
 
