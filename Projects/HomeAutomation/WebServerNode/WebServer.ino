@@ -119,9 +119,9 @@ int16_t readHTTPRequest(uint8_t client) {
   hc21FlushSerialBuffer();
 
   // Read connected client received information,first 9 characters
-  hc21.print("AT+SKRCV=");
+  hc21.print(F("AT+SKRCV="));
   hc21.print(client);
-  hc21.println(",9\n\r");
+  hc21.println(F(",9\n\r"));
 
   uint8_t requestArray[2];  // Command interval 0 to 99(two numbers)
   uint8_t requestArrayLength = 0;
@@ -138,19 +138,19 @@ int16_t readHTTPRequest(uint8_t client) {
   char HttpRequestType = hc21.read(); // Save request type
 
   if (HttpRequestType == 'P') { // If its a POST Request
-    Serial.print("HTTP Post Request: ");
+    Serial.print(F("HTTP Post Request: "));
 
     // Throw out the following 175 characters in HTTP Message because its not needed
-    hc21.print("AT+SKRCV=");
+    hc21.print(F("AT+SKRCV="));
     hc21.print(client);
-    hc21.println(",175\n\r");
+    hc21.println(F(",175\n\r"));
     hc21WaitForSerialData();
     hc21FlushSerialBuffer();
 
     // Read the next 25 characters of the message, this pack actually contains data whether you exit or entered the apartment
-    hc21.print("AT+SKRCV=");
+    hc21.print(F("AT+SKRCV="));
     hc21.print(client);
-    hc21.println(",30\n\r");
+    hc21.println(F(",30\n\r"));
     hc21WaitForSerialData();
 
     hc21.find("LocationE"); // Set Serial read pointer to "LocationE", in order to read next character
@@ -158,15 +158,15 @@ int16_t readHTTPRequest(uint8_t client) {
     char locationStatus = hc21.read(); // Should be either an 'n' or x'
 
     if (locationStatus == 'n') { // x for LocationEnter
-      Serial.print("Entered Apartment! | ");
+      Serial.print(F("Entered Apartment! | "));
       request = 4;
     } else if (locationStatus == 'x') { // x for LocationExit
-      Serial.print("Exited Apartment! | ");
+      Serial.print(F("Exited Apartment! | "));
       request = 3;
     }
 
   } else if (HttpRequestType == 'G') { // If its a GET Request
-    Serial.print("HTTP GET Request | ");
+    Serial.print(F("HTTP GET Request | "));
 
     hc21.find("T /"); // Set Serial read pointer to after "GET /", in order to read the GET Command
 
@@ -186,9 +186,9 @@ int16_t readHTTPRequest(uint8_t client) {
   }
 
   //Throw out remaining trash data
-  hc21.print("AT+SKRCV=");
+  hc21.print(F("AT+SKRCV="));
   hc21.print(client);
-  hc21.println(",510\n\r");
+  hc21.println(F(",510\n\r"));
   hc21WaitForSerialData();
   hc21FlushSerialBuffer();
 
@@ -201,7 +201,7 @@ int16_t readHTTPRequest(uint8_t client) {
 uint8_t checkNewClient() {
   hc21FlushSerialBuffer(); // Clean serial buffer before sending command
 
-  hc21.println("AT+SKSTT=1\n\r"); // Send command to HC-21 to return a list of connected clients
+  hc21.println(F("AT+SKSTT=1\n\r")); // Send command to HC-21 to return a list of connected clients
   hc21WaitForSerialData();
 
   nilThdSleepMilliseconds(10); // Let buffer fill
@@ -215,14 +215,14 @@ uint8_t checkNewClient() {
     hc21FlushSerialBuffer(); // Throw out remaining data
     // -------------DEBUG PART START--------------
 #ifdef DEBUG
-    Serial.println("-------------DEBUG PART START--------------");
-    hc21.println("AT+SKSTT=1\n\r"); // Send command to HC-21 to return a list of connected clients
+    Serial.println(F("-------------DEBUG PART START--------------"));
+    hc21.println(F("AT+SKSTT=1\n\r")); // Send command to HC-21 to return a list of connected clients
     // Wait for answer from module
     hc21WaitForSerialData();
     while (hc21.available())
       Serial.write(hc21.read());
     hc21FlushSerialBuffer(); // Throw out any remaining data
-    Serial.println("\n-------------DEBUG PART END--------------");
+    Serial.println(F("\n-------------DEBUG PART END--------------"));
 #endif
     // -------------DEBUG PART END--------------
 
@@ -260,13 +260,11 @@ void initCommand(char cmd[]) {
       blinkLED(1000);
       break; // Exit out of init loop
     } else {
-      Serial.print(F("ERROR"));
+      Serial.print(F("ERROR\nREstarting Arduino...\n\n"));
       blinkLED(500);
       blinkLED(500);
       blinkLED(500);
       blinkLED(500);
-      Serial.println();
-      Serial.println();
       resetFunc();  //Reset Arduino
     }
   }
@@ -282,9 +280,7 @@ void initHC21() {
 
   Serial.print(F("Testing if server initalized correctly..."));
   initCommand("AT+SKSTT=1\n\r"); // Check if server initialized correctly
-  Serial.println();
-  Serial.println(F("Server initalized and idle.."));
-  Serial.println();
+  Serial.println(F("\nServer initalized and idle..\n"));
   digitalWrite(DEBUG_LED, HIGH); // Turn LED on to indicate Webserver is started
 }
 
