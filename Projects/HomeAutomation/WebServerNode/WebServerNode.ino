@@ -19,14 +19,6 @@
 
 #define Serial NilSerial
 
-#ifdef DEBUG
-#define DEBUG_PRINT(x)  NilSerial.print (x)
-#define DEBUG_PRINTLN(x)  NilSerial.println (x)
-#else
-#define DEBUG_PRINT(x)
-#define DEBUG_PRINTLN(x)
-#endif
-
 RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
@@ -37,12 +29,9 @@ bool pauseWebserver = false;
 bool webserverIsPaused = false;
 
 void setup() {
-
-#ifdef DEBUG
   Serial.begin(115200);
-#endif
 
-  DEBUG_PRINTLN(F("Home Network Webserver Node"));
+  Serial.println(F("Home Network Webserver Node"));
 
   hc21.begin(38400); // Your modules baud rate might be different
 
@@ -53,7 +42,7 @@ void setup() {
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
-  DEBUG_PRINTLN(F("Basic system booted up! Starting RTOS..."));
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
 
   nilSysBegin(); // Start Nil RTOS.
 }
@@ -65,7 +54,7 @@ void loop() {
 void printStackInfo() {
   nilPrintStackSizes(&Serial);
   nilPrintUnusedStack(&Serial);
-  DEBUG_PRINTLN();
+  Serial.println();
 
   // Delay for one second.
   // Must not sleep in loop so use nilThdDelayMilliseconds().

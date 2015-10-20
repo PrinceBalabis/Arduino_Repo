@@ -2,7 +2,7 @@
 NIL_WORKING_AREA(webServerThread, 90);
 
 NIL_THREAD(WebServerThread, arg) {
-  DEBUG_PRINTLN(F("Started WebServerThread"));
+  Serial.println(F("Started WebServerThread"));
 
   // initialize digital pin 13 as an output.
   pinMode(DEBUG_LED, OUTPUT);
@@ -10,7 +10,7 @@ NIL_THREAD(WebServerThread, arg) {
 
   blinkLED(1000);
 
-  DEBUG_PRINTLN(F("Initializing HC-21.."));
+  Serial.println(F("Initializing HC-21.."));
   initHC21();
 
   while (1) {
@@ -18,7 +18,7 @@ NIL_THREAD(WebServerThread, arg) {
     if (pauseWebserver) {
       webserverIsPaused = true;
       while (pauseWebserver) {
-        nilThdSleepMilliseconds(10);
+        nilThdSleepMilliseconds(5);
       }
       webserverIsPaused = false;
     }
@@ -27,34 +27,38 @@ NIL_THREAD(WebServerThread, arg) {
     if (newClient != 0) { // What happens when a new client has connected and sent a GET Request
       // Save HTTP Reqeust
       int16_t request = readHTTPRequest(newClient);
-      DEBUG_PRINT(F("RAW HTTP Request: "));
-      DEBUG_PRINTLN(request);
-      nilThdSleepMilliseconds(10); // Give time for module to think
+      Serial.print(F("RAW HTTP Request: "));
+      Serial.print(request);
+      Serial.print(F(" | "));
 
       // Respond to GET Request
       // Notify Module that a message with max characters should be sent to client
-      hc21.print("AT+SKSND=2,20\n\r");
-      hc21.println(newClient);
-      hc21.flush();
-      nilThdSleepMilliseconds(10); // Give time for module to think
+      hc21FlushSerialBuffer();
+      hc21.print("AT+SKSND=");
+      hc21.print(newClient);
+      hc21.println(",18\n\r");
+      hc21WaitForSerialData();
+      hc21FlushSerialBuffer();
 
       // Send message
-      hc21.print("Request: ");
-      hc21.println(request);
-      hc21.flush();
-      nilThdSleepMilliseconds(10); // Give time for module to think
+      hc21.println("HTTP/1.0 204\r\n");
+      hc21FlushSerialBuffer();
 
       // Close connection to client
       hc21.print("AT+SKCLS=");
       hc21.println(newClient);
-      hc21.flush();
-      nilThdSleepMilliseconds(10); // Give time for module to think
+      hc21WaitForSerialData();
+      hc21FlushSerialBuffer();
 
       // Send command to commandExecutioner to run
-      executeCommand(request, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+      if (request) {
+        executeCommand(request, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+      } else {
+        Serial.println(F("ERROR:Didn't understand HTTP Request!!"));
+      }
     }
 
-    nilThdSleepMilliseconds(100); // Redo this send program every few moments, give enough time for other threads to run
+    nilThdSleepMilliseconds(150); // Redo this send program every few moments, give enough time for other threads to run
   }
 }
 
@@ -63,8 +67,7 @@ NIL_THREAD(WebServerThread, arg) {
  */
 bool sendGetRequest(uint8_t command, uint8_t ip1, uint8_t ip2, uint8_t ip3, uint8_t ip4, uint16_t port) {
   // Create connection to server
-  hc21.flush();
-  nilThdSleepMilliseconds(10); // Give time for module to think
+  hc21FlushSerialBuffer();
   hc21.print("AT+SKCT=");
   hc21.print("0,0,");
   hc21.print(ip1);
@@ -77,34 +80,34 @@ bool sendGetRequest(uint8_t command, uint8_t ip1, uint8_t ip2, uint8_t ip3, uint
   hc21.print(",");
   hc21.print(port);
   hc21.println("\n\r");
-  nilThdSleepMilliseconds(50); // Let serial buffer fill up
+  hc21WaitForSerialData();
   hc21.read(); // Skip first character which is just a '+'
   if ((char)hc21.read() == 'E') // If the message returned says error(E), then return false
     return false;
   hc21.find("=");  // Set pointer to find Connection Socket value
   uint8_t connectionSocket = (uint8_t)(hc21.read() - 48); // Save the Connection Socket
-  hc21.flush();
+  hc21FlushSerialBuffer();
 
   // Notify module that a message will be sent
   hc21.print("AT+SKSND=");
   hc21.print(connectionSocket);
   hc21.println(",100\n\r");
-  nilThdSleepMilliseconds(50);
-  hc21.flush();
+  hc21WaitForSerialData();
+  hc21FlushSerialBuffer();
 
   // Send GET Request
   hc21.print("GET /");
   hc21.print(command);
   hc21.println(" HTTP/1.0\r\n\r\n");
-  nilThdSleepMilliseconds(50);
-  hc21.flush();
+  hc21WaitForSerialData();
+  hc21FlushSerialBuffer();
 
   // Close connection
   hc21.print("AT+SKCLS=");
   hc21.print(connectionSocket);
   hc21.println("\n\r");
-  nilThdSleepMilliseconds(50);
-  hc21.flush();
+  hc21WaitForSerialData();
+  hc21FlushSerialBuffer();
 
   return true;
 }
@@ -113,8 +116,7 @@ bool sendGetRequest(uint8_t command, uint8_t ip1, uint8_t ip2, uint8_t ip3, uint
  * Returns GET/POST request value
  */
 int16_t readHTTPRequest(uint8_t client) {
-  hc21.flush();
-  nilThdSleepMilliseconds(10); // Give time for module to think
+  hc21FlushSerialBuffer();
 
   // Read connected client received information,first 9 characters
   hc21.print("AT+SKRCV=");
@@ -125,7 +127,8 @@ int16_t readHTTPRequest(uint8_t client) {
   uint8_t requestArrayLength = 0;
   uint8_t request = 0;
 
-  nilThdSleepMilliseconds(50); // Wait for the serial buffer to fill up (read all the serial data)
+  hc21WaitForSerialData();
+  nilThdSleepMilliseconds(20); // Wait for the serial buffer to fill up (read all the serial data)
 
   // Throw out first 9 characters of the incoming HTTP message which is not needed
   for (int i = 0; i < 9; i++) {
@@ -135,36 +138,35 @@ int16_t readHTTPRequest(uint8_t client) {
   char HttpRequestType = hc21.read(); // Save request type
 
   if (HttpRequestType == 'P') { // If its a POST Request
-    DEBUG_PRINT("HTTP Post Request: ");
+    Serial.print("HTTP Post Request: ");
 
     // Throw out the following 175 characters in HTTP Message because its not needed
     hc21.print("AT+SKRCV=");
     hc21.print(client);
     hc21.println(",175\n\r");
-    nilThdSleepMilliseconds(50); // Wait for the serial buffer to fill up (read all the serial data)
-    hc21.flush(); // Throw out trash data in serial buffer
-    nilThdSleepMilliseconds(50); // Wait for the serial buffer to fill up (read all the serial data)
+    hc21WaitForSerialData();
+    hc21FlushSerialBuffer();
 
     // Read the next 25 characters of the message, this pack actually contains data whether you exit or entered the apartment
     hc21.print("AT+SKRCV=");
     hc21.print(client);
     hc21.println(",30\n\r");
-    nilThdSleepMilliseconds(50); // Wait for the serial buffer to fill up (read all the serial data)
+    hc21WaitForSerialData();
 
     hc21.find("LocationE"); // Set Serial read pointer to "LocationE", in order to read next character
 
     char locationStatus = hc21.read(); // Should be either an 'n' or x'
 
     if (locationStatus == 'n') { // x for LocationEnter
-      DEBUG_PRINTLN("Entered Apartment!");
+      Serial.print("Entered Apartment! | ");
       request = 4;
     } else if (locationStatus == 'x') { // x for LocationExit
-      DEBUG_PRINTLN("Exited Apartment!");
+      Serial.print("Exited Apartment! | ");
       request = 3;
     }
 
   } else if (HttpRequestType == 'G') { // If its a GET Request
-    DEBUG_PRINTLN("HTTP GET Request");
+    Serial.print("HTTP GET Request | ");
 
     hc21.find("T /"); // Set Serial read pointer to after "GET /", in order to read the GET Command
 
@@ -183,7 +185,12 @@ int16_t readHTTPRequest(uint8_t client) {
     }
   }
 
-  hc21.flush(); // Throw out remaining data in serial buffer
+  //Throw out remaining trash data
+  hc21.print("AT+SKRCV=");
+  hc21.print(client);
+  hc21.println(",510\n\r");
+  hc21WaitForSerialData();
+  hc21FlushSerialBuffer();
 
   return request;
 }
@@ -192,36 +199,46 @@ int16_t readHTTPRequest(uint8_t client) {
  * Returns clients socket number, returns 0 if no client is connected
  */
 uint8_t checkNewClient() {
-  hc21.flush(); // Clean serial buffer before sending command
-  nilThdSleepMilliseconds(10); // Give time for module to think
+  hc21FlushSerialBuffer(); // Clean serial buffer before sending command
 
-  char answerReceived[64];
-  uint8_t i = 0;
+  hc21.println("AT+SKSTT=1\n\r"); // Send command to HC-21 to return a list of connected clients
+  hc21WaitForSerialData();
 
-  hc21.println("AT+SKSTT=1\n\r"); // Send command to HC-21
-
-  nilThdSleepMilliseconds(50); // Let Serial buffer fill
-
+  nilThdSleepMilliseconds(10); // Let buffer fill
   hc21.find(",0"); // advance cursor to "new line" in order to skip first row of server information
-  hc21.read(); // Jump over \n
-  hc21.read(); // Jump over \n
 
-  if ((uint8_t)(hc21.peek() - 48) < 100) {
+  if (hc21.available() > 4) { // When a new client is connected
+    hc21.read(); // Jump over \n character
+    hc21.read(); // Jump over \n character
+
     uint8_t newClient = hc21.peek() - 48;
-    hc21.flush(); // Throw out remaining data
-    DEBUG_PRINT(F("New Client: "));
-    DEBUG_PRINTLN(newClient);
+    hc21FlushSerialBuffer(); // Throw out remaining data
+    // -------------DEBUG PART START--------------
+#ifdef DEBUG
+    Serial.println("-------------DEBUG PART START--------------");
+    hc21.println("AT+SKSTT=1\n\r"); // Send command to HC-21 to return a list of connected clients
+    // Wait for answer from module
+    hc21WaitForSerialData();
+    while (hc21.available())
+      Serial.write(hc21.read());
+    hc21FlushSerialBuffer(); // Throw out any remaining data
+    Serial.println("\n-------------DEBUG PART END--------------");
+#endif
+    // -------------DEBUG PART END--------------
+
+    Serial.print(F("Client: "));
+    Serial.print(newClient);
+    Serial.print(F(" | "));
     return newClient;
   } else {
-    hc21.flush(); // Throw out remaining data
+    hc21FlushSerialBuffer(); // Throw out remaining data
     return 0;
   }
 }
 
 void initCommand(char cmd[]) {
   while (1) {
-    hc21.flush(); // Clean serial buffer before sending command
-    nilThdSleepMilliseconds(10); // Give time for module to think
+    hc21FlushSerialBuffer(); // Clean serial buffer before sending command
     hc21.println(cmd); // Send command to HC-21
 
     // Receive response from HC-21
@@ -233,41 +250,41 @@ void initCommand(char cmd[]) {
         nilThdSleepMilliseconds(50); // Let buffer fill
         hc21.find("O"); // advance cursor to "O"
         answerReceived = hc21.read(); // Save received character, which is hopefully K to return variable
-        hc21.flush(); // Throw out remaining serial data in buffer
+        hc21FlushSerialBuffer(); // Throw out remaining serial data in buffer
         break; // Get out of waiting loop
       }
     }
 
     if (answerReceived == 'K') {
-      DEBUG_PRINTLN(F("Done"));
+      Serial.println(F("Done"));
       blinkLED(1000);
       break; // Exit out of init loop
     } else {
-      DEBUG_PRINT(F("ERROR"));
+      Serial.print(F("ERROR"));
       blinkLED(500);
       blinkLED(500);
       blinkLED(500);
       blinkLED(500);
-      DEBUG_PRINTLN();
-      DEBUG_PRINTLN();
+      Serial.println();
+      Serial.println();
       resetFunc();  //Reset Arduino
     }
   }
 }
 
 void initHC21() {
-  DEBUG_PRINT(F("Resetting module..."));
+  Serial.print(F("Resetting module..."));
   initCommand("AT+Z\n\r");
   nilThdSleepMilliseconds(10000); // Wait some seconds to let the module initialize command
-  DEBUG_PRINT(F("Starting server..."));
+  Serial.print(F("Starting server..."));
   initCommand("AT+SKCT=0,1,0,9500\n\r");
   nilThdSleepMilliseconds(500); // Wait some seconds to let the module initialize command
 
-  DEBUG_PRINT(F("Testing if server initalized correctly..."));
+  Serial.print(F("Testing if server initalized correctly..."));
   initCommand("AT+SKSTT=1\n\r"); // Check if server initialized correctly
-  DEBUG_PRINTLN();
-  DEBUG_PRINTLN(F("Server initalized and idle.."));
-  DEBUG_PRINTLN();
+  Serial.println();
+  Serial.println(F("Server initalized and idle.."));
+  Serial.println();
   digitalWrite(DEBUG_LED, HIGH); // Turn LED on to indicate Webserver is started
 }
 
@@ -276,5 +293,15 @@ void blinkLED(uint16_t time) {
   nilThdSleepMilliseconds(time);
   digitalWrite(DEBUG_LED, !bitRead(PORTC, 0));
   nilThdSleepMilliseconds(time);
+}
+
+void hc21FlushSerialBuffer() {
+  nilThdSleepMilliseconds(100);
+  hc21.flush();
+}
+
+void hc21WaitForSerialData() {
+  while (!hc21.available())
+    nilThdSleepMilliseconds(1);
 }
 

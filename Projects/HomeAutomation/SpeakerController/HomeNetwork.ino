@@ -12,7 +12,9 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
     case HOME_TYPE_QUESTION: // If its a question
       Serial.print(F("Question-"));
       switch (msgContent) {
-          //No questions yet
+         case HOME_SPEAKER_QSN_POWER_STATUS:
+         homeNetwork.respondToQuestion(msgSender, getSpeakerPowerSwitchStatus());
+         break;
       }
       break;
   }
@@ -21,7 +23,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
 /**
 *  Thread for the Home Network
 **/
-NIL_WORKING_AREA(homeNetworkThread, 100); // 32 bytes seems to work fine even with Home Network debug on
+NIL_WORKING_AREA(homeNetworkThread, 150); // 32 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
 {
   Serial.println("Started HomeNetworkThread");
