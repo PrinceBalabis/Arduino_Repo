@@ -1,4 +1,7 @@
 /**
+ * 
+ * 433MHz Transmitter connected to pin 7
+ * 
  *  Prince Home Network IOT Example Client
  *  Start Server first before starting the Client!!!!!
  *  This library needs following peripherals:
