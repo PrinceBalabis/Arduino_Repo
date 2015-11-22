@@ -1,6 +1,6 @@
 NIL_WORKING_AREA(ledBuzzer, 128);
 NIL_THREAD(LedBuzzer, arg) {
-  Serial.println(F("Started LED & Buzzer..."));
+  //Serial.println(F("Started LED & Buzzer..."));
 
   pinMode(LED_BUZZER_PIN, OUTPUT);
   digitalWrite(LED_BUZZER_PIN, LOW);

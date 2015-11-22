@@ -12,12 +12,13 @@ SEMAPHORE_DECL(semLEDBuzzer, 0);
 
 uint32_t coinAmount = 0; // Count of amount of coins inserted
 double coinValue = 0.5; // Chosen coin value
+double coinTotal = 0; // Chosen coin value
 
 void setup() {
 
-  Serial.begin(115200);  //Begin serial communcation
-  Serial.println(F("Started System..."));
-  
+  //Serial.begin(115200);  //Begin serial communcation
+  //Serial.println(F("Started System..."));
+
   nilSysBegin();
 }
 

@@ -10,7 +10,7 @@
 
 NIL_WORKING_AREA(display, 128);
 NIL_THREAD(Display, arg) {
-  Serial.println(F("Started Display..."));
+  //Serial.println(F("Started Display..."));
 
   LiquidCrystal_I2C  lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
 
@@ -24,19 +24,19 @@ NIL_THREAD(Display, arg) {
     lcd.clear(); // Clear Display
     lcd.home(); // Go home
     lcd.print(coinAmount); // Print amount of coins inserted
-    lcd.print("x"); // Print multiplication sign
+    lcd.print(" st  "); // Print multiplication sign
     lcd.print(coinValue); // Print chosen coin value
     lcd.print(" kr"); // Print 'kr'
 
     lcd.setCursor (0, 1);       // go to start of 2nd line
     lcd.print("Total: ");
-    lcd.print(coinAmount * coinValue);
+    lcd.print(coinTotal);
     lcd.print(" kr");
 
     nilSemSignal(&semLEDBuzzer); // Beep LED and buzzer once
 
     nilSemWait(&semDisplay); // Wait for sensor service to tell this service to update display
-    Serial.println(F("Updating Display..."));
+    //Serial.println(F("Updating Display..."));
   }
 }
 
