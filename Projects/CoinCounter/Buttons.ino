@@ -41,20 +41,38 @@ NIL_THREAD(Buttons, arg) {
   }
 }
 
-// Function which toggles between coin values
+/**
+   Function which toggles between coin values
+*/
 void toggleCoinValue() {
-  if (coinValue == 0.50) {
-    coinValue = 1; // Set to 1 kr
+  if (coinValue == 0.25) {
+    coinSensorLagTime = KR_050_LAG_TIME;
+    coinSensorPollingTime = KR_050_POLLING_TIME;
+    coinValue = 0.50;  // Set to 0.50 kr
+  } else if (coinValue == 0.50) {
+    coinSensorLagTime = KR_1_LAG_TIME;
+    coinSensorPollingTime = KR_1_POLLING_TIME;
+    coinValue = 1;    // Set to 1 kr
   } else if (coinValue == 1) {
-    coinValue = 2; // Set to 2 kr
+    coinSensorLagTime = KR_2_LAG_TIME;
+    coinSensorPollingTime = KR_2_POLLING_TIME;
+    coinValue = 2;    // Set to 2 kr
   } else if (coinValue == 2) {
-    coinValue = 5; // Set to 5 kr
+    coinSensorLagTime = KR_5_LAG_TIME;
+    coinSensorPollingTime = KR_5_POLLING_TIME;
+    coinValue = 5;    // Set to 5 kr
   } else if (coinValue == 5) {
-    coinValue = 10; // Set to 10 kr
+    coinSensorLagTime = KR_10_LAG_TIME;
+    coinSensorPollingTime = KR_10_POLLING_TIME;
+    coinValue = 10;   // Set to 10 kr
   } else if (coinValue == 10) {
-    coinValue = 20; // Set to 20 kr
+    coinSensorLagTime = KR_20_LAG_TIME;
+    coinSensorPollingTime = KR_20_POLLING_TIME;
+    coinValue = 20;   // Set to 20 kr
   } else if (coinValue == 20) {
-    coinValue = 0.50; // Set to 0.50 kr
+    coinSensorLagTime = KR_025_LAG_TIME;
+    coinSensorPollingTime = KR_025_POLLING_TIME;
+    coinValue = 0.25; // Set to 0.25 kr
   }
 }
 
