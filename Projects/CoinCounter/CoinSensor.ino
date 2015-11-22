@@ -1,4 +1,4 @@
-NIL_WORKING_AREA(coinSensor, 256);
+NIL_WORKING_AREA(coinSensor, 128);
 NIL_THREAD(CoinSensor, arg) {
   nilThdSleepMilliseconds(500); // Give some time for whole system to start and stabilize
   Serial.println(F("Started Coin Sensor..."));
@@ -18,7 +18,8 @@ NIL_THREAD(CoinSensor, arg) {
       coinPreviousDetected = false;
       coinAmount++; // Add 1 coin to count
       //Serial.println(coinAmount); // Print amount of coins detected to the serial monitor
-      //nilSemSignal(&sem);
+      nilSemSignal(&semDisplay); // Tell display service to update display
+      nilSemSignal(&semLEDBuzzer); // Beep LED and buzzer once
     }
 
     startTime += COINSENSOR_POLLING_TIME; // Calculate date when to run next time
