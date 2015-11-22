@@ -21,6 +21,7 @@ NIL_THREAD(Display, arg) {
   lcd.setBacklight(HIGH);
 
   while (TRUE) {
+    lcd.clear(); // Clear Display
     lcd.home(); // Go home
     lcd.print(coinAmount); // Print amount of coins inserted
     lcd.print("x"); // Print multiplication sign
@@ -29,10 +30,13 @@ NIL_THREAD(Display, arg) {
 
     lcd.setCursor (0, 1);       // go to start of 2nd line
     lcd.print("Total: ");
-    lcd.print(coinAmount*coinValue);
+    lcd.print(coinAmount * coinValue);
     lcd.print(" kr");
 
+    nilSemSignal(&semLEDBuzzer); // Beep LED and buzzer once
+
     nilSemWait(&semDisplay); // Wait for sensor service to tell this service to update display
+    Serial.println(F("Updating Display..."));
   }
 }
 

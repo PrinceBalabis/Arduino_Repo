@@ -19,7 +19,6 @@ NIL_THREAD(CoinSensor, arg) {
       coinAmount++; // Add 1 coin to count
       //Serial.println(coinAmount); // Print amount of coins detected to the serial monitor
       nilSemSignal(&semDisplay); // Tell display service to update display
-      nilSemSignal(&semLEDBuzzer); // Beep LED and buzzer once
     }
 
     startTime += COINSENSOR_POLLING_TIME; // Calculate date when to run next time
