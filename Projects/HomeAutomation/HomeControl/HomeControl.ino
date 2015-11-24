@@ -1,11 +1,11 @@
 /*
- *  This Sketch is to make a "universal home control".
- *  Controlling PC, lights, speaker & other home electronics
- *  Hardware needed:
- *  - NPN transistor for PC Power switch to pin 6
- *
- * WARNING: Don't use Digital Pin 10 even if its not used, its reserved by SPI library!
- */
+    This Sketch is to make a "universal home control".
+    Controlling PC, lights, speaker & other home electronics
+    Hardware needed:
+    - NPN transistor for PC Power switch to pin 6
+    - Audio Switch to pin 2
+   WARNING: Don't use Digital Pin 10 even if its not used, its reserved by SPI library!
+*/
 // If a thread weirdly crashes then increase the stack value
 
 // Needed libraries & config
@@ -31,6 +31,9 @@ void setup() {
   // PC Power switch setup
   pcPowerSetup();
 
+  // Audio Switch setup
+  audioSwitchSetup();
+  
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network

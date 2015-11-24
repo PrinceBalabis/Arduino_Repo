@@ -3,8 +3,8 @@
  ** Executes commands
  **/
 
-static bool commandOrigin = 0;
-static int32_t commandToExecute = 0;
+bool commandOrigin = 0;
+int32_t commandToExecute = 0;
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
@@ -19,7 +19,7 @@ NIL_THREAD(CommandExecutioner, arg)
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     nilSemWait(&cmdExSem);
 
-    bool sent = false;
+    bool sent = true;
 
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // If the command is from Home Network
@@ -32,6 +32,10 @@ NIL_THREAD(CommandExecutioner, arg)
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
         switch (commandToExecute) {
+          case BUTTON_AUDIO_SWITCH:
+            toggleAudioSwitch();
+            Serial.print(F("Toggle Audio Switch"));
+            break;
           case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
             sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT);
             Serial.print(F("Starting Spotify Workout Playlist"));
@@ -96,8 +100,8 @@ NIL_THREAD(CommandExecutioner, arg)
 }
 
 /*
- * Run this function to enable CommandExecutionerThread to run
- */
+   Run this function to enable CommandExecutionerThread to run
+*/
 void executeCommand(int32_t _commandToExecute, bool _commandOrigin) {
   commandToExecute = _commandToExecute;
   commandOrigin = _commandOrigin;

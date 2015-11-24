@@ -29,6 +29,8 @@
 #define BUTTON_SPEAKER_VOLUME_DOWN 15
 #define BUTTON_SPEAKER_MUTE 14
 #define BUTTON_SPEAKER_MODE 13
+// Audio Switch
+#define BUTTON_AUDIO_SWITCH 12
 // Lights
 #define BUTTON_MAINLIGHTS_TOGGLE 4
 #define BUTTON_PAINTINGLIGHTS_TOGGLE 3
@@ -50,9 +52,17 @@ const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when ho
 
 /*
 *  ------------------------------------
- *  FastDigitalIO
+ *  FastDigitalIO for PC Power Switch
  *  ------------------------------------
  */
  #define PC_POWER_SWITCH_ON PORTD |= _BV(PD6)
  #define PC_POWER_SWITCH_OFF PORTD &= ~_BV(PD6)
- 
+
+/*
+*  ------------------------------------
+ *  FastDigitalIO for Audio Switch
+ *  ------------------------------------
+ */
+ #define AUDIO_SWITCH_SPEAKER PORTD |= _BV(PD2)
+ #define AUDIO_SWITCH_HEADSET PORTD &= ~_BV(PD2)
+

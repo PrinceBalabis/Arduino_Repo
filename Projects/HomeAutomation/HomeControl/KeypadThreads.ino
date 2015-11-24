@@ -54,7 +54,7 @@ const uint8_t keymapName[4][4] =
 Keypad keypad = Keypad(makeKeymap(keymap), rowPins, colPins, 4, 4);
 
 /**
- *  Gets the key name(number) of the button
+    Gets the key name(number) of the button
  **/
 uint8_t getKeyName(char keycode) {
   for (int i = 0; i < 4; i++) {
@@ -126,6 +126,9 @@ NIL_THREAD(KeypadCommandThread, arg)
         case BUTTON_SPEAKER_MODE:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
+        case BUTTON_AUDIO_SWITCH:
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          break;
       }
     }
 
@@ -156,7 +159,7 @@ NIL_THREAD(KeypadCommandThread, arg)
 }
 
 /**
- *  This function is an event which only runs when the key state is changed
+    This function is an event which only runs when the key state is changed
  **/
 void keypadEvent(KeypadEvent key) {
   keyName = getKeyName(key); // Save key which this event points to
