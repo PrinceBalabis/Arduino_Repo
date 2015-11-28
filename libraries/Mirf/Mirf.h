@@ -29,13 +29,12 @@
 
 #include <Arduino.h>
 
-#include "nRF24L01.h"
+#include "Mirf_nRF24L01.h"
 #include "MirfSpiDriver.h"
 
 // Nrf24l settings
 
 #define mirf_ADDR_LEN	5
-#define mirf_CONFIG ((1<<EN_CRC) | (0<<CRCO) )
 
 class Nrf24l {
 	public:
@@ -53,15 +52,16 @@ class Nrf24l {
 		void getData(uint8_t * data);
 		uint8_t getStatus();
 		
-		void transmitSync(uint8_t *dataout,uint8_t len);
-		void transferSync(uint8_t *dataout,uint8_t *datain,uint8_t len);
 		void configRegister(uint8_t reg, uint8_t value);
 		void readRegister(uint8_t reg, uint8_t * value, uint8_t len);
 		void writeRegister(uint8_t reg, uint8_t * value, uint8_t len);
+		void flushTx();
 		void powerUpRx();
 		void powerUpTx();
 		void powerDown();
 		
+		void nrfSpiWrite(uint8_t reg, uint8_t *data = 0, boolean readData = false, uint8_t len = 0);
+
 		void csnHi();
 		void csnLow();
 
@@ -69,39 +69,43 @@ class Nrf24l {
 		void ceLow();
 		void flushRx();
 
-		/*
+		/**
 		 * In sending mode.
 		 */
-
 		uint8_t PTX;
 
-		/*
+		/**
 		 * CE Pin controls RX / TX, default 8.
 		 */
-
 		uint8_t cePin;
 
-		/*
+		/**
 		 * CSN Pin Chip Select Not, default 7.
 		 */
-
 		uint8_t csnPin;
 
-		/*
+		/**
 		 * Channel 0 - 127 or 0 - 84 in the US.
 		 */
 		uint8_t channel;
 
-		/*
+		/**
 		 * Payload width in bytes default 16 max 32.
 		 */
-
 		uint8_t payload;
 
-		/*
+		/**
+		 * The base config register.
+		 * When required PWR_UP and/or PRIM_RX will be OR'ed with this.
+		 * 
+		 * NOTE: Use "_BV(EN_CRC) | _BV(CRCO)" here if you want to
+		 *       connect to a device using the RF24 library.
+		 */
+		uint8_t baseConfig;
+
+		/**
 		 * Spi interface (must extend spi).
 		 */
-
 		MirfSpiDriver *spi;
 };
 
