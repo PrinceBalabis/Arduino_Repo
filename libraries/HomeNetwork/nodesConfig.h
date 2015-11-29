@@ -80,7 +80,7 @@
 
 //***********************Bed Switch************************************************************
 //Second child of Main Room Lights
-#define HOME_BEDSWITCH_ID 02
+#define HOME_BEDSWITCH_ID 03
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
 #define HOME_TEST_ID 05
@@ -90,10 +90,10 @@
 // Question
 #define HOME_TEST_STATUS 1
 //***********************Other Nodes****************************************************************************
-//static const uint16_t nodeNAS = 02;
-//static const uint16_t nodeRaspberryPi = 03;
-//static const uint16_t nodeVoiceRecog = 04;
-//static const uint16_t nodePC = 02;
+//static const uint16_t nodeNAS = ;
+//static const uint16_t nodeRaspberryPi = ;
+//static const uint16_t nodeVoiceRecog = ;
+//static const uint16_t nodePC = ;
 
 //***********************homeNetworkExampleServer****************************************************
 //static const uint16_t nodeExampleA = 041; // Used for example/testing. This node is second child of centralHomeControl-node

@@ -13,7 +13,7 @@ int32_t count = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 100); // bytes works great
+NIL_WORKING_AREA(commandExecutioner, 150); // bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
@@ -64,8 +64,8 @@ NIL_THREAD(CommandExecutioner, arg)
 }
 
 /*
- * Run this function to enable CommandExecutionerThread to run
- */
+   Run this function to enable CommandExecutionerThread to run
+*/
 void executeCommand(int32_t _commandToExecute) {
   commandToExecute = _commandToExecute;
   commandOrigin = COMMANDEXECUTIONER_MSGORIGIN_LOCAL;
@@ -73,9 +73,9 @@ void executeCommand(int32_t _commandToExecute) {
 }
 
 /**
- * homeNetworkMessageReceived()
- * This function is executed automatically by the HomeNetwork Library when a message is received.
- */
+   homeNetworkMessageReceived()
+   This function is executed automatically by the HomeNetwork Library when a message is received.
+*/
 void executeHomeNetworkCommand(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
   commandFromNode = msgSender;
   commandType = msgType;

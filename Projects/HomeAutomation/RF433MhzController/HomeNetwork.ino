@@ -1,7 +1,7 @@
 /**
- * homeNetworkMessageReceived()
- * This function is executed automatically by the HomeNetwork Library when a message is received.
- */
+   homeNetworkMessageReceived()
+   This function is executed automatically by the HomeNetwork Library when a message is received.
+*/
 void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
   switch (msgType) {
     case HOME_TYPE_COMMAND: // If its a simple command
@@ -32,7 +32,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
 }
 
 /**
-*  Thread for the Home Network
+   Thread for the Home Network
 **/
 NIL_WORKING_AREA(homeNetworkThread, 150); // 36 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
