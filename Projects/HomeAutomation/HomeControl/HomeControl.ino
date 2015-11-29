@@ -3,7 +3,7 @@
     Controlling PC, lights, speaker & other home electronics
     Hardware needed:
     - NPN transistor for PC Power switch to pin 6
-    - Audio Switch to pin 2
+    - Audio Switch to pin 7
    WARNING: Don't use Digital Pin 10 even if its not used, its reserved by SPI library!
 */
 // If a thread weirdly crashes then increase the stack value

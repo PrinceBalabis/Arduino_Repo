@@ -33,6 +33,14 @@ NIL_THREAD(CommandExecutioner, arg)
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
         switch (commandToExecute) {
           case BUTTON_AUDIO_SWITCH:
+            if (AUDIO_SWITCH_GET_MODE) { // Headset
+              sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_ON);
+              Serial.println(F("Currently Headset mode"));
+            } else { // Speaker
+              sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_OFF);
+              Serial.println(F("Currently Speaker mode"));
+            }
+            nilThdSleepMilliseconds(500); // Some delay so the extremely uncomfortable noise from speaker wont be heard.
             toggleAudioSwitch();
             Serial.print(F("Toggle Audio Switch"));
             break;
