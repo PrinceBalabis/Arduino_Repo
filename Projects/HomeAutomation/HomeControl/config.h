@@ -2,10 +2,10 @@
 #define COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK 1
 
 /*
-*  ------------------------------------
- *  RF24 Mesh Node
- *  ------------------------------------
- */
+   ------------------------------------
+    RF24 Mesh Node
+    ------------------------------------
+*/
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
@@ -19,10 +19,10 @@
 #define HOME_SETTING_TIME_NETWORKAUTOUPDATE 1
 
 /*
-*  ------------------------------------
- *  Keypad Button reservations
- *  ------------------------------------
- */
+   ------------------------------------
+    Keypad Button reservations
+    ------------------------------------
+*/
 // NextBase
 #define BUTTON_SPEAKER_POWER 10
 #define BUTTON_SPEAKER_VOLUME_UP 16
@@ -43,26 +43,26 @@
 #define BUTTON_PC_SPOTIFYPLAYLIST_CHILL 7
 #define BUTTON_PC_SPOTIFYPLAYLIST_WORK 8
 /*
-*  ------------------------------------
- *  Keypad Performance
- *  ------------------------------------
- */
+   ------------------------------------
+    Keypad Performance
+    ------------------------------------
+*/
 const uint8_t keypadUpdateTime = 20; // How often to update keypad reads in milliseconds
 const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when holding a button, in milliseconds
 
 /*
-*  ------------------------------------
- *  FastDigitalIO for PC Power Switch
- *  ------------------------------------
- */
- #define PC_POWER_SWITCH_ON PORTD |= _BV(PD6)
- #define PC_POWER_SWITCH_OFF PORTD &= ~_BV(PD6)
+   ------------------------------------
+    FastDigitalIO for PC Power Switch
+    ------------------------------------
+*/
+#define PC_POWER_SWITCH_ON (PORTD = (1 << 6))
+#define PC_POWER_SWITCH_OFF (PORTD = ~(1 << 6))
 
 /*
-*  ------------------------------------
- *  FastDigitalIO for Audio Switch
- *  ------------------------------------
- */
- #define AUDIO_SWITCH_SPEAKER PORTD |= _BV(PD2)
- #define AUDIO_SWITCH_HEADSET PORTD &= ~_BV(PD2)
+   ------------------------------------
+    FastDigitalIO for Audio Switch
+    ------------------------------------
+*/
+#define AUDIO_SWITCH_SPEAKER (PORTD = (1 << 2))
+#define AUDIO_SWITCH_HEADSET (PORTD = ~(1 << 2))
 

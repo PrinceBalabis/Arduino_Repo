@@ -2,7 +2,7 @@ bool pcPowerSwitchStatus = false;
 
 void pcPowerSetup()
 {
-  DDRD |= (1 << 6); // Set pin 6 as output
+  DDRD = (1 << 6); // Set pin 6 as output
   PC_POWER_SWITCH_OFF; // Set pin 6 to LOW
   //pinMode(pcPowerPin, OUTPUT);
   //digitalWrite(pcPowerPin, LOW);
