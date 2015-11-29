@@ -60,7 +60,7 @@
 
 //***********************Speaker************************************************************
 //Third child of Home Control
-#define HOME_SPEAKER_ID 031
+#define HOME_SPEAKER_ID 02
 
 // Question
 #define HOME_SPEAKER_QSN_POWER_STATUS 1
