@@ -7,12 +7,12 @@
  */
 
 void setup() {
-   DDRB |= B00100000; // Set LED on board as output
+   DDRB = (1 << 5); // Set LED on board as output
 }
 
 void loop() {
-  PORTB |= _BV(PB5); // Toggle on
+  PORTB = (1 << 5); // Toggle on
   delay(1000);
-  PORTB &= ~_BV(PB5); // Toggle off
+  PORTB = ~(1 << 5); // Toggle off
   delay(1000);
 }
