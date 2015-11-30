@@ -2,7 +2,7 @@ bool pcPowerSwitchStatus = false;
 
 void pcPowerSetup()
 {
-  DDRD = (1 << 6); // Set pin 6 as output
+  PC_POWER_SWITCH_INIT; // Set pin 6 as output
   PC_POWER_SWITCH_OFF; // Set pin 6 to LOW
   //pinMode(pcPowerPin, OUTPUT);
   //digitalWrite(pcPowerPin, LOW);
@@ -12,12 +12,7 @@ void togglePCPowerSwitch()
 {
   //pcPowerSwitchStatus = !pcPowerSwitchStatus;
   //digitalWrite(pcPowerPin, pcPowerSwitchStatus);
-  // Read status of PC power switch
-  if (PIND & (1 << 6)) { // Switch is on - So toggle pin off
-    PC_POWER_SWITCH_OFF;
-  } else { // Switch is off - So toggle pin on
-    PC_POWER_SWITCH_ON;
-  }
+  PC_POWER_SWITCH_TOGGLE;
 }
 
 void setPCPowerSwitchOnMomentarily()
