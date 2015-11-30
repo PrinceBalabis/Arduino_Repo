@@ -36,7 +36,6 @@ NIL_THREAD(CommandExecutioner, arg)
             if (AUDIO_SWITCH_GET_MODE) {  // Headset = true, Speaker = false
               // Switch to Speaker
               sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON);
-              nilThdSleepMilliseconds(500); // Some delay so the extremely uncomfortable noise from speaker wont be heard.
               setAudioSwitchSpeaker();
             } else {
               // Switch to Headset
