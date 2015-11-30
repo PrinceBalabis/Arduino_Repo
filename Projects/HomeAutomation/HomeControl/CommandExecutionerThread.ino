@@ -38,7 +38,7 @@ NIL_THREAD(CommandExecutioner, arg)
               sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_OFF);
               nilThdSleepMilliseconds(500); // Some delay so the extremely uncomfortable noise from speaker wont be heard.
               setAudioSwitchSpeaker();
-            } else { 
+            } else {
               // Switch to Headset
               sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_ON);
               nilThdSleepMilliseconds(500); // Some delay so the extremely uncomfortable noise from speaker wont be heard.
