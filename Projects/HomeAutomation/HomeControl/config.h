@@ -55,7 +55,7 @@ const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when ho
     FastDigitalIO for PC Power Switch
     ------------------------------------
 */
-#define PC_POWER_SWITCH_PIN PD6
+#define PC_POWER_SWITCH_PIN 6
 #define PC_POWER_SWITCH_INIT (DDRD |= _BV(PC_POWER_SWITCH_PIN))
 #define PC_POWER_SWITCH_ON (PORTD |= _BV(PC_POWER_SWITCH_PIN))
 #define PC_POWER_SWITCH_OFF (PORTD &= ~_BV(PC_POWER_SWITCH_PIN))
@@ -66,7 +66,7 @@ const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when ho
     FastDigitalIO for Audio Switch
     ------------------------------------
 */
-#define AUDIO_SWITCH_PIN PD2
+#define AUDIO_SWITCH_PIN 2
 #define AUDIO_SWITCH_INIT (DDRD |= _BV(AUDIO_SWITCH_PIN))
 #define AUDIO_SWITCH_SPEAKER (PORTD &= ~_BV(AUDIO_SWITCH_PIN))
 #define AUDIO_SWITCH_HEADSET (PORTD |= _BV(AUDIO_SWITCH_PIN))
