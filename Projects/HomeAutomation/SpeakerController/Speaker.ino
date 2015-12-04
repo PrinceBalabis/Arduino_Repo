@@ -1,14 +1,26 @@
 
 boolean speakerMuteStatus = 0;
+boolean speakerPowerStatus = 1;
+
+void initSpeaker() {
+  //pinMode(SPEAKER_POWER_RELAY_PIN, OUTPUT);
+  //digitalWrite(SPEAKER_POWER_RELAY_PIN, HIGH);
+
+  SPEAKER_POWER_OUTPUT_INIT;
+
+  sendSpeakerPowerOnCommand();
+  speakerPowerStatus = 1;
+}
 
 bool getSpeakerPowerSwitchStatus() {
-  return digitalRead(SPEAKER_POWER_RELAY_PIN);
+  //return digitalRead(SPEAKER_POWER_RELAY_PIN);
+  return speakerPowerStatus;
 }
 
 void toggleSpeakerPower(void) {
   Serial.print(F("Toggling speaker power: "));
-  Serial.println(digitalRead(SPEAKER_POWER_RELAY_PIN));
-  if (digitalRead(SPEAKER_POWER_RELAY_PIN))
+  Serial.println(speakerPowerStatus);
+  if (speakerPowerStatus)
   {
     sendSpeakerPowerOffCommand();
   }
@@ -19,14 +31,18 @@ void toggleSpeakerPower(void) {
 }
 
 void sendSpeakerPowerOnCommand(void) {
-  digitalWrite(SPEAKER_POWER_RELAY_PIN, 1);
+  //digitalWrite(SPEAKER_POWER_RELAY_PIN, 1);
+  speakerPowerStatus = 1;
+  SPEAKER_POWER_ON;
   nilThdSleepMilliseconds(1000); // Wait for Speaker to recharge its capacitors and reach standby mode
   sendSpeakerCommand(SPEAKER_IR_POWER); // Send IR power command
   Serial.println(F("Turning on speaker"));
 }
 
 void sendSpeakerPowerOffCommand(void) {
-  digitalWrite(SPEAKER_POWER_RELAY_PIN, 0);
+  //digitalWrite(SPEAKER_POWER_RELAY_PIN, 0);
+  speakerPowerStatus = 0;
+  SPEAKER_POWER_OFF;
   Serial.println(F("Turning off speaker"));
 }
 

@@ -11,9 +11,9 @@
 #define HOME_AUTOUPDATE_DELAY 20
 
 /*  ------------------------------------
- *  IR Codes
- *  ------------------------------------
- */
+    IR Codes
+    ------------------------------------
+*/
 // NEXTBASE IR codes
 #define SPEAKER_IR_POWER 0xFFC23D
 #define SPEAKER_IR_MUTE 0xFF02FD
@@ -27,15 +27,19 @@
 //Connect 940 nm IR LED with a resistor to pin 3
 
 /*
-*  ------------------------------------
- *  EEPROM Addresses
- *  ------------------------------------
- */
+   ------------------------------------
+    EEPROM Addresses
+    ------------------------------------
+*/
 #define SPEAKER_EEPROM_MODE_ADDRESS 0
 
 /*
-*  ------------------------------------
- *  Relay for Speaker power switch
- *  ------------------------------------
- */
- #define SPEAKER_POWER_RELAY_PIN 4
+   ------------------------------------
+    Relay for Speaker power switch
+    ------------------------------------
+*/
+#define SPEAKER_POWER_RELAY_PIN 4
+#define SPEAKER_POWER_OUTPUT_INIT (DDRD |= _BV(SPEAKER_POWER_RELAY_PIN))
+#define SPEAKER_POWER_ON (PORTD |= _BV(SPEAKER_POWER_RELAY_PIN))
+#define SPEAKER_POWER_OFF (PORTD &= ~_BV(SPEAKER_POWER_RELAY_PIN))
+#define SPEAKER_POWER_TOGGLE (PORTD ^= _BV(SPEAKER_POWER_RELAY_PIN))

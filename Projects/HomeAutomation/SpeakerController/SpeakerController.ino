@@ -19,9 +19,6 @@ HomeNetwork homeNetwork(radio, network);
 IRsend irsend;
 
 void setup() {
-  pinMode(SPEAKER_POWER_RELAY_PIN, OUTPUT);
-  digitalWrite(SPEAKER_POWER_RELAY_PIN, LOW); // Turn off relay
-  
   Serial.begin(115200);
   Serial.println(F("Speaker Controller"));
   SPI.begin(); // SPI is used by homeNetwork
@@ -31,7 +28,7 @@ void setup() {
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));
-
+  
   nilSysBegin(); // Start Nil RTOS.
 }
 

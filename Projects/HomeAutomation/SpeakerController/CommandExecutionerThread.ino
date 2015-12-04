@@ -13,6 +13,9 @@ NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("CommandExecutioner thread started"));
 
+  //Init Speaker Relay
+  initSpeaker();
+  
   while (1)
   {
     //Wait for signal from either HNListenThread or Keypad Thread to run this loop
