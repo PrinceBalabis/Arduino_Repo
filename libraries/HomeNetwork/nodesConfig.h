@@ -15,52 +15,30 @@
 #define HOME_TYPE_QUESTION_FAST 'S'
 #define HOME_TYPE_RESPONSE 'R'
 
-//***********************Main Room Lights************************************************************
-// This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
-#define HOME_MAINLIGHTS_ID 02
-
-// Command
-#define HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE 1
-#define HOME_MAINLIGHTS_CMD_MAINLIGHTS_ON 2
-#define HOME_MAINLIGHTS_CMD_MAINLIGHTS_OFF 3
-// Question
-#define HOME_MAINLIGHTS_QSN_MAINLIGHTS_STATUS 1
-
 //***********************Home Control************************************************************
-//First child of Main Room Lights node
 #define HOME_HOMECONTROL_ID 01
 
 // Command(message type: typeCommand)
 // Starts from 17 because buttons use 1-16
 #define HOME_HOMECONTROL_CMD_PC_ON 17
 
-//***********************433MHz************************************************************
-// First child of Home Control
-#define HOME_RF433MHZ_ID 011
+//***********************Main Room Lights & 433MHz Controller************************************************************
+#define HOME_LIGHTS433POWER_ID 011
+
+// Command
+#define HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON 1
+#define HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF 2
+#define HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE 3
+#define HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_ON 4
+#define HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_OFF 5
+#define HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE 6
 
 // Question
-#define HOME_RF433MHZ_QSN_PAINTINGLIGHTS_STATUS 1
-
-// Command
-#define HOME_RF433MHZ_CMD_PAINTINGLIGHTS_ON 1
-#define HOME_RF433MHZ_CMD_PAINTINGLIGHTS_OFF 2
-#define HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE 3
-
-//***********************Bed Switch************************************************************
-//Second child of Home Control
-#define HOME_WEBSERVER_ID 021
-
-// Command
-#define HOME_WEBSERVER_CMD_MONITOR_DISABLE 1
-#define HOME_WEBSERVER_CMD_MONITOR_ENABLE 2
-#define HOME_WEBSERVER_CMD_SPOTIFY_CHILL 3
-#define HOME_WEBSERVER_CMD_SPOTIFY_DINNER 4
-#define HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT 5
-#define HOME_WEBSERVER_CMD_SPOTIFY_WORK 6
+#define HOME_LIGHTS433POWER_QSN_MAINLIGHTS_STATUS 1
+#define HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS 2
 
 //***********************Speaker************************************************************
-//Third child of Home Control
-#define HOME_SPEAKER_ID 03
+#define HOME_SPEAKER_ID 02
 
 // Question
 #define HOME_SPEAKER_QSN_POWER_STATUS 1
@@ -78,8 +56,20 @@
 #define HOME_SPEAKER_CMD_MODE_PC 10
 #define HOME_SPEAKER_CMD_MODE_LINEIN 11
 
+//***********************Webserver************************************************************
+#define HOME_WEBSERVER_ID 03
+
+// Command
+#define HOME_WEBSERVER_CMD_MONITOR_DISABLE 1
+#define HOME_WEBSERVER_CMD_MONITOR_ENABLE 2
+#define HOME_WEBSERVER_CMD_SPOTIFY_CHILL 3
+#define HOME_WEBSERVER_CMD_SPOTIFY_DINNER 4
+#define HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT 5
+#define HOME_WEBSERVER_CMD_SPOTIFY_WORK 6
+
+
+
 //***********************Bed Switch************************************************************
-//Second child of Main Room Lights
 #define HOME_BEDSWITCH_ID 04
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
@@ -96,8 +86,8 @@
 //static const uint16_t nodePC = ;
 
 //***********************homeNetworkExampleServer****************************************************
-//static const uint16_t nodeExampleA = 041; // Used for example/testing. This node is second child of centralHomeControl-node
-//static const uint16_t nodeExampleB = 051; // Used for example/testing. This node is third child of centralHomeControl-node
+//static const uint16_t nodeExampleA = 041; // Used for example/testing.
+//static const uint16_t nodeExampleB = 051; // Used for example/testing.
 
 // Commands to offer
 //static const int32_t cmdExampleAskCommand = 12345;

@@ -47,7 +47,7 @@
     Keypad Performance
     ------------------------------------
 */
-const uint8_t keypadUpdateTime = 20; // How often to update keypad reads in milliseconds
+const uint8_t keypadUpdateTime = 50; // How often to update keypad reads in milliseconds, 20ms has worked perfectly for many months
 const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when holding a button, in milliseconds
 
 /*
@@ -68,7 +68,7 @@ const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when ho
 */
 #define AUDIO_SWITCH_PIN 2
 #define AUDIO_SWITCH_INIT (DDRD |= _BV(AUDIO_SWITCH_PIN))
-#define AUDIO_SWITCH_SPEAKER (PORTD &= ~_BV(AUDIO_SWITCH_PIN))
-#define AUDIO_SWITCH_HEADSET (PORTD |= _BV(AUDIO_SWITCH_PIN))
-#define AUDIO_SWITCH_GET_MODE (PIND & _BV(AUDIO_SWITCH_PIN))
+#define AUDIO_SWITCH_SPEAKER (PORTD |= _BV(AUDIO_SWITCH_PIN))
+#define AUDIO_SWITCH_HEADSET (PORTD &= ~_BV(AUDIO_SWITCH_PIN))
+#define AUDIO_SWITCH_GET_MODE (!((PIND & _BV(AUDIO_SWITCH_PIN)) > 0))
 

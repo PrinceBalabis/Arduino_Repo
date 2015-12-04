@@ -1,5 +1,6 @@
 NewRemoteTransmitter transmitter(15303606, 7, 260, 2);
 
+// Used for testing new units
 //void setRemoteSwitch(uint8_t unit, boolean state){
 //  transmitter.sendUnit(unit, state);
 //}
@@ -7,29 +8,37 @@ NewRemoteTransmitter transmitter(15303606, 7, 260, 2);
 ////////////////////////////////////////////////////////////////////////////////
 
 bool getPaintingLightStatus() {
-  return EEPROM.read(paintingLightsAddress);
+  return EEPROM.read(PAINTINGLIGHTS_ADDRESS);
 }
 
 void setPaintingLightStatus(bool status) {
-  EEPROM.write(paintingLightsAddress, status);
+  EEPROM.write(PAINTINGLIGHTS_ADDRESS, status);
 }
 
 void setPaintingLightsOn() {
   if (!getPaintingLightStatus()) {
-    transmitter.sendUnit(paintingLightsCode, true);
+    transmitter.sendUnit(PAINTINGLIGHTS_433MHZ_CODE, true);
     setPaintingLightStatus(true);
   }
 }
 
 void setPaintingLightsOff() {
   if (getPaintingLightStatus()) {
-    transmitter.sendUnit(paintingLightsCode, false);
+    transmitter.sendUnit(PAINTINGLIGHTS_433MHZ_CODE, false);
     setPaintingLightStatus(false);
   }
 }
 
 void togglePaintingLights() {
-  bool tempStatus = !getPaintingLightStatus();
-  transmitter.sendUnit(paintingLightsCode, tempStatus);
-  setPaintingLightStatus(tempStatus);
+  if (getPaintingLightStatus()) {
+    transmitter.sendUnit(PAINTINGLIGHTS_433MHZ_CODE, 0);
+    setPaintingLightStatus(0);
+    Serial.println(F("Off"));
+
+  } else {
+    transmitter.sendUnit(PAINTINGLIGHTS_433MHZ_CODE, 1);
+    setPaintingLightStatus(1);
+    Serial.println(F("On"));
+
+  }
 }

@@ -33,17 +33,8 @@ NIL_THREAD(CommandExecutioner, arg)
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
         switch (commandToExecute) {
           case BUTTON_AUDIO_SWITCH:
-            if (AUDIO_SWITCH_GET_MODE) {  // Headset = true, Speaker = false
-              // Switch to Speaker
-              sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON);
-              setAudioSwitchSpeaker();
-            } else {
-              // Switch to Headset
-              sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
-              nilThdSleepMilliseconds(500); // Some delay so the extremely uncomfortable noise from speaker wont be heard.
-              setAudioSwitchHeadset();
-            }
-            Serial.print(F("Toggle Audio Switch"));
+            sent = toggleAudioSwitch();
+            Serial.print(F("Toggling Audio Switch"));
             break;
           case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
             sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT);
@@ -62,11 +53,11 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.print(F("Starting Spotify Work Playlist"));
             break;
           case BUTTON_MAINLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_MAINLIGHTS_ID, HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE);
+            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE);
             Serial.print(F("Toggling Main Lights"));
             break;
           case BUTTON_PAINTINGLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_RF433MHZ_ID, HOME_RF433MHZ_CMD_PAINTINGLIGHTS_TOGGLE, 1, 1000); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
+            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE, 1, 1000); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
             Serial.print(F("Toggling Painting Lights"));
             break;
           case BUTTON_SPEAKER_POWER:

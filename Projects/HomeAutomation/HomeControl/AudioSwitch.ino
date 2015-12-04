@@ -5,17 +5,24 @@ void audioSwitchSetup() {
   AUDIO_SWITCH_SPEAKER; // Set pin 2 to LOW and make it to speaker as default
 }
 
-//void toggleAudioSwitch() {
-//  if (AUDIO_SWITCH_GET_MODE) { // Switch is HIGH/Headset - So toggle pin LOW/Speaker
-//    AUDIO_SWITCH_SPEAKER;
-//    //digitalWrite(2, LOW);
-//    Serial.println("Set to Speaker");
-//  } else { // Switch is LOW/Speaker - So toggle pin HIGH/Headset
-//    AUDIO_SWITCH_HEADSET;
-//    //digitalWrite(2, HIGH);
-//    Serial.println("Set to Headset");
-//  }
-//}
+bool toggleAudioSwitch() {
+  bool sent = false;
+  if (AUDIO_SWITCH_GET_MODE) {  // Headset = true, Speaker = false
+    // Switch to Speaker
+    sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON);
+    if (sent) {
+      setAudioSwitchSpeaker();
+    }
+  } else {
+    // Switch to Headset
+    sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
+    if (sent) {
+      nilThdSleepMilliseconds(500); // Some delay so the extremely uncomfortable noise from speaker wont be heard.
+      setAudioSwitchHeadset();
+    }
+  }
+  return sent;
+}
 
 void setAudioSwitchSpeaker() {
   AUDIO_SWITCH_SPEAKER;

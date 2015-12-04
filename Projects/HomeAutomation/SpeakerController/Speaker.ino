@@ -31,22 +31,32 @@ void toggleSpeakerPower(void) {
 }
 
 void sendSpeakerPowerOnCommand(void) {
-  //digitalWrite(SPEAKER_POWER_RELAY_PIN, 1);
-  speakerPowerStatus = 1;
-  SPEAKER_POWER_ON;
-  nilThdSleepMilliseconds(1000); // Wait for Speaker to recharge its capacitors and reach standby mode
-  sendSpeakerCommand(SPEAKER_IR_POWER); // Send IR power command
-  speakerMuteStatus = 0;
-  Serial.println(F("Turning on speaker"));
-  nilThdSleepMilliseconds(9000); // Wait for Speaker to initalize untill continuing other commands
+  if (!speakerPowerStatus) {
+    //digitalWrite(SPEAKER_POWER_RELAY_PIN, 1);
+    speakerPowerStatus = 1;
+    SPEAKER_POWER_ON;
+    nilThdSleepMilliseconds(1000); // Wait for Speaker to recharge its capacitors and reach standby mode
+    sendSpeakerCommand(SPEAKER_IR_POWER); // Send IR power command
+    speakerMuteStatus = 0;
+    Serial.println(F("Turning on speaker"));
+    Serial.print(F("Pausing incoming commands for few seconds to allow speaker to initialize..."));
+    nilThdSleepMilliseconds(9000); // Wait for Speaker to initalize untill continuing other commands
+    Serial.println(F("Done...\nContinuing normal operations"));
+  } else {
+    Serial.println(F("Got command to turn on speaker but already on"));
+  }
 }
 
 void sendSpeakerPowerOffCommand(void) {
-  //digitalWrite(SPEAKER_POWER_RELAY_PIN, 0);
-  speakerPowerStatus = 0;
-  speakerMuteStatus = 0;
-  SPEAKER_POWER_OFF;
-  Serial.println(F("Turning off speaker"));
+  if (speakerPowerStatus) {
+    //digitalWrite(SPEAKER_POWER_RELAY_PIN, 0);
+    speakerPowerStatus = 0;
+    speakerMuteStatus = 0;
+    SPEAKER_POWER_OFF;
+    Serial.println(F("Turning off speaker"));
+  } else {
+    Serial.println(F("Got command to turn off speaker but already off"));
+  }
 }
 
 void sendSpeakerUpVolCommand(void)

@@ -1,6 +1,7 @@
 /*
  *  
  *  Relay/Main Lights
+ *  433MHz Transmitter connected to pin 7
  *  Ceiling lights relay/ceiling light pin to A0
  *  Left button to 4
  *  Right button to 5
@@ -12,6 +13,8 @@
 #include <RF24.h>
 #include <RF24Network.h>
 #include <HomeNetwork.h>
+#include <NewRemoteTransmitter.h>
+#include <EEPROM.h>
 #include "config.h"
 #include <EEPROM.h>
 #define Serial NilSerial
@@ -22,7 +25,7 @@ HomeNetwork homeNetwork(radio, network);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println(F("MainLights Node"));
+  Serial.println(F("Lights & 433MHz Controller(Power) Node"));
 
   initLights();
 
