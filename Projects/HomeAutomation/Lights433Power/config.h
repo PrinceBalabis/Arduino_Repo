@@ -42,3 +42,19 @@
 */
 #define PAINTINGLIGHTS_433MHZ_CODE 1
 
+/*
+   ------------------------------------
+    Photo Sensor
+    ------------------------------------
+*/
+#define PHOTOSENSOR_PIN A7
+#define PHOTOSENSOR_THRESHOLD 30
+// Time to wait until sending low/bright command
+#define PHOTOSENSOR_ADAPTTIME 5000
+#define PHOTOSENSOR_CEILINGLIGHTS_ON_LOWLIGHT_VALUE 50
+#define PHOTOSENSOR_CEILINGLIGHTS_OFF_LOWLIGHT_VALUE 10
+#define PHOTOSENSOR_CEILINGLIGHTS_ON_BRIGHTLIGHT_VALUE 60
+#define PHOTOSENSOR_CEILINGLIGHTS_OFF_BRIGHTLIGHT_VALUE 25
+#define PHOTOSENSOR_UPDATEDELAY 200
+
+

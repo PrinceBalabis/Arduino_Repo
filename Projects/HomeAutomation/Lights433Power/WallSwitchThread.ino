@@ -2,10 +2,10 @@
 // WallSwitchThread
 
 // If a thread weirdly crashes then increase the stack value
-NIL_WORKING_AREA(wallSwitchThread, 100); // 0 bytes works great
+NIL_WORKING_AREA(wallSwitchThread, 50); // 0 bytes works great
 NIL_THREAD(WallSwitchThread, arg) {
 
-  Serial.println("Started WallSwitchThread");
+  Serial.println(F("Started WallSwitchThread"));
 
   // Switch state variables
   bool leftSwitchState = 0;
@@ -26,11 +26,11 @@ NIL_THREAD(WallSwitchThread, arg) {
 
   while (1) {
     if (leftSwitchState != LEFT_BUTTON_READ) {
-      Serial.print("Left switch triggered: ");
+      Serial.print(F("Left switch triggered: "));
       toggleLights();
       leftSwitchState = !leftSwitchState;
     } else if (rightSwitchState != RIGHT_BUTTON_READ) {
-      Serial.print("Right switch triggered: ");
+      Serial.print(F("Right switch triggered: "));
       toggleLights();
       rightSwitchState = !rightSwitchState;
     }
