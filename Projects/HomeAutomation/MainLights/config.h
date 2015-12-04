@@ -14,7 +14,7 @@
 
 // How often to auto update network. Should be short because this node is parent for many child nodes
 // Crashes when its 1
-#define HOME_AUTOUPDATE_DELAY 2
+#define HOME_AUTOUPDATE_DELAY 5
 
 /*
  *  ------------------------------------

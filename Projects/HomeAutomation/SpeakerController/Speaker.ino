@@ -36,12 +36,15 @@ void sendSpeakerPowerOnCommand(void) {
   SPEAKER_POWER_ON;
   nilThdSleepMilliseconds(1000); // Wait for Speaker to recharge its capacitors and reach standby mode
   sendSpeakerCommand(SPEAKER_IR_POWER); // Send IR power command
+  speakerMuteStatus = 0;
   Serial.println(F("Turning on speaker"));
+  nilThdSleepMilliseconds(9000); // Wait for Speaker to initalize untill continuing other commands
 }
 
 void sendSpeakerPowerOffCommand(void) {
   //digitalWrite(SPEAKER_POWER_RELAY_PIN, 0);
   speakerPowerStatus = 0;
+  speakerMuteStatus = 0;
   SPEAKER_POWER_OFF;
   Serial.println(F("Turning off speaker"));
 }
