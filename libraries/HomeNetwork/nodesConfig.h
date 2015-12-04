@@ -17,7 +17,7 @@
 
 //***********************Main Room Lights************************************************************
 // This is the base node, this node cannot have children! (ie. node 10,20,30,40 and 50 will not work!)
-#define HOME_MAINLIGHTS_ID 00
+#define HOME_MAINLIGHTS_ID 02
 
 // Command
 #define HOME_MAINLIGHTS_CMD_MAINLIGHTS_TOGGLE 1
@@ -60,7 +60,7 @@
 
 //***********************Speaker************************************************************
 //Third child of Home Control
-#define HOME_SPEAKER_ID 02
+#define HOME_SPEAKER_ID 03
 
 // Question
 #define HOME_SPEAKER_QSN_POWER_STATUS 1
@@ -80,7 +80,7 @@
 
 //***********************Bed Switch************************************************************
 //Second child of Main Room Lights
-#define HOME_BEDSWITCH_ID 03
+#define HOME_BEDSWITCH_ID 04
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
 #define HOME_TEST_ID 05
