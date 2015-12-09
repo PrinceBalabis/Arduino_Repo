@@ -5,15 +5,7 @@ systime_t speakerLastVolumeChange = 0;
 
 void initSpeaker() {
   //pinMode(SPEAKER_POWER_RELAY_PIN, OUTPUT);
-  //digitalWrite(SPEAKER_POWER_RELAY_PIN, HIGH);
-
   SPEAKER_POWER_OUTPUT_INIT;
-
-  // Reboot speaker
-  speakerPowerStatus = 1;
-  sendSpeakerPowerOffCommand();
-  nilThdSleepMilliseconds(1000); // Need to change delay of HomeNetwork boot when changing this too. Or else Arduino crashes at boot
-  sendSpeakerPowerOnCommand();
 }
 
 bool getSpeakerPowerSwitchStatus() {

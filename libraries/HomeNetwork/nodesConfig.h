@@ -38,7 +38,7 @@
 #define HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS 2
 
 //***********************Speaker************************************************************
-#define HOME_SPEAKER_ID 02
+#define HOME_SPEAKER_ID 021
 
 // Question
 #define HOME_SPEAKER_QSN_POWER_STATUS 1
@@ -73,7 +73,7 @@
 #define HOME_BEDSWITCH_ID 04
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
-#define HOME_TEST_ID 05
+#define HOME_TEST_ID 021
 
 // Command(message type: typeCommand)
 #define HOME_TEST_CMD 1

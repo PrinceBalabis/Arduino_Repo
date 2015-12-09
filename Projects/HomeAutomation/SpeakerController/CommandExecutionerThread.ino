@@ -11,8 +11,6 @@ SEMAPHORE_DECL(cmdExSem, 0);
 NIL_WORKING_AREA(commandExecutioner, 80); //52 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
-  //Init Speaker Relay
-  initSpeaker();
 
   Serial.println(F("CommandExecutioner thread started"));
 
