@@ -7,9 +7,13 @@
 #define RF24_PIN_CE 8
 #define RF24_PIN_CSN 9
 
-// How often to auto update network. Should be short because this node is parent for many child nodes
-#define HOME_AUTOUPDATE_DELAY 15
+// How often to auto update network. At Around 10ms is good for volume change frequency
+#define HOME_AUTOUPDATE_DELAY 10
 
+// How often to update volume delays
+#define SPEAKER_VOLUME_CHANGE_DELAY 150
+// How many volume changes to perform per network command received
+#define SPEAKER_VOLUME_CHANGE_AMOUNT 2
 /*  ------------------------------------
     IR Codes
     ------------------------------------

@@ -11,11 +11,11 @@ SEMAPHORE_DECL(cmdExSem, 0);
 NIL_WORKING_AREA(commandExecutioner, 150); //52 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
-  Serial.println(F("CommandExecutioner thread started"));
-
   //Init Speaker Relay
   initSpeaker();
-  
+
+  Serial.println(F("CommandExecutioner thread started"));
+
   while (1)
   {
     //Wait for signal from either HNListenThread or Keypad Thread to run this loop
@@ -54,8 +54,8 @@ NIL_THREAD(CommandExecutioner, arg)
 }
 
 /*
- * Run this function to enable CommandExecutionerThread to run
- */
+   Run this function to enable CommandExecutionerThread to run
+*/
 void executeCommand(int32_t _commandToExecute) {
   commandToExecute = _commandToExecute;
   nilSemSignal(&cmdExSem);

@@ -1,7 +1,7 @@
 /**
- * homeNetworkMessageReceived()
- * This function is executed automatically by the HomeNetwork Library when a message is received.
- */
+   homeNetworkMessageReceived()
+   This function is executed automatically by the HomeNetwork Library when a message is received.
+*/
 void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
   switch (msgType) {
     case HOME_TYPE_COMMAND: // If its a simple command
@@ -12,20 +12,22 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
     case HOME_TYPE_QUESTION: // If its a question
       Serial.print(F("Question-"));
       switch (msgContent) {
-         case HOME_SPEAKER_QSN_POWER_STATUS:
-         homeNetwork.respondToQuestion(msgSender, getSpeakerPowerSwitchStatus());
-         break;
+        case HOME_SPEAKER_QSN_POWER_STATUS:
+          homeNetwork.respondToQuestion(msgSender, getSpeakerPowerSwitchStatus());
+          break;
       }
       break;
   }
 }
 
 /**
-*  Thread for the Home Network
+   Thread for the Home Network
 **/
 NIL_WORKING_AREA(homeNetworkThread, 150); // 32 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
 {
+  nilThdSleepMilliseconds(12000); // Delay start of home network thread so that speaker can boot first
+
   Serial.println("Started HomeNetworkThread");
   // The thread stops at this function, this function has a loop which keeps the network
   // auto updated and executes 'homeNetworkMessageReceived()' when a message is received

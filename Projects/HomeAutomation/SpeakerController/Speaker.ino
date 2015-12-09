@@ -1,14 +1,16 @@
 
 boolean speakerMuteStatus = 0;
-boolean speakerPowerStatus = 1;
+boolean speakerPowerStatus = 0;
+systime_t speakerLastVolumeChange = 0;
 
 void initSpeaker() {
   //pinMode(SPEAKER_POWER_RELAY_PIN, OUTPUT);
   //digitalWrite(SPEAKER_POWER_RELAY_PIN, HIGH);
 
   SPEAKER_POWER_OUTPUT_INIT;
-  
+
   // Reboot speaker
+  speakerPowerStatus = 1;
   sendSpeakerPowerOffCommand();
   nilThdSleepMilliseconds(1000);
   sendSpeakerPowerOnCommand();
@@ -68,18 +70,24 @@ void sendSpeakerPowerOffCommand(void) {
 
 void sendSpeakerUpVolCommand(void)
 {
-  for (int i = 0; i < 2 ; i++)
-    sendSpeakerCommand(SPEAKER_IR_UPVOLUME);
-  speakerMuteStatus = false;
-  Serial.println(F("Increased volume level"));
+  if ((nilTimeNow() - speakerLastVolumeChange) > SPEAKER_VOLUME_CHANGE_DELAY) {
+    for (int i = 0; i < SPEAKER_VOLUME_CHANGE_AMOUNT ; i++)
+      sendSpeakerCommand(SPEAKER_IR_UPVOLUME);
+    speakerMuteStatus = false;
+    Serial.println(F("Increased volume level"));
+    speakerLastVolumeChange = nilTimeNow();
+  }
 }
 
 void sendSpeakerDownVolCommand(void)
 {
-  for (int i = 0; i < 2 ; i++)
-    sendSpeakerCommand(SPEAKER_IR_DOWNVOLUME);
-  speakerMuteStatus = false;
-  Serial.println(F("Dropped volume level"));
+  if ((nilTimeNow() - speakerLastVolumeChange) > SPEAKER_VOLUME_CHANGE_DELAY) {
+    for (int i = 0; i < SPEAKER_VOLUME_CHANGE_AMOUNT ; i++)
+      sendSpeakerCommand(SPEAKER_IR_DOWNVOLUME);
+    speakerMuteStatus = false;
+    Serial.println(F("Dropped volume level"));
+    speakerLastVolumeChange = nilTimeNow();
+  }
 }
 
 void toggleSpeakerMuteCommand(void)

@@ -28,7 +28,7 @@ void setup() {
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));
-  
+
   nilSysBegin(); // Start Nil RTOS.
 }
 
