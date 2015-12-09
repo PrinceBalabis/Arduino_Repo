@@ -95,8 +95,12 @@ void toggleSpeakerMuteCommand(void)
   if (getSpeakerPowerSwitchStatus()) {
     sendSpeakerCommand(SPEAKER_IR_MUTE);
     speakerMuteStatus = !speakerMuteStatus;
-    Serial.print(F("Toggling mute: "));
-    Serial.println(speakerMuteStatus);
+    Serial.print(F("Toggling mute to: "));
+    if (speakerMuteStatus) {
+      Serial.println(F("Muted"));
+    } else {
+      Serial.println(F("Unmuted"));
+    }
   }
 }
 

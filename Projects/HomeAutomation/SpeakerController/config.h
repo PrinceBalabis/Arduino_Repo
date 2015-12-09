@@ -8,7 +8,7 @@
 #define RF24_PIN_CSN 9
 
 // How often to auto update network. At Around 10ms is good for volume change frequency
-#define HOME_AUTOUPDATE_DELAY 10
+#define HOME_AUTOUPDATE_DELAY 15
 
 // How often to update volume delays
 #define SPEAKER_VOLUME_CHANGE_DELAY 150
