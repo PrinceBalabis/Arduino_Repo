@@ -26,7 +26,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
 NIL_WORKING_AREA(homeNetworkThread, 150); // 32 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
 {
-  nilThdSleepMilliseconds(12000); // Delay start of home network thread so that speaker can boot first
+  nilThdSleepMilliseconds(14000); // Needed for stability, delay start of home network thread so that speaker can boot first
 
   Serial.println("Started HomeNetworkThread");
   // The thread stops at this function, this function has a loop which keeps the network

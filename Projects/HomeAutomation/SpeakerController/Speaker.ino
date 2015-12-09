@@ -12,7 +12,7 @@ void initSpeaker() {
   // Reboot speaker
   speakerPowerStatus = 1;
   sendSpeakerPowerOffCommand();
-  nilThdSleepMilliseconds(1000);
+  nilThdSleepMilliseconds(1000); // Need to change delay of HomeNetwork boot when changing this too. Or else Arduino crashes at boot
   sendSpeakerPowerOnCommand();
 }
 

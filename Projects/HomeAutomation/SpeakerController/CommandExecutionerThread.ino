@@ -8,7 +8,7 @@ static int32_t commandToExecute = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 150); //52 bytes works great
+NIL_WORKING_AREA(commandExecutioner, 80); //52 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   //Init Speaker Relay
