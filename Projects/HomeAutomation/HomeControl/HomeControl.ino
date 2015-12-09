@@ -39,7 +39,7 @@ void setup() {
   // Initialize Home Network
   //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
-  homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
+  homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
   Serial.println(F("Basic system booted up! Starting RTOS..."));
 

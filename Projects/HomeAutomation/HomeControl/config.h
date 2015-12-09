@@ -16,7 +16,7 @@
 #define RF24_PIN_CSN 9
 
 // How often to auto update network. Should be short because this node is parent for many child nodes
-#define HOME_SETTING_TIME_NETWORKAUTOUPDATE 1
+#define HOME_AUTOUPDATE_DELAY 1
 
 /*
    ------------------------------------
