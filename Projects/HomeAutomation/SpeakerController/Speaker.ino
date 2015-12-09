@@ -1,13 +1,16 @@
 
 boolean speakerMuteStatus = 0;
-boolean speakerPowerStatus = 0;
+boolean speakerPowerStatus = 1;
 
 void initSpeaker() {
   //pinMode(SPEAKER_POWER_RELAY_PIN, OUTPUT);
   //digitalWrite(SPEAKER_POWER_RELAY_PIN, HIGH);
 
   SPEAKER_POWER_OUTPUT_INIT;
-
+  
+  // Reboot speaker
+  sendSpeakerPowerOffCommand();
+  nilThdSleepMilliseconds(1000);
   sendSpeakerPowerOnCommand();
 }
 
@@ -17,8 +20,13 @@ bool getSpeakerPowerSwitchStatus() {
 }
 
 void toggleSpeakerPower(void) {
-  Serial.print(F("Toggling speaker power: "));
-  Serial.println(speakerPowerStatus);
+  Serial.print(F("Toggling speaker power.. Current State: "));
+  if (speakerPowerStatus) {
+    Serial.print(F("On.. "));
+  } else {
+    Serial.print(F("Off.. "));
+  }
+
   if (speakerPowerStatus)
   {
     sendSpeakerPowerOffCommand();
