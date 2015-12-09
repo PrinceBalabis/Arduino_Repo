@@ -5,8 +5,6 @@
 #include <SPI.h>
 #include <HomeNetwork.h>
 #include "homeNetworkConfig.h"
-#include "apartmentStatusLEDConfig.h"
-#include "buttonConfig.h"
 #define Serial NilSerial
 
 bool ledStatus = HIGH;

@@ -1,16 +1,15 @@
-NIL_WORKING_AREA(buttonThread, 0); // 50 bytes seems to work fine
+NIL_WORKING_AREA(buttonThread, 100); // 50 bytes seems to work fine
 NIL_THREAD(ButtonThread, arg) {
 
-  const int buttonPin = 2;     // the number of the pushbutton pin
-  pinMode(buttonPin, INPUT);
+  pinMode(BUTTON_PIN, INPUT);
 
   bool buttonStatus = 0; // variable for reading the pushbutton status
   bool lastButtonStatus = 0;
 
   Serial.println(F("Started Button listener Thread"));
 
-  while (TRUE) {
-    buttonStatus = digitalRead(buttonPin);
+  while (1) {
+    buttonStatus = digitalRead(BUTTON_PIN);
 
     if (buttonStatus && !lastButtonStatus) {
       Serial.println("Pressed button..");
