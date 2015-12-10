@@ -18,4 +18,4 @@
 #define HOME_SETTING_DEFAULT_QUESTION_RETRY_TIMES 5 // The amount of times to try and ask a question
 #define HOME_SETTING_DEFAULT_TIMEOUT_ANSWER 500 // The amount of time to wait for an answer after sending question
 #define HOME_SETTING_DEFAULT_TIME_READ 1 // How often to check if a confirmation or answer has been received after sending either command or question
-#define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 5 // How often to update the RF24 Home Network
+#define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // How often to update the RF24 Home Network
