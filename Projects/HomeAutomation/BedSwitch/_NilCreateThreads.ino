@@ -13,5 +13,4 @@ NIL_THREADS_TABLE_ENTRY(NULL, HomeNetworkThread, NULL, homeNetworkThread, sizeof
 NIL_THREADS_TABLE_ENTRY(NULL, CommandExecutioner, NULL, commandExecutioner, sizeof(commandExecutioner))
 //NIL_THREADS_TABLE_ENTRY(NULL, ApartmentStatusUpdater, NULL, apartmentStatusUpdater, sizeof(apartmentStatusUpdater))
 NIL_THREADS_TABLE_ENTRY(NULL, ButtonThread, NULL, buttonThread, sizeof(buttonThread))
-//NIL_THREADS_TABLE_ENTRY(NULL, ApartmentStatusLEDThread, NULL, apartmentStatusLEDThread, sizeof(apartmentStatusLEDThread))
 NIL_THREADS_TABLE_END()

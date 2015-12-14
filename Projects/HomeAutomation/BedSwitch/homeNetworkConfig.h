@@ -8,7 +8,7 @@
 #define RF24_PIN_CSN 9
 
 // How often to auto update network. Should be short because this node is parent for many child nodes
-#define HOME_AUTOUPDATE_DELAY 10
+#define HOME_AUTOUPDATE_DELAY 20
 
 #define CMD_UPDATE_LED 1
 #define CMD_APARTMENT_TOGGLE 2
@@ -21,4 +21,4 @@ const uint16_t apartmentStatusUpdateTime = 5000;
 #define BUTTON_PIN 2
 const uint16_t buttonReadUpdateTime = 50;
 const uint16_t buttonDebounceTime = 300;
-const uint16_t buttonRepressTime = 2000;
+const uint16_t buttonRepressTime = 6000;

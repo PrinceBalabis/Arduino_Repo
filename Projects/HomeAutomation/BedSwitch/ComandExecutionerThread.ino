@@ -22,29 +22,29 @@ NIL_THREAD(CommandExecutioner, arg)
     bool apartmentStatus = askApartmentStatus();
 
     switch (commandToExecute) {
-      //      case CMD_UPDATE_LED: // Update LED Status
-      //        // What happens when apartment is either on or off
-      //        if (apartmentStatus && !ledStatus) {
-      //          setLEDStatus(HIGH);
-      //          Serial.println(F("Apartment just went online, switching LED on!"));
-      //        } else if (!apartmentStatus && ledStatus) {
-      //          setLEDStatus(LOW);
-      //          Serial.println(F("Apartment just went offline, switching LED off!"));
-      //        } else if (apartmentStatus) {
-      //          Serial.println(F("Apartment still ONLINE"));
-      //        } else if (!apartmentStatus) {
-      //          Serial.println(F("Apartment still OFFLINE"));
-      //        }
-      //        break;
+      case CMD_UPDATE_LED: // Update LED Status
+        // What happens when apartment is either on or off
+        if (apartmentStatus && !ledStatus) {
+          setLEDStatus(HIGH);
+          Serial.println(F("Apartment just went online, switching LED on!"));
+        } else if (!apartmentStatus && ledStatus) {
+          setLEDStatus(LOW);
+          Serial.println(F("Apartment just went offline, switching LED off!"));
+        } else if (apartmentStatus) {
+          Serial.println(F("Apartment still ONLINE"));
+        } else if (!apartmentStatus) {
+          Serial.println(F("Apartment still OFFLINE"));
+        }
+        break;
       case CMD_APARTMENT_TOGGLE: // Button pressed, toggle apartment
         if (apartmentStatus) {
           shutdownApartment();
           //setLEDStatus(LOW);
-          Serial.println("Shut down apartment");
+          Serial.println(F("Shut down apartment"));
         } else {
           startupApartment();
           //setLEDStatus(HIGH);
-          Serial.println("Started up apartment");
+          Serial.println(F("Started up apartment"));
         }
         break;
     }

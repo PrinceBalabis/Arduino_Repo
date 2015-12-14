@@ -12,7 +12,9 @@ NIL_THREAD(ButtonThread, arg) {
     buttonStatus = digitalRead(BUTTON_PIN);
 
     if (buttonStatus && !lastButtonStatus) {
-      Serial.println("Pressed button..");
+      Serial.print(F("Pressed button.. Disabled button for "));
+      Serial.print(buttonRepressTime / 1000);
+      Serial.println(F(" seconds"));
 
       apartmentStatusUpdaterPaused = true; // Pause the apartment status polling
       apartmentStatusUpdaterPauseExecuted = true;
@@ -28,11 +30,8 @@ NIL_THREAD(ButtonThread, arg) {
 
     } else if (!buttonStatus && lastButtonStatus) {
       lastButtonStatus = LOW;
-      Serial.print("Disabled button for ");
-      Serial.print(buttonRepressTime);
-      Serial.println(" seconds");
-      nilThdSleepMilliseconds(buttonRepressTime); // Wait 10 seconds before able to press button again
-      Serial.println("Button is enabled again!");
+      nilThdSleepMilliseconds(buttonRepressTime); // Wait some seconds before able to press button again
+      Serial.println(F("Button is enabled again!"));
     }
 
     nilThdSleepMilliseconds(buttonReadUpdateTime);

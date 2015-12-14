@@ -20,7 +20,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  homeNetwork.setDebug(true); // Enable debug on home Network Library
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, NULL);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
@@ -36,7 +36,7 @@ void loop() {
 void printStackInfo() {
   nilPrintStackSizes(&Serial);
   nilPrintUnusedStack(&Serial);
-  Serial.println();
+  Serial.println(F(""));
 
   // Delay for one second.
   // Must not sleep in loop so use nilThdDelayMilliseconds().
