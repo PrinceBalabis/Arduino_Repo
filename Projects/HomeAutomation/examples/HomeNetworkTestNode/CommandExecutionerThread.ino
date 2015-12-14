@@ -18,7 +18,7 @@ NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
 
-  while (TRUE)
+  while (1)
   {
     // Wait for signal to run
     nilSemWait(&cmdExSem);
@@ -59,7 +59,7 @@ NIL_THREAD(CommandExecutioner, arg)
       Serial.print(F(" Status: "));
       Serial.print(status);
     }
-    Serial.println();
+    Serial.println(F(""));
   }
 }
 

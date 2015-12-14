@@ -23,7 +23,7 @@
 #define HOME_HOMECONTROL_CMD_PC_ON 17
 
 //***********************Main Room Lights & 433MHz Controller************************************************************
-#define HOME_LIGHTS433POWER_ID 011
+#define HOME_LIGHTS433POWER_ID 02
 
 // Command
 #define HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON 1
@@ -38,7 +38,7 @@
 #define HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS 2
 
 //***********************Speaker************************************************************
-#define HOME_SPEAKER_ID 021
+#define HOME_SPEAKER_ID 03
 
 // Question
 #define HOME_SPEAKER_QSN_POWER_STATUS 1
@@ -57,7 +57,7 @@
 #define HOME_SPEAKER_CMD_MODE_LINEIN 11
 
 //***********************Webserver************************************************************
-#define HOME_WEBSERVER_ID 03
+#define HOME_WEBSERVER_ID 04
 
 // Command
 #define HOME_WEBSERVER_CMD_MONITOR_DISABLE 1
@@ -70,10 +70,10 @@
 
 
 //***********************Bed Switch************************************************************
-#define HOME_BEDSWITCH_ID 04
+#define HOME_BEDSWITCH_ID 05
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
-#define HOME_TEST_ID 021
+#define HOME_TEST_ID 051
 
 // Command(message type: typeCommand)
 #define HOME_TEST_CMD 1

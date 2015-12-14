@@ -53,7 +53,7 @@ void loop() {
 void printStackInfo() {
   nilPrintStackSizes(&Serial);
   nilPrintUnusedStack(&Serial);
-  Serial.println();
+  Serial.println(F(""));
 
   // Delay for one second.
   // Must not sleep in loop so use nilThdDelayMilliseconds().

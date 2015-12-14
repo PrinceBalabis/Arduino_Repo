@@ -31,7 +31,7 @@ NIL_THREAD(WallSwitchThread, arg) {
       leftSwitchState = !leftSwitchState;
     } else if (rightSwitchState != RIGHT_BUTTON_READ) {
       Serial.print(F("Right switch triggered: "));
-      toggleLights();
+      togglePaintingLights();
       rightSwitchState = !rightSwitchState;
     }
 

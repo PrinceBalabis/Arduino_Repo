@@ -11,6 +11,6 @@
 NIL_THREADS_TABLE_BEGIN()
 NIL_THREADS_TABLE_ENTRY(NULL, HomeNetworkThread, NULL, homeNetworkThread, sizeof(homeNetworkThread))
 NIL_THREADS_TABLE_ENTRY(NULL, WallSwitchThread, NULL, wallSwitchThread, sizeof(wallSwitchThread))
-NIL_THREADS_TABLE_ENTRY(NULL, LightSensorThread, NULL, lightSensorThread, sizeof(lightSensorThread))
+//NIL_THREADS_TABLE_ENTRY(NULL, LightSensorThread, NULL, lightSensorThread, sizeof(lightSensorThread))
 NIL_THREADS_TABLE_END()
 

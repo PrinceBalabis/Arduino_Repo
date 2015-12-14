@@ -1,7 +1,7 @@
 /**
    Thread for the Light Sensor
 **/
-NIL_WORKING_AREA(lightSensorThread, 20); // bytes seems to work fine even with Home Network debug on
+NIL_WORKING_AREA(lightSensorThread, 50); // bytes seems to work fine even with Home Network debug on
 NIL_THREAD(LightSensorThread, arg)
 {
   Serial.println(F("Started Light Sensor"));
@@ -28,6 +28,9 @@ NIL_THREAD(LightSensorThread, arg)
           setMainLights(false); // Toggle main lights off
           timerRunning = 0;
           timeStart = 0;
+          Serial.print(F("Current light value: "));
+          Serial.print(lightValue);
+          Serial.print(F(".. "));
           Serial.println(F("Confirmed stable bright light, turning off main lights"));
         }
       } else if (timerRunning == 1) { // Reset timer if light went to normal
@@ -64,8 +67,9 @@ NIL_THREAD(LightSensorThread, arg)
 
 bool getRoomBrightness() {
   uint8_t lightValue = analogRead(PHOTOSENSOR_PIN);
-  //  Serial.print(F("VALUE: "));
-  //  Serial.println(lightValue);
+  Serial.print(F("Current light value: "));
+  Serial.print(lightValue);
+  Serial.print(F(".. "));
   if ((lightValue > PHOTOSENSOR_CEILINGLIGHTS_OFF_BRIGHTLIGHT_VALUE) && !mainLightsStatus) { // Room is above "bright" threshold, return 1
     Serial.println(F("Ceiling lights are currently off & room is bright from outside lights"));
     return true;
@@ -78,7 +82,8 @@ bool getRoomBrightness() {
   } else if ((lightValue < PHOTOSENSOR_CEILINGLIGHTS_ON_LOWLIGHT_VALUE) && mainLightsStatus) { // Room is under "low light" threshold, return 0
     Serial.println(F("Ceiling lights are currently on & room is dark"));
     return false;
+  } else {
+    Serial.println(F("Current room brightness is in the gray area"));
+    return false;
   }
-  Serial.println(F("GET ROOM BRIGHTNESS FUNCTION FAIL"));
-  return true;
 }

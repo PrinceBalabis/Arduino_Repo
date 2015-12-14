@@ -17,13 +17,13 @@ void setMainLights(bool status) {
   if (mainLightsStatus != status) { // Only run if mainLights arent already on set state
 
     if (status) { // Turn on main lights
-      if (!getRoomBrightness()) { // If its dark, its okay to turn on lights
+     // if (!getRoomBrightness()) { // If its dark, its okay to turn on lights
         PORTC |= _BV(PC0);
         //digitalWrite(MAINLIGHTS_PIN, status);
-      } else {
-        Serial.println(F("Room is already bright, not turning on ceiling lights"));
-        return; // Exit function
-      }
+    //  } else {
+    //    Serial.println(F("Room is already bright, not turning on ceiling lights"));
+   //     return; // Exit function
+    //  }
     } else { // Turn off main lights
       PORTC &= ~_BV(PC0);
       //digitalWrite(MAINLIGHTS_PIN, status);
