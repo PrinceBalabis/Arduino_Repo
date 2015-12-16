@@ -72,7 +72,7 @@ boolean getMainLightsStatus() {
   return false;
 }
 
-bool shutdownApartment() {
+void shutdownApartment() {
   nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF);
   Serial.println(F("Main lights shut down!"));
@@ -85,7 +85,7 @@ bool shutdownApartment() {
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
 }
 
-bool startupApartment() {
+void startupApartment() {
   nilThdSleepMilliseconds(1000);
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON); // Turn on main lights!
