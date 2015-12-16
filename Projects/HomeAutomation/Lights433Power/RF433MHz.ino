@@ -8,11 +8,11 @@ NewRemoteTransmitter transmitter(15303606, 7, 260, 2);
 ////////////////////////////////////////////////////////////////////////////////
 
 bool getPaintingLightStatus() {
-  return EEPROM.read(PAINTINGLIGHTS_ADDRESS);
+  return EEPROM.read(EEPROM_PAINTINGLIGHTS);
 }
 
 void setPaintingLightStatus(bool status) {
-  EEPROM.write(PAINTINGLIGHTS_ADDRESS, status);
+  EEPROM.write(EEPROM_PAINTINGLIGHTS, status);
 }
 
 void setPaintingLightsOn() {

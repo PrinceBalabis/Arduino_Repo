@@ -1,11 +1,9 @@
 /*
- * * Make sure the HC-21 has at least 200-300 mA!!!! (by using separate power supply)
- * Runs at 3.3V
- *
- * How to Send a GET HTTP Request from a simple internet browser:
- * Enter this in browser to send command 1
- * http://princehome.duckdns.org:9500/1
- */
+
+   How to Send a GET HTTP Request from a simple internet browser:
+   Enter this in browser to send command 1
+   http://princehome.duckdns.org:9500/1
+*/
 // If a thread weirdly crashes then increase the stack value
 
 #include <NilRTOS.h>
@@ -16,6 +14,7 @@
 #include <HomeNetwork.h>
 #include "config.h"
 #include <SoftwareSerial.h>
+#include <Wire.h>
 
 #define Serial NilSerial
 
@@ -23,22 +22,20 @@ RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
 HomeNetwork homeNetwork(radio, network);
 
-SoftwareSerial hc21(2, 3);
-
-bool pauseWebserver = false;
-bool webserverIsPaused = false;
-
 void setup() {
   Serial.begin(115200);
 
   Serial.println(F("Home Network Webserver Node"));
 
-  hc21.begin(38400); // Your modules baud rate might be different
+  // Start I²C bus as a slave
+  Wire.begin(TWI_SLAVE_ID);
+  // Set the callback to call when data is received.
+  Wire.onReceive(receiveCommand);
+  Wire.onRequest(requestCallback);
 
   SPI.begin(); // SPI is used by homeNetwork
-
   // Initialize Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 

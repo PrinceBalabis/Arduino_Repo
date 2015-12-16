@@ -33,7 +33,7 @@
     ------------------------------------
 */
 #define EEPROM_MAINLIGHTS 0
-#define PAINTINGLIGHTS_ADDRESS 1
+#define EEPROM_PAINTINGLIGHTS 1
 
 /*
    ------------------------------------

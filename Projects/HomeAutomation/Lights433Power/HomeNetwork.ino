@@ -35,11 +35,13 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
       switch (msgContent) {
         case HOME_LIGHTS433POWER_QSN_MAINLIGHTS_STATUS:
           homeNetwork.respondToQuestion(msgSender, mainLightsStatus);
-          Serial.println(F("Lights status question"));
+          Serial.print(F("Lights status question "));
+          Serial.println(mainLightsStatus);
           break;
         case HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS:
           homeNetwork.respondToQuestion(msgSender, getPaintingLightStatus());
-          Serial.println(F("Answered Painting lights status"));
+          Serial.print(F("Answered Painting lights status: "));
+          Serial.println(getPaintingLightStatus());
           break;
       }
       break;

@@ -261,7 +261,7 @@ void initCommand(char cmd[]) {
       blinkLED(1000);
       break; // Exit out of init loop
     } else {
-      Serial.print(F("ERROR\nREstarting Arduino...\n\n"));
+      Serial.print(F("ERROR\nRestarting Arduino...\n\n"));
       blinkLED(500);
       blinkLED(500);
       blinkLED(500);
