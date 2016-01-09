@@ -57,6 +57,22 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.println(F("Speaker Mode Toggle Command!"));
             homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MODE_TOGGLE);
             break;
+          case CMD_APARTMENT_PC_ON:
+            Serial.println(F("Started PC!"));
+            homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON);
+            break;
+          case CMD_APARTMENT_SPEAKER_POWER_TOGGLE:
+            Serial.println(F("Toggle Speaker Power!"));
+            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
+            break;
+          case CMD_APARTMENT_SPEAKER_VOLUME_UP:
+            Serial.println(F("Increased Speaker Volume!"));
+            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
+            break;
+          case CMD_APARTMENT_SPEAKER_VOLUME_DOWN:
+            Serial.println(F("Decreased Speaker Volume!"));
+            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
+            break;
           case CMD_APARTMENT_MOOD_TOGGLE:
             Serial.println(F("Apartment Mood Toggle Command!"));
             toggleApartmentMood();
@@ -65,6 +81,24 @@ NIL_THREAD(CommandExecutioner, arg)
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Command that came from HomeNetwork
         switch (commandToExecute) {
+          case HOME_WEBSERVER_CMD_MONITOR_DISABLE:
+
+            break;
+          case HOME_WEBSERVER_CMD_MONITOR_ENABLE:
+
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_CHILL:
+
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_DINNER:
+
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT:
+
+            break;
+          case HOME_WEBSERVER_CMD_SPOTIFY_WORK:
+
+            break;
             //          case HOME_WEBSERVER_CMD_MONITOR_DISABLE:
             //            if (!sendGetRequest(1, 192, 168, 1, 2, 5060)) {
             //              Serial.println(F("Couldnt connect to server!"));
@@ -137,7 +171,9 @@ void shutdownApartment() {
 
 void startupApartment() {
   nilThdSleepMilliseconds(1000);
+  homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON); // Turn on PC
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
+
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON); // Turn on main lights!
   Serial.println(F("Main lights turned on"));
 

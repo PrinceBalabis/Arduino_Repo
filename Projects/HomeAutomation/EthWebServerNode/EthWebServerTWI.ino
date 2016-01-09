@@ -1,8 +1,18 @@
+byte callbackCommand = 0;
+
 // This function is called when Master(EthWebserver) has something to tell to this Arduino
 void receiveCommand(int availableBytes)
 {
   if (availableBytes > 0) {
-    byte command = Wire.read();
+    uint16_t command;
+    if (availableBytes == 1) {
+      command = Wire.read();
+    } else if (availableBytes == 2) {
+      command = Wire.read() << 8; // Read MSB
+      command |= Wire.read(); // Read LSB
+    } else {
+      Serial.println("Cant process received TWI command, too many bytes!");
+    }
     Serial.print("Available bytes: ");
     Serial.println(availableBytes);
     Serial.print("Command: ");
@@ -15,12 +25,6 @@ void receiveCommand(int availableBytes)
 void requestCallback()
 {
   //Serial.println("Callback requested");
-  Wire.write(0);
+  Wire.write(callbackCommand);
 }
 
-void blinkLED(uint16_t time) {
-  digitalWrite(DEBUG_LED, !bitRead(PORTC, 0));
-  nilThdSleepMilliseconds(time);
-  digitalWrite(DEBUG_LED, !bitRead(PORTC, 0));
-  nilThdSleepMilliseconds(time);
-}

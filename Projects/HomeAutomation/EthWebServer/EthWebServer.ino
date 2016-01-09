@@ -16,6 +16,8 @@
 #define Serial NilSerial
 
 String request;
+String request2;
+String tempS;
 
 void setup() {
   Serial.begin(115200);
@@ -42,7 +44,5 @@ void printStackInfo() {
   // Arduino delay() can also be used in loop().
   nilThdDelayMilliseconds(1000);
 }
-
-void(* resetFunc) (void) = 0; //declare reset function @ address 0
 
 

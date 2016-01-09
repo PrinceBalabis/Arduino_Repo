@@ -16,7 +16,9 @@ NIL_THREAD(Webserver, arg) {
 
   // Start the Ethernet connection and the server:
   Ethernet.begin(mac, ip);
+  nilThdSleepMilliseconds(1000); // give the Ethernet shield a second to initialize:
   server.begin();
+  nilThdSleepMilliseconds(1000); // give the Ethernet shield a second to initialize:
   Serial.print(F("Server IP: "));
   Serial.println(Ethernet.localIP());
   Serial.println(F("Webserver is listening"));
@@ -50,12 +52,24 @@ NIL_THREAD(Webserver, arg) {
           if (reading && c == ' ') reading = false;
           if (requestType == GET_REQUEST) { // This part is used to read the request when its GET Request
             if (c == '?') reading = true; //found the ?, begin reading the info
-
             if (reading) {
               if (c != '?') {
-                request += c;
+                Serial.print(F("c= "));
+                Serial.println(c);
+                tempS = "";
+                tempS.concat(c);
+                Serial.print(F("tempS= "));
+                Serial.println(tempS);
+                if (request != "") {
+                  request2 = tempS;
+                } else {
+                  request = tempS;
+                }
+                Serial.print(F("request:= "));
+                Serial.println(request);
+                Serial.print(F("request2:= "));
+                Serial.println(request2);
               }
-
             }
           }
 
@@ -95,9 +109,17 @@ NIL_THREAD(Webserver, arg) {
         }
       }
       Serial.print(F("Request: "));
-      Serial.println((byte)request.toInt());
-      sendTWICommand((byte)request.toInt()); // Send command to HomeNetwork
-      request = ""; // Clear string
+      uint16_t requestMerged;
+      if (request2 != "") {
+        requestMerged = (uint16_t)request.toInt() * 10 + (uint16_t)request2.toInt();
+      } else{
+        requestMerged = (uint16_t)request.toInt();
+      }
+
+      Serial.println(requestMerged);
+      sendTWICommand(requestMerged); // Send command to HomeNetwork
+      request = ""; // Clear strings
+      request2 = "";
       // give the web browser time to receive the data
       nilThdSleepMilliseconds(CLIENT_SEND_TIME);
       // close the connection:

@@ -29,7 +29,7 @@ NIL_THREAD(TWI, arg) {
   }
 }
 
-void sendTWICommand(byte command) {
+void sendTWICommand(uint16_t command) {
   Serial.print(F("Sending TWI command.. "));
   Serial.println(command);
 

@@ -4,7 +4,7 @@
 #define CLIENT_SEND_TIME 100
 #define SERVER_BOOT_TIME 5000
 
-#define TWI_CHECK_DELAY 1000
+#define TWI_CHECK_DELAY 100
 #define TWI_SLAVE_ID 1
 #define TWI_BOOT_TIME SERVER_BOOT_TIME+2000
 
@@ -18,3 +18,7 @@
 #define CMD_SPEAKER_MODE_TOGGLE 7 // Toggle speaker mode
 #define CMD_PAINTINGLIGHTS_TOGGLE 8 // Toggle Painting Lights 
 #define CMD_APARTMENT_MOOD_TOGGLE 9 // Toggle Apartment mood
+#define CMD_APARTMENT_PC_ON 10 // Start PC
+#define CMD_APARTMENT_SPEAKER_POWER_TOGGLE 11 // Toggle Speaker Power
+#define CMD_APARTMENT_SPEAKER_VOLUME_UP 12 // Increase Speaker Volume
+#define CMD_APARTMENT_SPEAKER_VOLUME_DOWN 13 // Decrease Speaker Volume
