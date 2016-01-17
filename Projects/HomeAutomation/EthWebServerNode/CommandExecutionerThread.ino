@@ -5,6 +5,7 @@
 
 static bool commandOrigin = 0;
 static int32_t commandToExecute = 0;
+static int8_t nodeToSendTo = 0;
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
@@ -20,12 +21,8 @@ NIL_THREAD(CommandExecutioner, arg)
     nilSemWait(&cmdExSem);
 
     switch (commandOrigin) {
-      case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // Command that came from the internet
+      case COMMANDEXECUTIONER_MSGORIGIN_INTERNET_MACRO: // Macro Command that came from the internet
         switch (commandToExecute) {
-          case CMD_MAINLIGHTS_TOGGLE:
-            Serial.println(F("Toggle Main Lights command!"));
-            homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE);
-            break;
           case QSN_MAINLIGHTS_STATUS:
 
             break;
@@ -45,39 +42,15 @@ NIL_THREAD(CommandExecutioner, arg)
               startupApartment();
             }
             break;
-          case CMD_PAINTINGLIGHTS_TOGGLE:
-            Serial.println(F("Painting Lights Toggle Command!"));
-            homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE);
-            break;
-          case CMD_SPEAKER_MUTE_TOGGLE:
-            Serial.println(F("Speaker Mute Toggle Command!"));
-            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
-            break;
-          case CMD_SPEAKER_MODE_TOGGLE:
-            Serial.println(F("Speaker Mode Toggle Command!"));
-            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MODE_TOGGLE);
-            break;
-          case CMD_APARTMENT_PC_ON:
-            Serial.println(F("Started PC!"));
-            homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON);
-            break;
-          case CMD_APARTMENT_SPEAKER_POWER_TOGGLE:
-            Serial.println(F("Toggle Speaker Power!"));
-            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
-            break;
-          case CMD_APARTMENT_SPEAKER_VOLUME_UP:
-            Serial.println(F("Increased Speaker Volume!"));
-            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
-            break;
-          case CMD_APARTMENT_SPEAKER_VOLUME_DOWN:
-            Serial.println(F("Decreased Speaker Volume!"));
-            homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
-            break;
           case CMD_APARTMENT_MOOD_TOGGLE:
             Serial.println(F("Apartment Mood Toggle Command!"));
             toggleApartmentMood();
             break;
         }
+        break;
+      case COMMANDEXECUTIONER_MSGORIGIN_INTERNET: // Normal Command that came from the internet
+        Serial.println(F("Command sent to HomeNetwork!"));
+        homeNetwork.sendCommand(nodeToSendTo, commandToExecute);
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Command that came from HomeNetwork
         switch (commandToExecute) {
@@ -150,9 +123,30 @@ NIL_THREAD(CommandExecutioner, arg)
 /*
    Run this function to enable CommandExecutionerThread to run
 */
-void executeCommand(int32_t _commandToExecute, bool _commandOrigin) {
+//void executeCommandFromHomeNetwork(uint8_t _nodeToSendTo, uint8_t _commandToExecute, bool _commandOrigin) {
+//  nodeToSendTo = _nodeToSendTo;
+//  commandToExecute = _commandToExecute;
+//  commandOrigin = _commandOrigin;
+//  nilSemSignal(&cmdExSem);
+//}
+
+/*
+   Run this function to enable CommandExecutionerThread to run
+*/
+void executeCommandFromInternetMacro(uint8_t _commandToExecute) {
+  nodeToSendTo = 0;
   commandToExecute = _commandToExecute;
-  commandOrigin = _commandOrigin;
+  commandOrigin = COMMANDEXECUTIONER_MSGORIGIN_INTERNET_MACRO;
+  nilSemSignal(&cmdExSem);
+}
+
+/*
+   Run this function to enable CommandExecutionerThread to run
+*/
+void executeCommandFromInternet(uint8_t _nodeToSendTo, uint8_t _commandToExecute) {
+  nodeToSendTo = _nodeToSendTo;
+  commandToExecute = _commandToExecute;
+  commandOrigin = COMMANDEXECUTIONER_MSGORIGIN_INTERNET;
   nilSemSignal(&cmdExSem);
 }
 

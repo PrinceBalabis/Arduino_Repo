@@ -3,7 +3,14 @@
 
    Circuit:
    Ethernet shield attached to pins 10, 11, 12, 13
-    http://192.168.1.16:9500/?1
+
+   Toggle Main Lights(Normal command with node and command as "node-command" format)
+   http://192.168.1.16:9500/?2-1
+
+
+   Toggle Main Lights(Macro command with node and command as "node-command" format)
+   http://192.168.1.16:9500/?2-1
+   
 */
 
 #include <NilRTOS.h>
@@ -15,8 +22,11 @@
 
 #define Serial NilSerial
 
-String request;
-String request2;
+String node1;
+String node2;
+String command1;
+String command2;
+
 String tempS;
 
 void setup() {

@@ -54,21 +54,42 @@ NIL_THREAD(Webserver, arg) {
             if (c == '?') reading = true; //found the ?, begin reading the info
             if (reading) {
               if (c != '?') {
-                Serial.print(F("c= "));
-                Serial.println(c);
+                //Read node
+//                Serial.print(F("c: "));
+//                Serial.println(c);
                 tempS = "";
                 tempS.concat(c);
-                Serial.print(F("tempS= "));
-                Serial.println(tempS);
-                if (request != "") {
-                  request2 = tempS;
+//                Serial.print(F("tempS: "));
+//                Serial.println(tempS);
+                if (node1 != "") {
+                  node2 = tempS;
                 } else {
-                  request = tempS;
+                  node1 = tempS;
                 }
-                Serial.print(F("request:= "));
-                Serial.println(request);
-                Serial.print(F("request2:= "));
-                Serial.println(request2);
+//                Serial.print(F("request: "));
+//                Serial.println(node1);
+//                Serial.print(F("request2: "));
+//                Serial.println(node2);
+
+                client.read(); // Skip the "-"
+
+                //Read command,
+                c = client.read();
+//                Serial.print(F("c: "));
+//                Serial.println(c);
+                tempS = "";
+                tempS.concat(c);
+//                Serial.print(F("tempS: "));
+//                Serial.println(tempS);
+                if (command1 != "") {
+                  command2 = tempS;
+                } else {
+                  command1 = tempS;
+                }
+//                Serial.print(F("command1: "));
+//                Serial.println(command1);
+//                Serial.print(F("command2: "));
+//                Serial.println(command2);
               }
             }
           }
@@ -80,9 +101,9 @@ NIL_THREAD(Webserver, arg) {
               char locationStatus = client.read(); // Should be either an 'n' or x'
               if (locationStatus == 'n') { // if 'n' then youre Entered
                 Serial.println(F("Entered apartment"));
-                sendTWICommand(CMD_APARTMENT_STARTUP);
+                //sendTWICommand(CMD_APARTMENT_STARTUP);
               } else if (locationStatus == 'x') { // if 'x' then youre Exited
-                sendTWICommand(CMD_APARTMENT_SHUTDOWN);
+                //sendTWICommand(CMD_APARTMENT_SHUTDOWN);
                 Serial.println(F("Exit apartment"));
               } else {
                 Serial.println(F("Request not understood!"));
@@ -96,7 +117,8 @@ NIL_THREAD(Webserver, arg) {
             client.println(F(""));
             client.println(F("<!DOCTYPE HTML>"));
             client.println(F("<html>"));
-            client.print(request);
+            client.print(node1);
+            client.print(command1);
             client.println(F("</html>"));
             break;
           }
@@ -108,18 +130,31 @@ NIL_THREAD(Webserver, arg) {
           }
         }
       }
-      Serial.print(F("Request: "));
-      uint16_t requestMerged;
-      if (request2 != "") {
-        requestMerged = (uint16_t)request.toInt() * 10 + (uint16_t)request2.toInt();
-      } else{
-        requestMerged = (uint16_t)request.toInt();
+      //Serial.print(F("Node: "));
+      uint16_t nodeMerged;
+      if (node2 != "") {
+        nodeMerged = (uint16_t)node1.toInt() * 10 + (uint16_t)node2.toInt();
+      } else {
+        nodeMerged = (uint16_t)node1.toInt();
       }
+      //Serial.println(nodeMerged);
+      //Serial.print(F("Command: "));
+      uint16_t commandMerged;
+      if (command2 != "") {
+        commandMerged = (uint16_t)command1.toInt() * 10 + (uint16_t)command2.toInt();
+      } else {
+        commandMerged = (uint16_t)command1.toInt();
+      }
+      //Serial.println(commandMerged);
 
-      Serial.println(requestMerged);
-      sendTWICommand(requestMerged); // Send command to HomeNetwork
-      request = ""; // Clear strings
-      request2 = "";
+      sendTWICommand(nodeMerged, commandMerged); // Send command to HomeNetwork
+
+      // Clear strings
+      node1 = "";
+      node2 = "";
+      command1 = "";
+      command2 = "";
+
       // give the web browser time to receive the data
       nilThdSleepMilliseconds(CLIENT_SEND_TIME);
       // close the connection:

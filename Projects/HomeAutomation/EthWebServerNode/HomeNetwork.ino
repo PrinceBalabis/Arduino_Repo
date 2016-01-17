@@ -7,7 +7,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
     case HOME_TYPE_COMMAND: // If its a simple command
       Serial.print(F("Command: "));
       //Send message to CommandExecutionerThread for decoding
-      executeCommand(msgContent, COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK);
+//      executeCommandHomeNetwork(msgContent);
       break;
     case HOME_TYPE_QUESTION: // If its a question
       Serial.print(F("Question: "));
