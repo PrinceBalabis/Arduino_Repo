@@ -31,7 +31,7 @@ NIL_THREAD(TWI, arg) {
 }
 
 // This function is called to send a command to home network when command is received from internet
-void sendTWICommand(uint8_t node, uint8_t command) {
+void sendTWICommand(uint16_t node, uint16_t command) {
   Serial.print(F("Sending TWI.. Node="));
   Serial.print(node);
   Serial.print(F(", Command="));

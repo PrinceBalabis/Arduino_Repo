@@ -17,8 +17,8 @@ void receiveCommand(int availableBytes)
     Serial.print("Available bytes: ");
     Serial.println(availableBytes);
 
-    uint8_t node = Wire.read();
-    uint8_t command = Wire.read();
+    uint16_t node = Wire.read();
+    uint16_t command = Wire.read();
 
     Serial.print("Node: ");
     Serial.print(node);

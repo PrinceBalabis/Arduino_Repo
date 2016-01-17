@@ -117,7 +117,7 @@ NIL_THREAD(Webserver, arg) {
             client.println(F(""));
             client.println(F("<!DOCTYPE HTML>"));
             client.println(F("<html>"));
-            client.print(node1);
+            client.println(node1);
             client.print(command1);
             client.println(F("</html>"));
             break;

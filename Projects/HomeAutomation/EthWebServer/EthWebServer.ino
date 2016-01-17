@@ -5,11 +5,11 @@
    Ethernet shield attached to pins 10, 11, 12, 13
 
    Toggle Main Lights(Normal command with node and command as "node-command" format)
-   http://192.168.1.16:9500/?2-1
+   http://192.168.1.16:9500/?2-3
 
 
-   Toggle Main Lights(Macro command with node and command as "node-command" format)
-   http://192.168.1.16:9500/?2-1
+   Toggle Apartment Mood(Macro command with node and command as "0-command" format)
+   http://192.168.1.16:9500/?0-5
    
 */
 

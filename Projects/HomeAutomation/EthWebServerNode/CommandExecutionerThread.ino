@@ -3,9 +3,9 @@
  ** Executes commands
  **/
 
-static bool commandOrigin = 0;
+static uint8_t commandOrigin = 0;
 static int32_t commandToExecute = 0;
-static int8_t nodeToSendTo = 0;
+static uint16_t nodeToSendTo = 0;
 
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
@@ -133,7 +133,7 @@ NIL_THREAD(CommandExecutioner, arg)
 /*
    Run this function to enable CommandExecutionerThread to run
 */
-void executeCommandFromInternetMacro(uint8_t _commandToExecute) {
+void executeCommandFromInternetMacro(uint16_t _commandToExecute) {
   nodeToSendTo = 0;
   commandToExecute = _commandToExecute;
   commandOrigin = COMMANDEXECUTIONER_MSGORIGIN_INTERNET_MACRO;
@@ -143,7 +143,7 @@ void executeCommandFromInternetMacro(uint8_t _commandToExecute) {
 /*
    Run this function to enable CommandExecutionerThread to run
 */
-void executeCommandFromInternet(uint8_t _nodeToSendTo, uint8_t _commandToExecute) {
+void executeCommandFromInternet(uint16_t _nodeToSendTo, uint16_t _commandToExecute) {
   nodeToSendTo = _nodeToSendTo;
   commandToExecute = _commandToExecute;
   commandOrigin = COMMANDEXECUTIONER_MSGORIGIN_INTERNET;
