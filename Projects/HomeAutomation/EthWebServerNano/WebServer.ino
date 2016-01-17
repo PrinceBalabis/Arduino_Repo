@@ -1,28 +1,8 @@
 #define GET_REQUEST 0
 #define POST_REQUEST 1
 
-NIL_WORKING_AREA(webserver, 400);
-NIL_THREAD(Webserver, arg) {
-  nilThdSleepMilliseconds(SERVER_BOOT_TIME);
-  Serial.println(F("Webserver Thread started"));
+void updateServer() {
 
-  byte mac[] = {
-    0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
-  };
-  IPAddress ip(SERVER_IP);
-  EthernetServer server(SERVER_PORT);
-  boolean reading = false;
-  bool requestType = 0; // 0=GET Request, 1=POST Request
-  bool isNode = 1;
-
-  // Start the Ethernet connection and the server:
-  Ethernet.begin(mac, ip);
-  nilThdSleepMilliseconds(1000); // give the Ethernet shield a second to initialize:
-  server.begin();
-  nilThdSleepMilliseconds(1000); // give the Ethernet shield a second to initialize:
-  Serial.print(F("Server IP: "));
-  Serial.println(Ethernet.localIP());
-  Serial.println(F("Webserver is listening"));
 
   while (1) {
     // listen for incoming clients
@@ -55,47 +35,49 @@ NIL_THREAD(Webserver, arg) {
             if (c == '?') reading = true; //found the ?, begin reading the info
             if (reading) {
               if (c != '?') {
-                //Serial.print(F("c: "));
-                //Serial.println(c);
+                //Read node
+                //                Serial.print(F("c: "));
+                //                Serial.println(c);
                 tempS = "";
                 tempS.concat(c);
-                //Serial.print(F("tempS: "));
-                //Serial.println(tempS);
-
-                if (tempS != "-") {
-                  if (node1 == "") {
-                    //Read node
-                   // Serial.println(F("Reading node..."));
-                    node1 = tempS;
-                    //Serial.print(F("node1: "));
-                    //Serial.println(node1);
-                  } else if (node2 == "" && isNode) {
-                    node2 = tempS;
-                    //Serial.print(F("node2: "));
-                    //Serial.println(node2);
-                  } else if (!isNode) {
-                    //Read command,
-                    //Serial.println(F("Reading command..."));
-                    if (command1 != "") {
-                      command2 = tempS;
-                      //Serial.print(F("command2: "));
-                      //Serial.println(command2);
-                    } else {
-                      command1 = tempS;
-                      //Serial.print(F("command1: "));
-                      //Serial.println(command1);
-                    }
-                  }
-                } else if (tempS == "-") { // Change variable type from node to command
-                  isNode = 0;
+                //                Serial.print(F("tempS: "));
+                //                Serial.println(tempS);
+                if (node1 != "") {
+                  node2 = tempS;
+                } else {
+                  node1 = tempS;
                 }
+                //                Serial.print(F("request: "));
+                //                Serial.println(node1);
+                //                Serial.print(F("request2: "));
+                //                Serial.println(node2);
+
+                client.read(); // Skip the "-"
+
+                //Read command,
+                c = client.read();
+                //                Serial.print(F("c: "));
+                //                Serial.println(c);
+                tempS = "";
+                tempS.concat(c);
+                //                Serial.print(F("tempS: "));
+                //                Serial.println(tempS);
+                if (command1 != "") {
+                  command2 = tempS;
+                } else {
+                  command1 = tempS;
+                }
+                //                Serial.print(F("command1: "));
+                //                Serial.println(command1);
+                //                Serial.print(F("command2: "));
+                //                Serial.println(command2);
               }
             }
           }
 
           if (c == '\n' && currentLineIsBlank) {
             if (requestType == POST_REQUEST) { // This part is used to read the request when its GET Request
-              nilThdSleepMilliseconds(1000); // Give some time to receive whole POST Request from client
+              delay(1000); // Give some time to receive whole POST Request from client
               client.find("LocationE"); // Find String "LocationE" in POST Request
               char locationStatus = client.read(); // Should be either an 'n' or x'
               if (locationStatus == 'n') { // if 'n' then youre Entered
@@ -148,20 +130,19 @@ NIL_THREAD(Webserver, arg) {
 
       sendTWICommand(nodeMerged, commandMerged); // Send command to HomeNetwork
 
-      // Clear variables
-      isNode = 1;
+      // Clear strings
       node1 = "";
       node2 = "";
       command1 = "";
       command2 = "";
 
       // give the web browser time to receive the data
-      nilThdSleepMilliseconds(CLIENT_SEND_TIME);
+      delay(CLIENT_SEND_TIME);
       // close the connection:
       client.stop();
       Serial.println(F("Client disconnected"));
       Ethernet.maintain();
     }
-    nilThdSleepMilliseconds(5);
+    delay(5);
   }
 }

@@ -1,9 +1,3 @@
-/*
-
-   How to Send a GET HTTP Request from a simple internet browser:
-   Enter this in browser to send command 1
-   http://princehome.duckdns.org:9500/1
-*/
 // If a thread weirdly crashes then increase the stack value
 
 #include <NilRTOS.h>
