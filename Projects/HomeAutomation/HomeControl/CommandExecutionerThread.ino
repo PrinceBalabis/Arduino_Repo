@@ -32,10 +32,6 @@ NIL_THREAD(CommandExecutioner, arg)
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
         switch (commandToExecute) {
-          case BUTTON_AUDIO_SWITCH:
-            sent = toggleAudioSwitch();
-            Serial.print(F("Toggling Audio Switch"));
-            break;
           case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
             sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT);
             Serial.print(F("Starting Spotify Workout Playlist"));
@@ -77,7 +73,7 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.print(F("Toggling Speaker Mute"));
             break;
           case BUTTON_SPEAKER_MODE:
-            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MODE_TOGGLE);
+            toggleAudioSwitch();
             Serial.print(F("Toggling Speaker Mode"));
             break;
           case BUTTON_PC_POWER:

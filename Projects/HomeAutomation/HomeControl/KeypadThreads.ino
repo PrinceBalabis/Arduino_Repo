@@ -126,9 +126,6 @@ NIL_THREAD(KeypadCommandThread, arg)
         case BUTTON_SPEAKER_MODE:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
           break;
-        case BUTTON_AUDIO_SWITCH:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
-          break;
       }
     }
 
