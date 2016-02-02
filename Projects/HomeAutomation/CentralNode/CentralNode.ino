@@ -9,16 +9,8 @@
 RF24 radio(8, 9);
 RF24Network network(radio);
 
-#define LED_13_PIN 5
-#define LED_13_OUTPUT_INIT (DDRB |= _BV(LED_13_PIN))
-#define LED_13_ON (PORTB |= _BV(LED_13_PIN))
-#define LED_13_OFF (PORTB &= ~_BV(LED_13_PIN))
-
 void setup() {
   delay(4000); //Give some time for capacitor to charge up and stabilize before initializing RF24 module!
-  LED_13_OUTPUT_INIT;
-  delay(100);
-  LED_13_OFF;
   SPI.begin(); // SPI is used by homeNetwork
   delay(500);
   radio.begin(); // Initialize radio
@@ -33,10 +25,9 @@ void setup() {
   delay(100);
   radio.setRetries(15, 15);
   delay(500);
-  LED_13_ON;   // turn the LED on (HIGH is the voltage level)
-  delay(100);
 }
 
 void loop() {
   network.update();
+  delay(1);
 }
