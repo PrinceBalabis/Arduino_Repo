@@ -3,16 +3,17 @@
 
    Circuit:
    Ethernet shield attached to pins 10, 11, 12, 13
-   
+
    Run this command where AA is node which is a number betwen 0-99 and BB which is command and between 0-99
    http://192.168.1.16:9500/?AA-BB
-
+   Example of normal command:
    Toggle Main Lights(Normal command with node and command as "node-command" format)
    http://192.168.1.16:9500/?2-3
 
+   To run a macro command, have AA as 0, example:
    Toggle Apartment Mood(Macro command with node and command as "0-command" format)
    http://192.168.1.16:9500/?0-5
-   
+
 */
 
 #include <NilRTOS.h>

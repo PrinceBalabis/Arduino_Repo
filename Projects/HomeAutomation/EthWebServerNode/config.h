@@ -26,7 +26,7 @@
  *  Webserver
  *  ------------------------------------
  */
-// Webserver Commands
+// Webserver Macro Commands
 #define QSN_MAINLIGHTS_STATUS 1 // Ask mainlights status
 #define CMD_APARTMENT_SHUTDOWN 2 // Shutdown Apartment
 #define CMD_APARTMENT_STARTUP 3 // Startup Apartment
