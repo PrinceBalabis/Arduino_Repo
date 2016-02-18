@@ -85,9 +85,13 @@ as the other node will be waiting for the answer.
 */
 void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
-// ------------------------------------------------------PUBLIC FUNCTIONS END---------------------------------------------------------------
+/*
+Function needs to be executed in a thread in the Sketch. Execution will be stuck infinitely in this thread.
+This function must be run in order for home network to function properly.
+*/
+void update();
 
-void update(); // Used by internal thread, NOT to be used by Sketch!
+// ------------------------------------------------------PUBLIC FUNCTIONS END---------------------------------------------------------------
 private:
   RF24& radio;
   RF24Network& network;

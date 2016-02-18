@@ -38,6 +38,8 @@
 #define HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS 2
 
 //***********************Speaker************************************************************
+// Disabled speaker because of inconsistencies with IR 
+
 // #define HOME_SPEAKER_ID 03
 
 // Question
@@ -73,7 +75,7 @@
 #define HOME_BEDSWITCH_ID 05
 
 //***********************Example Sketches like ToggleMainLights or AskMainLightsStatus************************************************************
-#define HOME_TEST_ID 051
+#define HOME_TEST_ID 01
 
 // Command(message type: typeCommand)
 #define HOME_TEST_CMD 1

@@ -75,7 +75,7 @@ void HomeNetwork::update()
       uint16_t msgSender = read(&msgContent, &msgType);
       if(msgType == HOME_TYPE_COMMAND || msgType ==  HOME_TYPE_QUESTION){ //A Command/Question w/ confirmation request
         if(debug)
-          Serial.print(F("msgType: Normal msgType w/ confirmation->"));
+          Serial.print(F("Normal command/question w/ confirmation->"));
         // SPAM CONFIRMATION MESSAGE BACK TO MAKE SURE IT GET RECEIVED!!!
         for(uint8_t i=0 ; i<HOME_SETTING_DEFAULT_SPAM_CONFIRMATION_TIMES ; i++){
           sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION); // Send back confirmation

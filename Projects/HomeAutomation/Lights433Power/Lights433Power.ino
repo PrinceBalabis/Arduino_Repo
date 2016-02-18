@@ -32,7 +32,7 @@ void setup() {
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(HOME_NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
 
