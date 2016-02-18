@@ -39,6 +39,9 @@ void HomeNetwork::begin(uint16_t nodeID, void (* _pmsgReceivedF)(uint16_t,unsign
   homeNetwork_autoUpdateTime = HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE;
 }
 
+/*
+
+*/
 bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
 {
   if(_homeNetwork_autoUpdateTime < 0 || _homeNetwork_autoUpdateTime > 127 ) { // If its a negative value, or outside the boundaries of int8_t, then set to default
@@ -72,7 +75,7 @@ void HomeNetwork::update()
       uint16_t msgSender = read(&msgContent, &msgType);
       if(msgType == HOME_TYPE_COMMAND || msgType ==  HOME_TYPE_QUESTION){ //A Command/Question w/ confirmation request
         if(debug)
-        Serial.print(F("msgType: Normal msgType w/ confirmation->"));
+          Serial.print(F("msgType: Normal msgType w/ confirmation->"));
         // SPAM CONFIRMATION MESSAGE BACK TO MAKE SURE IT GET RECEIVED!!!
         for(uint8_t i=0 ; i<HOME_SETTING_DEFAULT_SPAM_CONFIRMATION_TIMES ; i++){
           sendFast(msgSender, msgContent, HOME_TYPE_CONFIRMATION); // Send back confirmation
@@ -80,11 +83,11 @@ void HomeNetwork::update()
         pmsgReceivedF(msgSender, msgType, msgContent); // deliver message to Sketch
       } else if(msgType == HOME_TYPE_COMMAND_FAST){ // Fast command, no confirmation message back
         if(debug)
-        Serial.print(F("Command fast->"));
+          Serial.print(F("Command fast->"));
         pmsgReceivedF(msgSender, HOME_TYPE_COMMAND, msgContent); // deliver message to Sketch
       } else if(msgType ==  HOME_TYPE_QUESTION_FAST){// Fast question, no confirmation message back
         if(debug)
-        Serial.print(F("Question fast->"));
+          Serial.print(F("Question fast->"));
         pmsgReceivedF(msgSender, HOME_TYPE_QUESTION, msgContent); // deliver message to Sketch
       }
       else {
@@ -98,7 +101,7 @@ void HomeNetwork::update()
 
 void HomeNetwork::setNetworkUpdateStatus(bool status)
 {
-  // set autoUpdate()
+  // set autoUpdate to either enabled or disabled
   autoUpdateStatus = status;
 
   if(status){
@@ -109,20 +112,10 @@ void HomeNetwork::setNetworkUpdateStatus(bool status)
   }
 }
 
-/**
-* setDebug
-* This function is used to toggle debug messages on/off
-**/
 void HomeNetwork::setDebug(bool status){
   debug = status;
 }
 
-/**
-* sendFast
-* This function sends the message to a receiver, both which are set in parameter
-* This function differs from send function by that this sends a message WITHOUT
-* waiting for a confirmation-message back from the receiver of the initial message
-**/
 void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType)
 {
   switch(msgType){
@@ -143,16 +136,10 @@ void HomeNetwork::sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned ch
   network.write(header, &msgContent, sizeof(msgContent));
 }
 
-/**
-* send
-* This function sends the message to a receiver, both which are set in parameter
-* This function differs from send function by that this sends a message AND
-* waits for a confirmation-message back from the receiver of the initial message
-**/
 bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType, uint8_t retryTimes, uint16_t timeout)
 {
   if(debug)
-  Serial.print(F("send()->"));
+    Serial.print(F("send()->"));
 
   setNetworkUpdateStatus(false); // Pause autoUpdate
 
@@ -174,7 +161,7 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
       break; // when answer is received stop resending message
     } else {
       if(debug)
-      Serial.print(F("FAILED to send...Resending->"));
+        Serial.print(F("FAILED to send...Resending->"));
     }
   }
 
@@ -194,13 +181,13 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
   if(debug)
-  Serial.print(F("sendCommand()->"));
+    Serial.print(F("sendCommand()->"));
   return send(msgReceiver, msgContent, HOME_TYPE_COMMAND);
 }
 
 bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t retryTimes, uint16_t timeout){
   if(debug)
-  Serial.print(F("sendCommand()->"));
+    Serial.print(F("sendCommand()->"));
   return send(msgReceiver, msgContent, HOME_TYPE_COMMAND, retryTimes, timeout);
 }
 
@@ -215,7 +202,7 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
   setNetworkUpdateStatus(false); // Pause autoUpdate
 
   if(debug)
-  Serial.print(F("sendQuestion()->"));
+    Serial.print(F("sendQuestion()->"));
   // Send question
   bool answerReceived;
   for(int i = 0; i < HOME_SETTING_DEFAULT_QUESTION_RETRY_TIMES; i++){
@@ -229,11 +216,11 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 
   if(answerReceived){
     if(debug)
-    Serial.print(F("Answer received->"));
+      Serial.print(F("Answer received->"));
     return true;
   } else {
     if(debug)
-    Serial.print(F("NO ANSWER WAS RECEIVED! ->"));
+      Serial.print(F("NO ANSWER WAS RECEIVED! ->"));
     return false;
   }
 }
@@ -258,7 +245,7 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
     network.update(); // Check the network regularly for the entire network to function properly
     if (millis() - started_waiting_at > timeout) {
       if(debug)
-      Serial.print(F("TIMED OUT! NO ANSWER RECEIVED!->"));
+        Serial.print(F("TIMED OUT! NO ANSWER RECEIVED!->"));
       return false;
     }
     if(network.available())
@@ -268,11 +255,11 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
         break;
       } else if(msgSenderReceived != *pmsgReceiver){
         if(debug)
-        Serial.print(F("MESSAGE RECEIVED WAS NOT FROM CORRECT NODE!->"));
+          Serial.print(F("MESSAGE RECEIVED WAS NOT FROM CORRECT NODE!->"));
         return false;
       } else if(msgTypeReceived != msgType){
         if(debug)
-        Serial.print(F("MESSAGE RECEIVED HAS WRONG MESSAGE TYPE!->"));
+          Serial.print(F("MESSAGE RECEIVED HAS WRONG MESSAGE TYPE!->"));
         return false;
       }
     }
@@ -286,7 +273,7 @@ bool HomeNetwork::readAnswer(uint16_t *pmsgReceiver, const unsigned char msgType
 
 void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
   if(debug)
-  Serial.print(F("respondToQuestion()->"));
+    Serial.print(F("respondToQuestion()->"));
   // SPAM ANSWER MESSAGE BACK TO MAKE SURE IT GET RECEIVED!!!
   for(uint8_t i=0 ; i<HOME_SETTING_DEFAULT_SPAM_ANSWER_TIMES ; i++){
     sendFast(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);

@@ -36,9 +36,9 @@ NIL_THREAD(CommandExecutioner, arg)
           case TESTING_QSN_MAINLIGHTS_STATUS:
             sent = homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_MAINLIGHTS_STATUS, &status, TESTING_ANSWER_TIMEOUT);
             break;
-          case TESTING_CMD_SPEAKER_MUTE_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
-            break;
+//          case TESTING_CMD_SPEAKER_MUTE_TOGGLE:
+//            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
+//            break;
           case TESTING_CMD_433MHZ_PAINTINGLIGHTS_TOGGLE:
             sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE);
             break;

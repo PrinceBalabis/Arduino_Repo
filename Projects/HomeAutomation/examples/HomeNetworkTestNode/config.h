@@ -20,8 +20,8 @@
 
 
 // TESTING
-#define TESTING_SEND_DELAY 500 // How often to send the testing command
-#define TESTING_ANSWER_TIMEOUT 200 // How long to wait for answer before timeout
+#define TESTING_SEND_DELAY 3000 // How often to send the testing command
+#define TESTING_ANSWER_TIMEOUT 500 // How long to wait for answer before timeout
 #define TESTING_CHOSEN_COMMAND TESTING_CMD_MAINLIGHTS_TOGGLE // Command chosen to test
 
 #define TESTING_CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights

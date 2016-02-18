@@ -6,7 +6,7 @@
 // For RF24_PA_MAX a 100uF capacitor is needed!
 #define HOME_SETTING_POWERAMPLIFIERLEVEL RF24_PA_MAX
 
-#define HOME_SETTING_DATARATE RF24_2MBPS  // Set data rate to 250kpbs(other settings: RF24_250KBPS, RF24_1MBPS, RF24_2MBPS)
+#define HOME_SETTING_DATARATE RF24_2MBPS  // Set data rate to 250kpbs(other settings: RF24_250KBPS, RF24_1MBPS, RF24_2MBPS), lower datarate=better signal
 #define HOME_SETTING_CHANNEL 90 // Default Home network is using channel 90, dont know other channels though
 
 // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
@@ -18,4 +18,4 @@
 #define HOME_SETTING_DEFAULT_QUESTION_RETRY_TIMES 5 // The amount of times to try and ask a question
 #define HOME_SETTING_DEFAULT_TIMEOUT_ANSWER 500 // The amount of time to wait for an answer after sending question
 #define HOME_SETTING_DEFAULT_TIME_READ 1 // How often to check if a confirmation or answer has been received after sending either command or question
-#define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // How often to update the RF24 Home Network
+#define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // How often to auto-update the RF24 Home Network(polling time)

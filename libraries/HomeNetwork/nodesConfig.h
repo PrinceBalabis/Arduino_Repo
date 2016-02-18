@@ -38,23 +38,23 @@
 #define HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS 2
 
 //***********************Speaker************************************************************
-#define HOME_SPEAKER_ID 03
+// #define HOME_SPEAKER_ID 03
 
 // Question
-#define HOME_SPEAKER_QSN_POWER_STATUS 1
+// #define HOME_SPEAKER_QSN_POWER_STATUS 1
 
 // Command
-#define HOME_SPEAKER_CMD_POWER_TOGGLE 1
-#define HOME_SPEAKER_CMD_POWER_ON 2
-#define HOME_SPEAKER_CMD_POWER_OFF 3
-#define HOME_SPEAKER_CMD_VOLUME_UP 4
-#define HOME_SPEAKER_CMD_VOLUME_DOWN 5
-#define HOME_SPEAKER_CMD_MUTE_TOGGLE 6
-#define HOME_SPEAKER_CMD_MUTE_ON 7
-#define HOME_SPEAKER_CMD_MUTE_OFF 8
-#define HOME_SPEAKER_CMD_MODE_TOGGLE 9
-#define HOME_SPEAKER_CMD_MODE_PC 10
-#define HOME_SPEAKER_CMD_MODE_LINEIN 11
+// #define HOME_SPEAKER_CMD_POWER_TOGGLE 1
+// #define HOME_SPEAKER_CMD_POWER_ON 2
+// #define HOME_SPEAKER_CMD_POWER_OFF 3
+// #define HOME_SPEAKER_CMD_VOLUME_UP 4
+// #define HOME_SPEAKER_CMD_VOLUME_DOWN 5
+// #define HOME_SPEAKER_CMD_MUTE_TOGGLE 6
+// #define HOME_SPEAKER_CMD_MUTE_ON 7
+// #define HOME_SPEAKER_CMD_MUTE_OFF 8
+// #define HOME_SPEAKER_CMD_MODE_TOGGLE 9
+// #define HOME_SPEAKER_CMD_MODE_PC 10
+// #define HOME_SPEAKER_CMD_MODE_LINEIN 11
 
 //***********************Webserver************************************************************
 #define HOME_WEBSERVER_ID 04
