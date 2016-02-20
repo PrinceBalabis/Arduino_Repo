@@ -18,7 +18,7 @@ NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
 
-  for (int repeatStatus = 0; repeatStatus < TESTING_REPEATS; repeatStatus++)
+  while (1)
   {
     // Wait for signal to run
     nilSemWait(&cmdExSem);
@@ -54,7 +54,13 @@ NIL_THREAD(CommandExecutioner, arg)
         }
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK:
-
+        // Received commands from other node
+        sentEnabled = false;
+        Serial.println(F("Received: "));
+        Serial.println(commandFromNode);
+        Serial.println(commandType);
+        Serial.println(commandToExecute);
+        Serial.println(F(""));
         break;
     }
 
@@ -67,11 +73,6 @@ NIL_THREAD(CommandExecutioner, arg)
       }
     }
     Serial.println(F(""));
-  }
-  // Stop program when done sending command
-  homeNetwork.setNetworkUpdateStatus(false); // Pause autoUpdate
-  while (1)
-  {
   }
 }
 

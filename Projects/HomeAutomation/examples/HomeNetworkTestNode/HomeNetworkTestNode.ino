@@ -17,15 +17,15 @@ HomeNetwork homeNetwork(radio, network);
 void setup() {
   Serial.begin(115200);
   Serial.println(F("Home Network Testing Node"));
-  
+
   SPI.begin(); // SPI is used by homeNetwork
 
   // Initialize Home Network
   homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &executeHomeNetworkCommand);
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
-  
-  
+
+
   Serial.println(F("Basic system booted up! Starting RTOS..."));
 
   nilSysBegin(); // Start Nil RTOS.

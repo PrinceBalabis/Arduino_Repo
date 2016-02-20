@@ -72,10 +72,10 @@ NIL_THREAD(CommandExecutioner, arg)
 //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
 //            Serial.print(F("Toggling Speaker Mute"));
 //            break;
-//          case BUTTON_SPEAKER_MODE:
-//            toggleAudioSwitch();
-//            Serial.print(F("Toggling Speaker Mode"));
-//            break;
+          case BUTTON_SPEAKER_MODE:
+            toggleAudioSwitch();
+            Serial.print(F("Toggling Speaker Mode"));
+            break;
           case BUTTON_PC_POWER:
             togglePCPowerSwitch();
             Serial.print(F("Toggling PC Power Switch"));

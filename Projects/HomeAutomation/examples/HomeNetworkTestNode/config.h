@@ -2,10 +2,10 @@
 #define COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK 1
 
 /*
-*  ------------------------------------
- *  RF24 Mesh Node
- *  ------------------------------------
- */
+   ------------------------------------
+    RF24 Mesh Node
+    ------------------------------------
+*/
 // This is the nodeID of this Arduino.
 // WARNING! DONT FORGET TO SET UNIQUE NODE ID IN config.h FOR EACH NODE!
 // If you are creating a new node add it to: "\library\HomeNetwork\homeNetworkNodes.h"
