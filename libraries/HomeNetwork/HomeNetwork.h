@@ -17,7 +17,7 @@ public:
 
   /*****************************************************************************************
   PUBLIC FUNCTIONS START
-  *****************************************************************************************/  
+  *****************************************************************************************/
   /*
   Function which runs when this class is objectified. Pointer-objects in parameter is saved locally to be easily accessed from this class.
   */
@@ -107,12 +107,9 @@ private:
 
   int8_t homeNetwork_autoUpdateTime;
 
-    struct payload_t { // Structure of our payload
+  struct payload_t { // Structure of our payload
     int32_t msgContent;
     unsigned long arrendID;
   };
-  
-  // bool getResponse(const unsigned char msgType, int32_t *pmsgResponse, uint16_t timeout);
-  // uint16_t read(int32_t *pmsgReceived, unsigned char *pmsgType);
 };
 #endif

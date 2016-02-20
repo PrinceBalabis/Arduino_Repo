@@ -3,8 +3,6 @@
 //#define HOME_SETTING_RETRY_DELAY 15 // How long to wait between each retry, in multiples of 250us, max is 15.  0 means 250us, 15 means 4000us
 //#define HOME_SETTING_RETRY_TIMES 15 // Max 15 retries in library
 
-// Set the tx timeout for built-in tx retries in module(milliseconds)
-#define HOME_SETTING_SENDTIMEOUT 500
 
 // Avaliable commands: RF24_PA_MIN,RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX
 // For RF24_PA_MAX a 100uF capacitor is needed!
@@ -15,11 +13,12 @@
 
 // Tweaks optimized for compatability, reliability, driftsecurity and at least performance for Prince home IOT network
 // Tweak however you want though
-#define HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION 200 // The amount of time to wait for a confirmation after sending command(A very fast node can take minimum 100ms to respond, make sure its at least that)
-#define HOME_SETTING_DEFAULT_SEND_RETRY_TIMES 5 // The amount of times to try and send a message w/ confirmation
-#define HOME_SETTING_DEFAULT_QUESTION_RETRY_TIMES 5 // The amount of times to try and ask a question
-#define HOME_SETTING_DEFAULT_TIMEOUT_ANSWER 500 // The amount of time to wait for an answer after sending question
-#define HOME_SETTING_DEFAULT_TIME_READ 1 // How often to check if a confirmation or answer has been received after sending either command or question
+// Possible scenarios to consider, Nodes too far from each other(too high ping and too low variables times out the sending program), receiver node is offline(and you dont want transmitter node to freeze too long because of too high timeouttime/retries)
+// Keep scenarios in mind to find perfect tweaks.
+#define HOME_SETTING_SENDTIMEOUT 50 // Set the tx timeout for built-in tx retries in module(milliseconds), set it to at least 50ms, any shorter than that and sending messages will garantee to fail.
+#define HOME_SETTING_ACK_CHECKTIME 1 // How often to check if a ACK-message has been received after sending either command or question
+#define HOME_SETTING_DEFAULT_ACK_TIMEOUT 50 // The amount of time to wait for a confirmation after sending command(A very fast node can take minimum 50ms to respond, make sure its at least that)
+#define HOME_SETTING_DEFAULT_SEND_TRIES 2 // The amount of times to try and send a message where its ACK-message failed to be received. Should be at least 2 to be safe, because sometimes sending actually fails for some reason.
 #define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // How often to auto-update the RF24 Home Network(polling time)
 
 /*************************************************************************************************************************************

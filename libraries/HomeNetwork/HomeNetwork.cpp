@@ -172,53 +172,61 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
     Serial.print(arrendID);
     Serial.print(F("->"));
   }
-  //for (uint8_t i = 0 ; i < sendTries ; i++) {
-  // network.write() function returns wether someone picked up a message,
-  // doesn't have to be the node you are trying to send to,
-  // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
-  network.write(header, &payload, sizeof(payload));
+  for (uint8_t i = 0 ; i < sendTries ; i++) {
+    unsigned long startTime = millis();
+    // network.write() function returns wether someone picked up a message,
+    // doesn't have to be the node you are trying to send to,
+    // could be a parent node, or any node in between. So its not very useful as "sent successful"-verification
+    network.write(header, &payload, sizeof(payload));
 
-  // Wait for response, when received read the payload and send back ack. Gets stuck in getAnswer() function either until
-  // response is received or timed out waiting for response.
-  unsigned long started_waiting_at = millis();
-  while (1) {
-    network.update(); // Check the network regularly for the entire network to function properly
-    if (millis() - started_waiting_at > responsetimeout) { //Timed out, break out of "check incoming messages"-loop
+    if (millis() - startTime > responsetimeout) {// If network.write() command took more than txtimeout value then we can assume it failed to send message to node and we dont wait for answer.
       if (debug)
-        Serial.print(F("TIMED OUT! NO ANSWER RECEIVED!->"));
-      break;
-    }
-    if (network.available()) // When a message is finally received before timing out
-    {
-      // Save received message content
-      RF24NetworkHeader readHeader;
-      unsigned long arrendIDReceived;
-      network.read(readHeader, &arrendIDReceived, sizeof(arrendIDReceived));
-
-      // Check if ACK message has correct arrendID
-      if (arrendID == arrendIDReceived) {
-        if (debug)
-          Serial.print(F("Got ACK-message->"));
-        setNetworkUpdateStatus(true); // Resume autoUpdate
-        return true;
-      } else {
-        if (debug) {
-          Serial.print(F("CORRECT ACK-MESSAGE NOT RECEIVED. MESSAGE DID NOT CONTAIN CORRECT ARRENDID! GOT: "));
-          Serial.print(arrendIDReceived);
-          Serial.print(F("->"));
+        Serial.print(F("FAILED TO SEND MESSAGE, NOT REACHED TO RECEIVER!->"));
+    } else { // Sending was success then wait for ACK-message
+      startTime = millis();
+      // Wait for response, when received read the payload and send back ack. Gets stuck in getAnswer() function either until
+      // response is received or timed out waiting for response.
+      while (1) {
+        network.update(); // Check the network regularly for the entire network to function properly
+        if (millis() - startTime > responsetimeout) { //Timed out, break out of "check incoming messages"-loop
+          if (debug)
+            Serial.print(F("TIMED OUT! NO ANSWER RECEIVED!->"));
+          break;
         }
-        setNetworkUpdateStatus(true); // Resume autoUpdate
-        return false;
+        if (network.available()) // When a message is finally received before timing out
+        {
+          // Save received message content
+          RF24NetworkHeader readHeader;
+          unsigned long arrendIDReceived;
+          network.read(readHeader, &arrendIDReceived, sizeof(arrendIDReceived));
+
+          // Check if ACK message has correct arrendID
+          if (arrendID == arrendIDReceived) {
+            if (debug)
+              Serial.print(F("Got ACK-message->"));
+            setNetworkUpdateStatus(true); // Resume autoUpdate
+            return true;
+          } else {
+            if (debug) {
+              Serial.print(F("CORRECT ACK-MESSAGE NOT RECEIVED. MESSAGE DID NOT CONTAIN CORRECT ARRENDID! GOT: "));
+              Serial.print(arrendIDReceived);
+              Serial.print(F("->"));
+              Serial.print(F("STILL WAITING FOR CORRECT ACK-MESSAGE->"));
+            }
+          }
+        }
+        nilThdSleepMilliseconds(HOME_SETTING_ACK_CHECKTIME); // Check every few ms if answer-message is received
       }
-      break;
     }
-    nilThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
+    if (debug)
+      Serial.print(F("RETRYING SENDING->"));
   }
+  return false;
 }
 
 // // This function acts as a default send function but with default retry time and timeout
-// bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType){
-//   return send(msgReceiver, msgContent, msgType, HOME_SETTING_DEFAULT_SEND_RETRY_TIMES, HOME_SETTING_DEFAULT_TIMEOUT_CONFIRMATION);
+// bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType) {
+//   return send(msgReceiver, msgContent, msgType, HOME_SETTING_DEFAULT_SEND_TRIES, HOME_SETTING_DEFAULT_ACK_TIMEOUT);
 // }
 
 // bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent){
@@ -271,49 +279,6 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 // sendQuestion(msgReceiver, msgContent, pmsgResponse, HOME_SETTING_DEFAULT_TIMEOUT_ANSWER);
 // }
 
-
-/*
-  getResponse
-
-  returns true if response is received, false if it is not
-*/
-// bool HomeNetwork::getResponse(int32_t *pmsgResponse, uint16_t timeout)
-// {
-//   int32_t msgSenderReceived = -1;
-//   unsigned char msgTypeReceived = 'Z';
-//   payload_t payloadReceived;
-
-//   unsigned long started_waiting_at = millis();
-//   while (1) {
-//     network.update(); // Check the network regularly for the entire network to function properly
-//     if (millis() - started_waiting_at > timeout) {
-//       if (debug)
-//         Serial.print(F("TIMED OUT! NO ANSWER RECEIVED!->"));
-//       return false;
-//     }
-//     if (network.available())
-//     {
-//       msgSenderReceived = read(&msgReceived, &msgTypeReceived);
-//       if (msgTypeReceived == msgType) {
-//         break;
-//       } else if (msgSenderReceived != *pmsgReceiver) {
-//         if (debug)
-//           Serial.print(F("MESSAGE RECEIVED WAS NOT FROM CORRECT NODE!->"));
-//         return false;
-//       } else if (msgTypeReceived != msgType) {
-//         if (debug)
-//           Serial.print(F("MESSAGE RECEIVED HAS WRONG MESSAGE TYPE!->"));
-//         return false;
-//       }
-//     }
-//     nilThdSleepMilliseconds(HOME_SETTING_DEFAULT_TIME_READ); // Check every few ms if answer-message is received
-//   }
-
-//   *pmsgResponse = msgReceived; // Save answer to variable
-
-//   return true;
-// }
-
 // void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
 //   if(debug)
 //     Serial.print(F("respondToQuestion()->"));
@@ -321,24 +286,4 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 //   for(uint8_t i=0 ; i<HOME_SETTING_DEFAULT_SPAM_ANSWER_TIMES ; i++){
 //     sendFast(_msgSender, _ResponseData, HOME_TYPE_RESPONSE);
 //   }
-// }
-
-
-/**
-*  read
-*  This function reads the message and stores it to the variable sent in parameter
-* returns the senders ID.int - returns -1 if read was unsuccesful
-*/
-// uint16_t HomeNetwork::read(payload_t *payloadReceived, unsigned char *pmsgType) {
-//   // Save sender node ID of received message
-//   RF24NetworkHeader peekHeader;
-//   network.peek(peekHeader);
-//   uint16_t msgSender = peekHeader.from_node;
-//   *pmsgType = peekHeader.type;
-
-//   // Save received message content
-//   RF24NetworkHeader readHeader;
-//   network.read(readHeader, payloadReceived, sizeof(payloadReceived)); // Read message and store to msgReceived variable
-
-//   return msgSender;
 // }
