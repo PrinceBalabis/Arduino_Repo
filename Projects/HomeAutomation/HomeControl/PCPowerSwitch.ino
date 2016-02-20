@@ -1,4 +1,4 @@
--bool pcPowerSwitchStatus = false;
+bool pcPowerSwitchStatus = false;
 
 void pcPowerSetup()
 {
