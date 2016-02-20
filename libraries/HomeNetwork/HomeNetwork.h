@@ -51,7 +51,7 @@ public:
   because using this function you actually know if the receiver actually received the message.
   Returns if the message was sent successfully.
   */
-// bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
+  bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   /*
   Similar to the previous send(), but here you can specify how many retries to send the message before giving up, and the time to
   wait until doing another retry.
@@ -62,30 +62,30 @@ public:
   Sends a command.
   Returns if the message was sent successfully.
   */
-// bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
+  bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
   /*
   Similar to the previous sendCommand(), but here you can specify how many retries to send the message before giving up, and the time to
   wait until doing another retry.
   Returns if the message was sent successfully.
   */
-// bool sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t retryTimes, uint16_t timeout);
+  bool sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t sendTries, uint16_t responsetimeout);
   /*
   Sends a question. Specify a int32_t pointer in the paramter to which the answer to the question should be stored
   Returns if the message was sent successfully.
   */
-// bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
+bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
   /*
   Similar to the previous sendCommand(), but here you can specify how many retries to send the message before giving up, and the time to
   wait until doing another retry. Specify a int32_t pointer in the paramter to which the answer to the question should be stored
   Returns if the message was sent successfully.
   */
-// bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse, uint16_t timeout);
+  bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse, uint16_t answerTimeout);
 
   /*
   Function which is ran to send an answer to a question received from another node. Important to run this as fast as possible after receiving a question,
   as the other node will be waiting for the answer.
   */
-// void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
+  bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
   /*
   Function needs to be executed in a thread in the Sketch. Execution will be stuck infinitely in this thread.

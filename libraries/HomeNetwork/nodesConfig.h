@@ -4,16 +4,13 @@ Message type' is packet within the header of a message, it is read by
 the receiver to understand what type of packet it is.
 These message types can be used by all nodes when communicating with each other.
 *************************************************************************************************************************************/
-#define HOME_TYPE_COMMAND 'A' // Simple command(a number), which is a message and sender IS EXPECTED to get an ack-response back
-#define HOME_TYPE_COMMAND_FAST 'C' // Simple command(a number), which is a message and NO NEED to return an ack-response back
-//#define HOME_TYPE_MESSAGE 'A //TODO MESSAGE TYPE. A message(todo: maybe a string, char array that is max 32 bits(biggest message size))
-//#define HOME_TYPE_QUESTION 'D'
-//#define HOME_TYPE_QUESTION_FAST 'E'
-//#define HOME_TYPE_ANSWER 'F'
+#define HOME_TYPE_COMMAND 'A' // Simple command(a number), which is a message and sender IS EXPECTED to get an ACK-response back
+#define HOME_TYPE_COMMAND_FAST 'B' // Simple command(a number), which is a message and NO NEED to return an ACK-response back
+#define HOME_TYPE_QUESTION 'C' // A question(a number), which is a message and IS EXPECTED to get an ACK-response back
+//#define HOME_TYPE_QUESTION_FAST 'D'
+#define HOME_TYPE_ANSWER 'E'
+//#define HOME_TYPE_MESSAGE 'F' //TODO MESSAGE TYPE. A message(todo: maybe a string, char array that is max 32 bits(biggest message size))
 /*************************************************************************************************************************************/
-
-
-
 
 
 /*************************************************************************************************************************************

@@ -15,22 +15,9 @@
 // Tweak however you want though
 // Possible scenarios to consider, Nodes too far from each other(too high ping and too low variables times out the sending program), receiver node is offline(and you dont want transmitter node to freeze too long because of too high timeouttime/retries)
 // Keep scenarios in mind to find perfect tweaks.
-#define HOME_SETTING_SENDTIMEOUT 50 // Set the tx timeout for built-in tx retries in module(milliseconds), set it to at least 50ms, any shorter than that and sending messages will garantee to fail.
+#define HOME_SETTING_SEND_TIMEOUT 100 // Set the tx timeout for built-in tx retries in module(milliseconds), set it to at least 50ms, any shorter than that and sending messages will garantee to fail.
 #define HOME_SETTING_ACK_CHECKTIME 1 // How often to check if a ACK-message has been received after sending either command or question
-#define HOME_SETTING_DEFAULT_ACK_TIMEOUT 50 // The amount of time to wait for a confirmation after sending command(A very fast node can take minimum 50ms to respond, make sure its at least that)
+#define HOME_SETTING_DEFAULT_ACK_TIMEOUT 100 // The amount of time to wait for a confirmation after sending command(A very fast node can take minimum 50ms to respond, make sure its at least that)
 #define HOME_SETTING_DEFAULT_SEND_TRIES 2 // The amount of times to try and send a message where its ACK-message failed to be received. Should be at least 2 to be safe, because sometimes sending actually fails for some reason.
 #define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // How often to auto-update the RF24 Home Network(polling time)
-
-/*************************************************************************************************************************************
-GLOBAL MESSAGE TYPES
-Message type' is packet within the header of a message, it is read by
-the receiver to understand what type of packet it is.
-These message types can be used by all nodes when communicating with each other.
-*************************************************************************************************************************************/
-#define HOME_TYPE_COMMAND 'A' // Simple command(a number), which is a message and sender IS EXPECTED to get an ack-response back
-#define HOME_TYPE_COMMAND_FAST 'C' // Simple command(a number), which is a message and NO NEED to return an ack-response back
-//#define HOME_TYPE_MESSAGE 'A //TODO MESSAGE TYPE. A message(todo: maybe a string, char array that is max 32 bits(biggest message size))
-//#define HOME_TYPE_QUESTION 'D'
-//#define HOME_TYPE_QUESTION_FAST 'E'
-//#define HOME_TYPE_ANSWER 'F'
-/*************************************************************************************************************************************/
+#define HOME_SETTING_DEFAULT_ANSWER_TIMEOUT 2000 // Max time to wait for answer to a question
