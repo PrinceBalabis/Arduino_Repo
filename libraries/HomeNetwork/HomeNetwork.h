@@ -42,41 +42,27 @@ public:
   void setDebug(bool status);
 
   /*
-  Send a message, this is faster than just send(), but at the cost of not waiting for any "confirmation" message. This means that
-  the system does not know if the receiver of the messaged received the actual message.
-  */
-  // void sendFast(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
-  /*
-  Similar to sendFast(), but this is slower and waits for a confirmation message to be received. This function is safer than sendFast()
-  because using this function you actually know if the receiver actually received the message.
+  This function sends a message and gets an ACK-message back
   Returns if the message was sent successfully.
   */
   bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType);
   /*
-  Similar to the previous send(), but here you can specify how many retries to send the message before giving up, and the time to
-  wait until doing another retry.
+  Similar to the previous send(), but here you can specify how many retries to send the message before giving up.
   Returns if the message was sent successfully.
   */
-  bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType, uint8_t sendTries, uint16_t responsetimeout);
+  bool send(uint16_t msgReceiver, int32_t msgContent, unsigned char msgType, uint8_t sendTries);
   /*
   Sends a command.
   Returns if the message was sent successfully.
   */
   bool sendCommand(uint16_t msgReceiver, int32_t msgContent);
   /*
-  Similar to the previous sendCommand(), but here you can specify how many retries to send the message before giving up, and the time to
-  wait until doing another retry.
+  Similar to the previous sendCommand(), but here you can specify how many retries to send the message before giving up.
   Returns if the message was sent successfully.
   */
-  bool sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t sendTries, uint16_t responsetimeout);
+  bool sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t sendTries);
   /*
   Sends a question. Specify a int32_t pointer in the paramter to which the answer to the question should be stored
-  Returns if the message was sent successfully.
-  */
-bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse);
-  /*
-  Similar to the previous sendCommand(), but here you can specify how many retries to send the message before giving up, and the time to
-  wait until doing another retry. Specify a int32_t pointer in the paramter to which the answer to the question should be stored
   Returns if the message was sent successfully.
   */
   bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse, uint16_t answerTimeout);
@@ -85,7 +71,7 @@ bool sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgRespons
   Function which is ran to send an answer to a question received from another node. Important to run this as fast as possible after receiving a question,
   as the other node will be waiting for the answer.
   */
-  bool respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
+  void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
 
   /*
   Function needs to be executed in a thread in the Sketch. Execution will be stuck infinitely in this thread.

@@ -8,7 +8,6 @@ These message types can be used by all nodes when communicating with each other.
 #define HOME_TYPE_COMMAND_FAST 'B' // Simple command(a number), which is a message and NO NEED to return an ACK-response back
 #define HOME_TYPE_QUESTION 'C' // A question(a number), which is a message and IS EXPECTED to get an ACK-response back
 //#define HOME_TYPE_QUESTION_FAST 'D'
-#define HOME_TYPE_ANSWER 'E'
 //#define HOME_TYPE_MESSAGE 'F' //TODO MESSAGE TYPE. A message(todo: maybe a string, char array that is max 32 bits(biggest message size))
 /*************************************************************************************************************************************/
 
@@ -93,12 +92,12 @@ Webserver
 /*************************************************************************************************************************************
 Bed Switch
 *************************************************************************************************************************************/
-#define HOME_BEDSWITCH_ID 05
+#define HOME_BEDSWITCH_ID 021
 
 /*************************************************************************************************************************************
 Example Sketches like ToggleMainLights or AskMainLightsStatus
 *************************************************************************************************************************************/
-#define HOME_TEST_ID 01
+#define HOME_TEST_ID 05
 
 // Command(message type: typeCommand)
 #define HOME_TEST_CMD 1

@@ -4,7 +4,6 @@
 */
 
 void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
-  Serial.print(F("New Message.. "));
   switch (msgType) {
     case HOME_TYPE_COMMAND: // If its a simple command
       switch (msgContent) {
@@ -51,7 +50,7 @@ void homeNetworkMessageReceived(uint16_t msgSender, unsigned char msgType, int32
 /**
    Thread for the Home Network
 **/
-NIL_WORKING_AREA(homeNetworkThread, 150); // 100 bytes seems to work fine even with Home Network debug on
+NIL_WORKING_AREA(homeNetworkThread, 200); // 100 bytes seems to work fine even with Home Network debug on
 NIL_THREAD(HomeNetworkThread, arg)
 {
   Serial.println(F("Started HomeNetworkThread"));

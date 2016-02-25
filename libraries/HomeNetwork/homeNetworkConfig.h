@@ -15,9 +15,8 @@
 // Tweak however you want though
 // Possible scenarios to consider, Nodes too far from each other(too high ping and too low variables times out the sending program), receiver node is offline(and you dont want transmitter node to freeze too long because of too high timeouttime/retries)
 // Keep scenarios in mind to find perfect tweaks.
-#define HOME_SETTING_SEND_TIMEOUT 100 // Set the tx timeout for built-in tx retries in module(milliseconds), set it to at least 50ms, any shorter than that and sending messages will garantee to fail.
-#define HOME_SETTING_ACK_CHECKTIME 1 // How often to check if a ACK-message has been received after sending either command or question
-#define HOME_SETTING_DEFAULT_ACK_TIMEOUT 100 // The amount of time to wait for a confirmation after sending command(A very fast node can take minimum 50ms to respond, make sure its at least that)
-#define HOME_SETTING_DEFAULT_SEND_TRIES 2 // The amount of times to try and send a message where its ACK-message failed to be received. Should be at least 2 to be safe, because sometimes sending actually fails for some reason.
-#define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // How often to auto-update the RF24 Home Network(polling time)
-#define HOME_SETTING_DEFAULT_ANSWER_TIMEOUT 2000 // Max time to wait for answer to a question
+#define HOME_SETTING_ACK_CHECKTIME 1 // (Def. min: 1)How often to check if a ACK-message has been received after sending either command or question
+#define HOME_SETTING_DEFAULT_ACK_TIMEOUT 50 // (Def. min: 50)The amount of time to wait for a confirmation after sending command
+#define HOME_SETTING_DEFAULT_SEND_TRIES 5 // (Def. min: 5)The amount of times to try and send a message where its ACK-message failed to be received.
+
+#define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // (Def. min: 20)How often to auto-update the RF24 Home Network(polling time)
