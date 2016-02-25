@@ -20,8 +20,8 @@
 
 
 // TESTING
-#define TESTING_SEND_DELAY 1 // (Def. min 1)How often to send the testing command.
-#define TESTING_REPEATS 4294967294 // How many times to send the command in the program. Max 4294967294 times
+#define TESTING_SEND_DELAY 5000 // (Def. min 1)How often to send the testing command.
+#define TESTING_REPEATS 2 // How many times to send the command in the program. Max 4294967294 times
 
 #define TESTING_CHOSEN_COMMAND TESTING_CMD_MAINLIGHTS_TOGGLE // Command chosen to test
 
