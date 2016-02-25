@@ -253,6 +253,13 @@ bool HomeNetwork::sendCommand(uint16_t msgReceiver, int32_t msgContent, uint8_t 
 bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t *pmsgResponse, uint16_t answerTimeout) {
 	setNetworkUpdateStatus(false); // Pause autoUpdate
 
+	//Safety measure so its guaranteed to be at least 100ms
+	if (answerTimeout < 100) {
+		if (debug)
+			Serial.print(F("LESS THAN 100MS, SET TO 100MS->"));
+		answerTimeout = 100;
+	}
+
 	if (debug)
 		Serial.print(F("sendQuestion()->"));
 
@@ -303,11 +310,11 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 	return false;
 }
 
-void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) {
+void HomeNetwork::sendAnswer(uint16_t _msgSender, int32_t _ResponseData) {
 	if (debug)
 		Serial.print(F("respondToQuestion()->"));
 
-	nilThdSleepMilliseconds(1);
+	nilThdSleepMilliseconds(5); // Needed so answer doesnt send before receiver node can start listening.
 	header = RF24NetworkHeader(_msgSender, NULL);
 	payload = { _ResponseData, NULL };
 	network.write(header, &payload, sizeof(payload));

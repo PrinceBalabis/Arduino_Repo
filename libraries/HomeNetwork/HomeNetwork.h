@@ -71,7 +71,7 @@ public:
 	Function which is ran to send an answer to a question received from another node. Important to run this as fast as possible after receiving a question,
 	as the other node will be waiting for the answer.
 	*/
-	void respondToQuestion(uint16_t _msgSender, int32_t _ResponseData);
+	void sendAnswer(uint16_t _msgSender, int32_t _ResponseData);
 
 	/*
 	Function needs to be executed in a thread in the Sketch. Execution will be stuck infinitely in this thread.
