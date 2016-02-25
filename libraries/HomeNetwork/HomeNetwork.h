@@ -94,9 +94,21 @@ private:
 
 	int8_t homeNetwork_autoUpdateTime;
 
-	struct payload_t { // Structure of our payload
+	// Structure of our payload
+	struct payload_t {
 		int32_t msgContent;
 		unsigned long arrendID;
 	};
+
+
+	// Variables used for send/receive functions, declared here so variables wont be using child thread stack but stack from main thread.
+	RF24NetworkHeader readHeader;
+	payload_t payload;
+	unsigned long startTime;
+	unsigned long arrendID;
+	unsigned long arrendIDReceived;
+	RF24NetworkHeader header;
+	bool toggleUpdateStatus;
+
 };
 #endif

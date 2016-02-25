@@ -69,31 +69,30 @@ void HomeNetwork::update()
 		if (network.available()) // When a message is received send incoming message to Sketch function, if its just a command, return an ack-message
 		{
 			// Save received header & payload of message
-			RF24NetworkHeader readHeader;
-			payload_t payloadReceived;
-			network.read(readHeader, &payloadReceived, sizeof(payloadReceived));
+
+			network.read(readHeader, &payload, sizeof(payload));
 
 			if (readHeader.type == HOME_TYPE_COMMAND) { //A Command w/ confirmation request
 				// Send back ACK-message
 				// Set receiver of message
-				RF24NetworkHeader header(readHeader.from_node, NULL);
+				header = RF24NetworkHeader(readHeader.from_node, NULL);
 
 				// network.write() function returns wether someone picked up a message,
 				// doesn't have to be the node you are trying to send to,
 				// but could be a parent node. So its not very useful.
-				network.write(header, &payloadReceived.arrendID, sizeof(payloadReceived.arrendID));
+				network.write(header, &payload.arrendID, sizeof(payload.arrendID));
 
 				if (debug) {
 					Serial.print(F("Got Command->ID:"));
-					Serial.print(payloadReceived.arrendID);
+					Serial.print(payload.arrendID);
 					Serial.print(F("->Sent ACK->"));
 				}
 
-				if (previousArrendID[0] != payloadReceived.arrendID && previousArrendID[1] != payloadReceived.arrendID && previousArrendID[2] != payloadReceived.arrendID) {
+				if (previousArrendID[0] != payload.arrendID && previousArrendID[1] != payload.arrendID && previousArrendID[2] != payload.arrendID) {
 					previousArrendID[0] = previousArrendID[1];
 					previousArrendID[1] = previousArrendID[2];
-					previousArrendID[2] = payloadReceived.arrendID; // Save this ArrendID to newest ArrendID storage
-					//pmsgReceivedF(readHeader.from_node, readHeader.type, payloadReceived.msgContent); // deliver message to Sketch
+					previousArrendID[2] = payload.arrendID; // Save this ArrendID to newest ArrendID storage
+					//pmsgReceivedF(readHeader.from_node, readHeader.type, payload.msgContent); // deliver message to Sketch
 				} else {
 					if (debug)
 						Serial.print(F("ARREND ALREADY DONE, NOT FORWARDING TO SKETCH"));
@@ -102,20 +101,20 @@ void HomeNetwork::update()
 			} else if (readHeader.type ==  HOME_TYPE_QUESTION) { // A question
 				// Send back ACK-message
 				// Set receiver of message
-				RF24NetworkHeader header(readHeader.from_node, NULL);
+				header = RF24NetworkHeader(readHeader.from_node, NULL);
 
 				// network.write() function returns wether someone picked up a message,
 				// doesn't have to be the node you are trying to send to,
 				// but could be a parent node. So its not very useful.
-				network.write(header, &payloadReceived.arrendID, sizeof(payloadReceived.arrendID));
+				network.write(header, &payload.arrendID, sizeof(payload.arrendID));
 
 				if (debug) {
 					Serial.print(F("Got Question->ID:"));
-					Serial.print(payloadReceived.arrendID);
+					Serial.print(payload.arrendID);
 					Serial.print(F("->"));
 				}
 
-				pmsgReceivedF(readHeader.from_node, HOME_TYPE_QUESTION, payloadReceived.msgContent); // deliver message to Sketch
+				pmsgReceivedF(readHeader.from_node, HOME_TYPE_QUESTION, payload.msgContent); // deliver message to Sketch
 			}
 			else { // Useless spam or trash talk gets here
 				if (debug)
@@ -151,25 +150,22 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 
 	//Only toggle update status if its enabled. If its disabled, dont toggle network update.
 	//This is needed so that sendQuestion() functions will work
-	bool toggleUpdateStatus = false;
+	toggleUpdateStatus = false;
 	if (autoUpdateStatus == true) {
 		toggleUpdateStatus = true;
 		setNetworkUpdateStatus(false); // Pause autoUpdate
 	}
 
 	// Set receiver of message
-	RF24NetworkHeader header(msgReceiver, msgType);
+	header = RF24NetworkHeader(msgReceiver, msgType);
 
-	const unsigned long arrendID = millis();
+	arrendID = millis();
 	//Create payload to send which contains message and message ID
-	payload_t payload = { msgContent, arrendID };
+	payload = { msgContent, arrendID };
 	if (debug) {
 		Serial.print(arrendID);
 		Serial.print(F(":ID->"));
 	}
-	unsigned long startTime;
-	RF24NetworkHeader readHeader;
-	unsigned long arrendIDReceived;
 
 	for (uint8_t i = 0 ; i < sendTries ; i++) {
 		// network.write() function returns wether someone picked up a message,
@@ -261,11 +257,7 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 		Serial.print(F("sendQuestion()->"));
 
 	// Send question
-	unsigned long startTime;
-	RF24NetworkHeader readHeader;
-	payload_t payloadReceived;
-
-	for (int i = 0; i < HOME_SETTING_DEFAULT_SEND_TRIES; i++) {
+	for (uint8_t i = 0; i < HOME_SETTING_DEFAULT_SEND_TRIES; i++) {
 		if (debug)
 			Serial.print(F("Send-try->"));
 		if (send(msgReceiver, msgContent, HOME_TYPE_QUESTION, HOME_SETTING_DEFAULT_SEND_TRIES)) { // Send question, and wait for answer only if question was successfully sent
@@ -282,14 +274,14 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 				if (network.available()) // When a message is finally received before timing out
 				{
 					// Save received message content
-					network.read(readHeader, &payloadReceived, sizeof(payloadReceived));
+					network.read(readHeader, &payload, sizeof(payload));
 
 					// Check if answer message comes from correct node
 					if (msgReceiver == readHeader.from_node) {
 						if (debug)
 							Serial.print(F("Got Answer->"));
 
-						*pmsgResponse = payloadReceived.msgContent; // Save the answer
+						*pmsgResponse = payload.msgContent; // Save the answer
 						setNetworkUpdateStatus(true); // Resume autoUpdate
 						return true;
 					} else {
@@ -316,7 +308,7 @@ void HomeNetwork::respondToQuestion(uint16_t _msgSender, int32_t _ResponseData) 
 		Serial.print(F("respondToQuestion()->"));
 
 	nilThdSleepMilliseconds(1);
-	RF24NetworkHeader header(_msgSender, NULL);
-	payload_t payload = { _ResponseData, NULL };
+	header = RF24NetworkHeader(_msgSender, NULL);
+	payload = { _ResponseData, NULL };
 	network.write(header, &payload, sizeof(payload));
 }

@@ -32,7 +32,7 @@ void setup() {
 }
 
 void loop() {
-  //printStackInfo(); // Print stack information
+  printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {
