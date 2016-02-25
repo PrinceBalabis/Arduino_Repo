@@ -56,7 +56,6 @@ bool HomeNetwork::setNetworkUpdateTime(int8_t _homeNetwork_autoUpdateTime)
 void HomeNetwork::update()
 {
 	while (1) {
-
 		// Get stuck in this loop while its ment to be paused
 		if (!autoUpdateStatus) {
 			currentAutoUpdateStatus = false;
@@ -90,9 +89,16 @@ void HomeNetwork::update()
 					Serial.print(F("->Sent ACK->"));
 				}
 
+				if (previousArrendID[0] != payloadReceived.arrendID && previousArrendID[1] != payloadReceived.arrendID && previousArrendID[2] != payloadReceived.arrendID) {
+					previousArrendID[0] = previousArrendID[1];
+					previousArrendID[1] = previousArrendID[2];
+					previousArrendID[2] = payloadReceived.arrendID; // Save this ArrendID to newest ArrendID storage
+					//pmsgReceivedF(readHeader.from_node, readHeader.type, payloadReceived.msgContent); // deliver message to Sketch
+				} else {
+					if (debug)
+						Serial.print(F("ARREND ALREADY DONE, NOT FORWARDING TO SKETCH"));
+				}
 				Serial.println(F(""));
-
-				//pmsgReceivedF(readHeader.from_node, readHeader.type, payloadReceived.msgContent); // deliver message to Sketch
 			} else if (readHeader.type ==  HOME_TYPE_QUESTION) { // A question
 				// Send back ACK-message
 				// Set receiver of message

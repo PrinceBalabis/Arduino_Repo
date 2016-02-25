@@ -13,7 +13,7 @@ int32_t count = 1;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 200); // bytes works great
+NIL_WORKING_AREA(commandExecutioner, 250); // bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));

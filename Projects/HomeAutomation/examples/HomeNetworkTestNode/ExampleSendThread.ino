@@ -3,7 +3,7 @@
     Sends a messeger to Node A every few moments
  **/
 
-NIL_WORKING_AREA(exampleSendThread, 150);
+NIL_WORKING_AREA(exampleSendThread, 100);
 NIL_THREAD(ExampleSendThread, arg) {
   Serial.println(F("Testing beginning"));
 

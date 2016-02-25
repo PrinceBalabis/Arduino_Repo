@@ -23,7 +23,7 @@
 #define TESTING_SEND_DELAY 1 // (Def. min 1)How often to send the testing command.
 #define TESTING_REPEATS 4294967294 // How many times to send the command in the program. Max 4294967294 times
 
-#define TESTING_CHOSEN_COMMAND TESTING_QSN_MAINLIGHTS_STATUS // Command chosen to test
+#define TESTING_CHOSEN_COMMAND TESTING_CMD_MAINLIGHTS_TOGGLE // Command chosen to test
 
 #define TESTING_CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
 #define TESTING_QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status
