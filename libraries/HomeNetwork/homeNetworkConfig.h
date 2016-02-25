@@ -17,6 +17,6 @@
 // Keep scenarios in mind to find perfect tweaks.
 #define HOME_SETTING_ACK_CHECKTIME 1 // (Def. min: 1)How often to check if a ACK-message has been received after sending either command or question
 #define HOME_SETTING_DEFAULT_ACK_TIMEOUT 50 // (Def. min: 50)The amount of time to wait for a confirmation after sending command
-#define HOME_SETTING_DEFAULT_SEND_TRIES 5 // (Def. min: 5)The amount of times to try and send a message where its ACK-message failed to be received.
+#define HOME_SETTING_DEFAULT_SEND_TRIES 10 // (Def. min: 5)The amount of times to try and send a message where its ACK-message failed to be received.
 
 #define HOME_SETTING_DEFAULT_TIME_NETWORKAUTOUPDATE 20 // (Def. min: 20)How often to auto-update the RF24 Home Network(polling time)

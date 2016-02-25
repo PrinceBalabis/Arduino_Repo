@@ -90,7 +90,9 @@ void HomeNetwork::update()
 					Serial.print(F("->Sent ACK->"));
 				}
 
-				pmsgReceivedF(readHeader.from_node, readHeader.type, payloadReceived.msgContent); // deliver message to Sketch
+				Serial.println(F(""));
+
+				//pmsgReceivedF(readHeader.from_node, readHeader.type, payloadReceived.msgContent); // deliver message to Sketch
 			} else if (readHeader.type ==  HOME_TYPE_QUESTION) { // A question
 				// Send back ACK-message
 				// Set receiver of message
@@ -147,8 +149,6 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 	if (autoUpdateStatus == true) {
 		toggleUpdateStatus = true;
 		setNetworkUpdateStatus(false); // Pause autoUpdate
-		if (debug)
-			Serial.print(F("Pausing autoUpdate->"));
 	}
 
 	// Set receiver of message
@@ -158,9 +158,8 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 	//Create payload to send which contains message and message ID
 	payload_t payload = { msgContent, arrendID };
 	if (debug) {
-		Serial.print(F("ID:"));
 		Serial.print(arrendID);
-		Serial.print(F("->"));
+		Serial.print(F(":ID->"));
 	}
 	unsigned long startTime;
 	RF24NetworkHeader readHeader;
@@ -173,9 +172,8 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 		startTime = millis();
 		network.write(header, &payload, sizeof(payload));
 		if (debug) {
-			Serial.print(F("Send:"));
 			Serial.print(millis() - startTime);
-			Serial.print(F("ms->"));
+			Serial.print(F("ms SendTime->"));
 		}
 		// Wait for response, when received read the payload and send back ack. Gets stuck in getAnswer() function either until
 		// response is received or timed out waiting for response.
@@ -203,8 +201,6 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 					}
 					if (toggleUpdateStatus == true) {
 						setNetworkUpdateStatus(true); // Resume autoUpdate
-						if (debug)
-							Serial.print(F("Resume autoUpdate->"));
 					}
 					return true;
 				} else {
@@ -225,8 +221,6 @@ bool HomeNetwork::send(uint16_t msgReceiver, int32_t msgContent, unsigned char m
 		Serial.print(F("FAILED TO SEND, OUT OF RETRIES->"));
 	if (toggleUpdateStatus == true) {
 		setNetworkUpdateStatus(true); // Resume autoUpdate
-		if (debug)
-			Serial.print(F("Resume autoUpdate->"));
 	}
 	return false;
 }

@@ -13,7 +13,7 @@ int32_t count = 1;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 300); // bytes works great
+NIL_WORKING_AREA(commandExecutioner, 200); // bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
@@ -23,7 +23,7 @@ NIL_THREAD(CommandExecutioner, arg)
     // Wait for signal to run
     nilSemWait(&cmdExSem);
 
-    int32_t status = -999;
+    int32_t answer = -999;
     bool sentEnabled = true;
     bool sent = false;
     Serial.print(count++);
@@ -36,13 +36,13 @@ NIL_THREAD(CommandExecutioner, arg)
             sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE);
             break;
           case TESTING_QSN_MAINLIGHTS_STATUS:
-            sent = homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_MAINLIGHTS_STATUS, &status, TESTING_ANSWER_TIMEOUT);
+            sent = homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_MAINLIGHTS_STATUS, &answer, 200);
             break;
           case TESTING_CMD_433MHZ_PAINTINGLIGHTS_TOGGLE:
             sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE);
             break;
           case TESTING_CMD_433MHZ_PAINTINGLIGHTS_STATUS:
-            sent = homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS, &status, TESTING_ANSWER_TIMEOUT);
+            sent = homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS, &answer, 200);
             break;
         }
         break;
@@ -58,16 +58,15 @@ NIL_THREAD(CommandExecutioner, arg)
     }
 
     if (sentEnabled) {
-      Serial.print(F("Sent: "));
-      Serial.print(sent);
-      if (!sent) {
-        Serial.println(F(""));
-        Serial.println(F("FAILED, STOPPING PROGRAM"));
+      if (sent) {
+        Serial.print(F("Sent"));
+      } else {
+        Serial.print(F("NOT SENT! FAILED, STOPPING PROGRAM!"));
         while (1) {}
       }
-      if (status != -999) { // If the status variable was used in the example, print it out
-        Serial.print(F(" Status: "));
-        Serial.print(status);
+      if (answer != -999) { // If the status variable was used in the example, print it out
+        Serial.print(F(", Answer: "));
+        Serial.print(answer);
       }
     }
     Serial.println(F(""));
