@@ -23,7 +23,7 @@ void setup() {
   delay(100);
   network.txTimeout = 0; // Set to 0 to use the normal auto retry period defined by radio.setRetries()
   delay(100);
-  radio.setRetries(15, 15);
+  radio.setRetries(0, 0);
   delay(500);
 }
 

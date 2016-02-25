@@ -49,11 +49,11 @@ NIL_THREAD(CommandExecutioner, arg)
 //            Serial.print(F("Starting Spotify Work Playlist"));
 //            break;
           case BUTTON_MAINLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE, 5, 20);
+            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE, 20);
             Serial.print(F("Toggling Main Lights"));
             break;
           case BUTTON_PAINTINGLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE, 5, 20); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
+            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE, 20); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
             Serial.print(F("Toggling Painting Lights"));
             break;
 //          case BUTTON_SPEAKER_POWER:

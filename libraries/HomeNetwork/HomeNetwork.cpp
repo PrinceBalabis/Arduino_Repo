@@ -92,7 +92,7 @@ void HomeNetwork::update()
 					previousArrendID[0] = previousArrendID[1];
 					previousArrendID[1] = previousArrendID[2];
 					previousArrendID[2] = payload.arrendID; // Save this ArrendID to newest ArrendID storage
-					//pmsgReceivedF(readHeader.from_node, readHeader.type, payload.msgContent); // deliver message to Sketch
+					pmsgReceivedF(readHeader.from_node, readHeader.type, payload.msgContent); // deliver message to Sketch
 				} else {
 					if (debug)
 						Serial.print(F("ARREND ALREADY DONE, NOT FORWARDING TO SKETCH"));
