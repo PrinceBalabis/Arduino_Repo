@@ -82,12 +82,11 @@ Webserver
 #define HOME_WEBSERVER_ID 04
 
 // Command
-#define HOME_WEBSERVER_CMD_MONITOR_DISABLE 1
-#define HOME_WEBSERVER_CMD_MONITOR_ENABLE 2
-#define HOME_WEBSERVER_CMD_SPOTIFY_CHILL 3
-#define HOME_WEBSERVER_CMD_SPOTIFY_DINNER 4
-#define HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT 5
-#define HOME_WEBSERVER_CMD_SPOTIFY_WORK 6
+#define HOME_WEBSERVER_CMD_PC_SLEEP 1
+#define HOME_WEBSERVER_CMD_SPOTIFY_CHILL 2
+#define HOME_WEBSERVER_CMD_SPOTIFY_DINNER 3
+#define HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT 4
+#define HOME_WEBSERVER_CMD_SPOTIFY_WORK 5
 
 /*************************************************************************************************************************************
 Bed Switch

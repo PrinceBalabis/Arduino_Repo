@@ -8,23 +8,26 @@ NIL_THREAD(TWI, arg) {
   // This while loop gets used when a GET or POST command is to be sent from Home Network to internet
   while (1) {
     //    Serial.print(F("Requesting data.. "));
-    //
-    //    //Request data from slave.
-    //    Wire.beginTransmission(TWI_SLAVE_ID);
-    //    int available = Wire.requestFrom(TWI_SLAVE_ID, (uint8_t)1);
-    //    if (available == 1) {
-    //      byte command = Wire.read();
-    //      if (command == 0) {
-    //        Serial.println(F("Connected but no command ATM.. "));
-    //      } else {
-    //        Serial.print(F("Command: "));
-    //        Serial.println(command);
-    //      }
-    //    } else {
-    //      Serial.print(F("Not available: "));
-    //      Serial.println(available);
-    //    }
-    //    Wire.endTransmission();
+
+    while (command != 0) { // Wait here untill Webserver ran command before getting a new one
+      nilThdDelayMilliseconds(10);
+    }
+
+    //Request data from slave.
+    Wire.beginTransmission(TWI_SLAVE_ID);
+    int available = Wire.requestFrom(TWI_SLAVE_ID, (uint8_t)1);
+    if (available == 1) {
+      command = Wire.read();
+      if (command == 0) {
+        //        Serial.println(F("Connected but no command ATM.. "));
+      } else {
+        Serial.print(F("Command: "));
+        Serial.println(command);
+      }
+    } else {
+      Serial.println(F("Not Connected!"));
+    }
+    Wire.endTransmission();
 
     nilThdDelayMilliseconds(TWI_CHECK_DELAY);
   }

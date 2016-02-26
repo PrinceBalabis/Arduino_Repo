@@ -17,7 +17,7 @@
 #define RF24_PIN_CSN 9
 
 // How often to auto update network.
-#define HOME_SETTING_TIME_NETWORKAUTOUPDATE 20
+#define HOME_SETTING_TIME_NETWORKAUTOUPDATE 10
 
 #define TWI_SLAVE_ID 1
 

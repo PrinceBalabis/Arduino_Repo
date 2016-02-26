@@ -54,10 +54,11 @@ NIL_THREAD(CommandExecutioner, arg)
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Command that came from HomeNetwork
         switch (commandToExecute) {
-          case HOME_WEBSERVER_CMD_MONITOR_DISABLE:
-
+          case HOME_WEBSERVER_CMD_PC_SLEEP:
+            callbackCommand = HOME_WEBSERVER_CMD_PC_SLEEP;
+            Serial.println(F("Send GET-command to Sleep PC"));
             break;
-          case HOME_WEBSERVER_CMD_MONITOR_ENABLE:
+          case HOME_WEBSERVER_CMD_PC_WAKE:
 
             break;
           case HOME_WEBSERVER_CMD_SPOTIFY_CHILL:
@@ -123,12 +124,11 @@ NIL_THREAD(CommandExecutioner, arg)
 /*
    Run this function to enable CommandExecutionerThread to run
 */
-//void executeCommandFromHomeNetwork(uint8_t _nodeToSendTo, uint8_t _commandToExecute, bool _commandOrigin) {
-//  nodeToSendTo = _nodeToSendTo;
-//  commandToExecute = _commandToExecute;
-//  commandOrigin = _commandOrigin;
-//  nilSemSignal(&cmdExSem);
-//}
+void executeCommandFromHomeNetwork(uint8_t _commandToExecute) {
+  commandToExecute = _commandToExecute;
+  commandOrigin = COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK;
+  nilSemSignal(&cmdExSem);
+}
 
 /*
    Run this function to enable CommandExecutionerThread to run
@@ -151,20 +151,20 @@ void executeCommandFromInternet(uint16_t _nodeToSendTo, uint16_t _commandToExecu
 }
 
 void shutdownApartment() {
-//  nilThdSleepMilliseconds(1000);
+  //  nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF);
   Serial.println(F("Main lights shut down!"));
-//  nilThdSleepMilliseconds(1000);
+  //  nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_OFF);
   Serial.println(F("Painting lights shut down!"));
-//  nilThdSleepMilliseconds(1000);
-//  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
-//  Serial.println(F("Speaker shut down!"));
+  //  nilThdSleepMilliseconds(1000);
+  //  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
+  //  Serial.println(F("Speaker shut down!"));
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
 }
 
 void startupApartment() {
-//  nilThdSleepMilliseconds(1000);
+  //  nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON); // Turn on PC
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
 
@@ -175,9 +175,9 @@ void startupApartment() {
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT); // Start Workout Playlist!!
 
   //nilThdSleepMilliseconds(5000); // Give some time for Spotify to start playlist
-//  nilThdSleepMilliseconds(1000);
-//  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON); // Turn on speaker!
-//  Serial.println(F("Speaker turned on"));
+  //  nilThdSleepMilliseconds(1000);
+  //  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON); // Turn on speaker!
+  //  Serial.println(F("Speaker turned on"));
 }
 
 // Returns true if a source is on, returns false if all is off
@@ -191,19 +191,19 @@ bool askApartmentStatus() {
     return true;
   }
 
-//  nilThdSleepMilliseconds(1000);
+  //  nilThdSleepMilliseconds(1000);
   status = getPaintingLightsStatus();
   if (status) {
     Serial.println(F("Apartment seems online, turning everything off.."));
     return true;
   }
 
-//  nilThdSleepMilliseconds(1000);
-//  status = getspeakerPowerSwitchStatus();
-//  if (status) {
-//    Serial.println(F("Apartment seems online, turning everything off.."));
-//    return true;
-//  }
+  //  nilThdSleepMilliseconds(1000);
+  //  status = getspeakerPowerSwitchStatus();
+  //  if (status) {
+  //    Serial.println(F("Apartment seems online, turning everything off.."));
+  //    return true;
+  //  }
 
   Serial.println(F("Apartment seems offline, turning everything on.."));
   return false;
@@ -266,7 +266,7 @@ void toggleApartmentMood() {
     homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_ON);
   }
   else if (!status) {// Main lights are off, check paintinglights status
-//    nilThdDelayMilliseconds(3000);
+    //    nilThdDelayMilliseconds(3000);
     homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS, &status, 200);
     if (status) { // Paintinglights are on, toggle on main lights and paintinglights off
       Serial.println(F("Painting lights are on!"));

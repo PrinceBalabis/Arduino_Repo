@@ -1,4 +1,3 @@
-byte callbackCommand = 0;
 
 // This function is called when Master(EthWebserver)
 // has something to tell to this Arduino(Command received from internet)
@@ -36,10 +35,11 @@ void receiveCommand(int availableBytes)
   }
 }
 
-// This function is called by Master(EthWebserver) to check if this Arduino has something to tell Master
+// This function is called by EthWebserver(Master) to check if this Arduino(EthWebserverNode,Slave) has something to tell EthWebserver(Master
 void requestCallback()
 {
   //Serial.println("Callback requested");
   Wire.write(callbackCommand);
+  callbackCommand = 0; // Clear previous command
 }
 

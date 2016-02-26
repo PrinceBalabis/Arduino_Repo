@@ -20,14 +20,14 @@
 
 
 // TESTING
-#define TESTING_SEND_DELAY 5000 // (Def. min 1)How often to send the testing command.
-#define TESTING_REPEATS 2 // How many times to send the command in the program. Max 4294967294 times
+#define TESTING_SEND_DELAY 1 // (Def. min 1)How often to send the testing command.
+#define TESTING_REPEATS 1 // How many times to send the command in the program. Max 4294967294 times
 
-#define TESTING_CHOSEN_COMMAND TESTING_CMD_MAINLIGHTS_TOGGLE // Command chosen to test
+#define TESTING_CHOSEN_COMMAND TESTING_CMD_WEB_PC_SLEEP // Command chosen to test
 
 #define TESTING_CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
 #define TESTING_QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status
 #define TESTING_CMD_SPEAKER_MUTE_TOGGLE 3 // Toggle mute on Speaker Node
 #define TESTING_CMD_433MHZ_PAINTINGLIGHTS_TOGGLE 4 // toggle painting lights on 433MHz Node
 #define TESTING_CMD_433MHZ_PAINTINGLIGHTS_STATUS 5 // Ask status of painting lights on 433MHz Node
-
+#define TESTING_CMD_WEB_PC_SLEEP 6 // Sleep PC

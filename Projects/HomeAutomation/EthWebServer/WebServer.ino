@@ -25,6 +25,16 @@ NIL_THREAD(Webserver, arg) {
   Serial.println(F("Webserver is listening"));
 
   while (1) {
+
+    /////////////////////////////////////////// Send GET
+
+    // Detected a command from HomeNetwork
+    if (command != 0) {
+      sendGETCommand(command);
+      command = 0; // Clear current command to allow a new command
+    }
+
+    /////////////////////////////////////////// GET-SERVER
     // listen for incoming clients
     EthernetClient client = server.available();
     if (client) {
@@ -65,7 +75,7 @@ NIL_THREAD(Webserver, arg) {
                 if (tempS != "-") {
                   if (node1 == "") {
                     //Read node
-                   // Serial.println(F("Reading node..."));
+                    // Serial.println(F("Reading node..."));
                     node1 = tempS;
                     //Serial.print(F("node1: "));
                     //Serial.println(node1);
@@ -163,5 +173,46 @@ NIL_THREAD(Webserver, arg) {
       Ethernet.maintain();
     }
     nilThdSleepMilliseconds(5);
+  }
+}
+
+void sendGETCommand(byte command) {
+  EthernetClient client;
+  bool connected = 0;
+
+  switch (command) {
+    case HOME_WEBSERVER_CMD_PC_SLEEP:
+      connected = client.connect(ip_PC, PORT_EVENTGHOST);
+      if (connected) {
+        Serial.println(F("connected"));
+        client.print(F("GET "));
+        client.print(F("/html?SleepPCMonitors"));
+        client.println(F(" HTTP/1.0"));
+        client.println(F(""));
+      }
+      Serial.println(F("Send command to PC Sleep"));
+      break;
+    default:
+      Serial.println(F("Cannot recognize GET command"));
+      break;
+  }
+
+  //////Send GET
+  if (connected) {
+    // Print received data from GET-request
+    while (client.connected() && !client.available()) nilThdSleepMilliseconds(1); //waits for data
+    while (client.connected() || client.available()) { //connected or data available
+      char c = client.read();
+      Serial.print(c);
+    }
+    Serial.println();
+    Serial.println(F("disconnecting."));
+    Serial.println(F("=================="));
+    Serial.println(F(""));
+    client.stop();
+  }
+  else {
+    Serial.println(F("connection failed"));
+    Serial.println(F(""));
   }
 }

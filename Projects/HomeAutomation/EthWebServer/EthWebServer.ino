@@ -21,6 +21,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "config.h"
+#include "nodesConfig.h"
 #include <Wire.h>
 
 #define Serial NilSerial
@@ -31,6 +32,8 @@ String command1;
 String command2;
 
 String tempS;
+
+byte command;
 
 void setup() {
   Serial.begin(115200);
@@ -44,7 +47,7 @@ void setup() {
 }
 
 void loop() {
-  //printStackInfo(); // Print stack information
+  printStackInfo(); // Print stack information
 }
 
 void printStackInfo() {

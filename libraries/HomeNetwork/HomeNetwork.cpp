@@ -97,7 +97,8 @@ void HomeNetwork::update()
 					if (debug)
 						Serial.print(F("ARREND ALREADY DONE, NOT FORWARDING TO SKETCH"));
 				}
-				Serial.println(F(""));
+				if (debug)
+					Serial.println(F(""));
 			} else if (readHeader.type ==  HOME_TYPE_QUESTION) { // A question
 				// Send back ACK-message
 				// Set receiver of message
@@ -304,7 +305,8 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 				Serial.print(F("RETRYING SENDING->"));
 		}
 	}
-	Serial.print(F("COULDN'T GET ANSWER->"));
+	if (debug)
+		Serial.print(F("COULDN'T GET ANSWER->"));
 
 	setNetworkUpdateStatus(true); // Resume autoUpdate
 	return false;
