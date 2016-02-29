@@ -29,5 +29,5 @@ void setup() {
 
 void loop() {
   network.update();
-  delay(1);
+  delayMicroseconds(1);
 }

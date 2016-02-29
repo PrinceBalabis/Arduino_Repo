@@ -13,7 +13,7 @@
 bool radioNumber = 0;
 
 /* Hardware configuration: Set up nRF24L01 radio on SPI bus plus pins 7 & 8 */
-RF24 radio(8,9);
+RF24 radio(7,8);
 /**********************************************************/
 
 byte addresses[][6] = {"1Node","2Node"};
@@ -56,8 +56,8 @@ if (role == 1)  {
     
     Serial.println(F("Now sending"));
 
-    unsigned long time = micros();                             // Take the time, and send it.  This will block until complete
-     if (!radio.write( &time, sizeof(unsigned long) )){
+    unsigned long start_time = micros();                             // Take the time, and send it.  This will block until complete
+     if (!radio.write( &start_time, sizeof(unsigned long) )){
        Serial.println(F("failed"));
      }
         
@@ -78,15 +78,15 @@ if (role == 1)  {
     }else{
         unsigned long got_time;                                 // Grab the response, compare, and send to debugging spew
         radio.read( &got_time, sizeof(unsigned long) );
-        unsigned long time = micros();
+        unsigned long end_time = micros();
         
         // Spew it
         Serial.print(F("Sent "));
-        Serial.print(time);
+        Serial.print(start_time);
         Serial.print(F(", Got response "));
         Serial.print(got_time);
         Serial.print(F(", Round-trip delay "));
-        Serial.print(time-got_time);
+        Serial.print(end_time-start_time);
         Serial.println(F(" microseconds"));
     }
 

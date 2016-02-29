@@ -1,27 +1,20 @@
 // Returns true if a source is on, returns false if all is off
 bool askApartmentStatus() {
 
-  bool status = false;
-
-  status = getMainLightsStatus();
-  if (status) {
+  if (getMainLightsStatus()) {
     Serial.println(F("Apartment seems online, turning everything off.."));
     return true;
   }
 
-  //nilThdSleepMilliseconds(1000);
-  status = getPaintingLightsStatus();
-  if (status) {
+  if (getPaintingLightsStatus()) {
     Serial.println(F("Apartment seems online, turning everything off.."));
     return true;
   }
 
-//  nilThdSleepMilliseconds(1000);
-//  status = getspeakerPowerSwitchStatus();
-//  if (status) {
-//    Serial.println(F("Apartment seems online, turning everything off.."));
-//    return true;
-//  }
+  //  if (getspeakerPowerSwitchStatus()) {
+  //    Serial.println(F("Apartment seems online, turning everything off.."));
+  //    return true;
+  //  }
 
   Serial.println(F("Apartment seems offline, turning everything on.."));
   return false;
@@ -73,30 +66,21 @@ boolean getMainLightsStatus() {
 }
 
 void shutdownApartment() {
-  //nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF);
   Serial.println(F("Main lights shut down!"));
-  //nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_OFF);
   Serial.println(F("Painting lights shut down!"));
-  //nilThdSleepMilliseconds(1000);
   //homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
-  //Serial.println(F("Speaker shut down!"));
-  //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
+  homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_PC_SLEEP);
+  Serial.println(F("Sleeping PC!"));
+
 }
 
 void startupApartment() {
-  //nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON); // Turn on PC
-  //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
+  Serial.println(F("PC turned on"));
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON); // Turn on main lights!
   Serial.println(F("Main lights turned on"));
-
-  //nilThdSleepMilliseconds(4000); // Give some time for PC to wake before doing any more PC controls
-  //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_SPOTIFY_PLAYLIST_WORKOUT); // Start Workout Playlist!!
-
-  //nilThdSleepMilliseconds(5000); // Give some time for Spotify to start playlist
-  //nilThdSleepMilliseconds(1000);
   //homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_ON); // Turn on speaker!
   //Serial.println(F("Speaker turned on"));
 }
