@@ -1,33 +1,57 @@
-/**
-   Central Node is the node which must be run to succesfully have HomeNetwork Automation Online
-*/
+// If a thread weirdly crashes then increase the stack value
 
-#include <SPI.h>
-#include <RF24.h>
+#include <NilRTOS.h>
+#include <NilSerial.h>
 #include <RF24Network.h>
+#include <RF24.h>
+#include <SPI.h>
+#include <HomeNetwork.h>
+#include "config.h"
+#include <SoftwareSerial.h>
+#include <Wire.h>
 
-RF24 radio(8, 9);
+#define Serial NilSerial
+
+RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
 RF24Network network(radio);
+HomeNetwork homeNetwork(radio, network);
+
+byte callbackCommand = 0;
 
 void setup() {
-  delay(4000); //Give some time for capacitor to charge up and stabilize before initializing RF24 module!
+  Serial.begin(115200);
+
+  Serial.println(F("Home Network Webserver Node"));
+
+  // Start I²C bus as a slave
+  Wire.begin(TWI_SLAVE_ID);
+  // Set the callback to call when data is received.
+  Wire.onReceive(receiveCommand);
+  Wire.onRequest(requestCallback);
+
   SPI.begin(); // SPI is used by homeNetwork
-  delay(500);
-  radio.begin(); // Initialize radio
-  delay(100);
-  network.begin(90, 00); // Start mesh Network
-  delay(500);
-  radio.setPALevel(RF24_PA_MAX);
-  delay(100);
-  radio.setDataRate(RF24_2MBPS);
-  delay(100);
-  network.txTimeout = 0; // Set to 0 to use the normal auto retry period defined by radio.setRetries()
-  delay(100);
-  radio.setRetries(0, 0);
-  delay(500);
+  // Initialize Home Network
+  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
+  homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
+
+  Serial.println(F("Basic system booted up! Starting RTOS..."));
+
+  nilSysBegin(); // Start Nil RTOS.
 }
 
 void loop() {
-  network.update();
-  delayMicroseconds(1);
+  //printStackInfo(); // Print stack information
 }
+
+void printStackInfo() {
+  nilPrintStackSizes(&Serial);
+  nilPrintUnusedStack(&Serial);
+  Serial.println(F(""));
+
+  // Delay for one second.
+  // Must not sleep in loop so use nilThdDelayMilliseconds().
+  // Arduino delay() can also be used in loop().
+  nilThdDelayMilliseconds(1000);
+}
+

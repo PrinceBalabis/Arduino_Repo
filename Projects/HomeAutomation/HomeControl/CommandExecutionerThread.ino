@@ -24,10 +24,10 @@ NIL_THREAD(CommandExecutioner, arg)
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // If the command is from Home Network
         switch (commandToExecute) {
-          case HOME_HOMECONTROL_CMD_PC_ON:
-            setPCPowerSwitchOnMomentarily();
-            Serial.println(F("Turned PC on"));
-            break;
+//          case HOME_HOMECONTROL_CMD_PC_ON:
+//            setPCPowerSwitchOnMomentarily();
+//            Serial.println(F("Turned PC on"));
+//            break;
         }
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
@@ -48,14 +48,14 @@ NIL_THREAD(CommandExecutioner, arg)
 //            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORK);
 //            Serial.print(F("Starting Spotify Work Playlist"));
 //            break;
-          case BUTTON_MAINLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE, 20);
-            Serial.print(F("Toggling Main Lights"));
-            break;
-          case BUTTON_PAINTINGLIGHTS_TOGGLE:
-            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE, 20); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
-            Serial.print(F("Toggling Painting Lights"));
-            break;
+//          case BUTTON_MAINLIGHTS_TOGGLE:
+//            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE, 20);
+//            Serial.print(F("Toggling Main Lights"));
+//            break;
+//          case BUTTON_PAINTINGLIGHTS_TOGGLE:
+//            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE, 20); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
+//            Serial.print(F("Toggling Painting Lights"));
+//            break;
 //          case BUTTON_SPEAKER_POWER:
 //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
 //            Serial.print(F("Toggling Speaker Power"));

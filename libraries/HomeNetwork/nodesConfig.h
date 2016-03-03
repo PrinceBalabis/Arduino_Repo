@@ -31,7 +31,7 @@ If a node has the address "0345". Then this node is a child of parent node "034"
 /*************************************************************************************************************************************
 Home Control
 *************************************************************************************************************************************/
-#define HOME_HOMECONTROL_ID 01
+#define HOME_HOMECONTROL_ID 00
 
 // Command(message type: typeCommand)
 // Starts from 17 because buttons use 1-16

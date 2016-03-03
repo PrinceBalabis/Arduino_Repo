@@ -11,22 +11,17 @@
 // Needed libraries & config
 #include <NilRTOS.h>
 #include <NilSerial.h>
-#include <RF24Network.h>
-#include <RF24.h>
-#include <SPI.h>
 #include <Keypad.h>
-#include <NewRemoteTransmitter.h>
-#include <HomeNetwork.h>
 #include "config.h"
+#include <Wire.h>
+
 #define Serial NilSerial
 
-RF24 radio(RF24_PIN_CE, RF24_PIN_CSN);
-RF24Network network(radio);
-HomeNetwork homeNetwork(radio, network);
+static byte command;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println(F("HomeControl Node"));
+  Serial.println(F("HomeControl"));
 
   // PC Power switch setup
   pcPowerSetup();
@@ -34,13 +29,6 @@ void setup() {
   // Audio Switch setup
   audioSwitchSetup();
   
-  SPI.begin(); // SPI is used by homeNetwork
-
-  // Initialize Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
-  homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
-  homeNetwork.setNetworkUpdateTime(HOME_AUTOUPDATE_DELAY);
-
   Serial.println(F("Basic system booted up! Starting RTOS..."));
 
   nilSysBegin(); // Start Nil RTOS.
