@@ -58,9 +58,6 @@ NIL_THREAD(CommandExecutioner, arg)
             callbackCommand = HOME_WEBSERVER_CMD_PC_SLEEP;
             Serial.println(F("Send GET-command to Sleep PC"));
             break;
-          case HOME_WEBSERVER_CMD_PC_WAKE:
-
-            break;
           case HOME_WEBSERVER_CMD_SPOTIFY_CHILL:
 
             break;

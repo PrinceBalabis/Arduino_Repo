@@ -24,8 +24,8 @@ void receiveCommand(int availableBytes)
     Serial.print(", Command: ");
     Serial.println(command);
 
-    // If node is 0 then its a macro command
-    if (node == 0) {
+    // If node is 255 then its a macro command
+    if (node == 255) {
       Serial.println("Macro Command");
       executeCommandFromInternetMacro(command);
     } else { // Not a macro

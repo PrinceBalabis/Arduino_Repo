@@ -37,7 +37,7 @@ void setup() {
   Serial.println(F("Webserver"));
 
   // Start I²C bus as master
-  //Wire.begin();
+  Wire.begin();
 
   Serial.println(F("Basic system booted up! Starting loop..."));
 
@@ -52,11 +52,13 @@ void setup() {
   //server.begin();
   //delay(1000); // give the Ethernet shield a second to initialize:
   //Serial.print(F("Server IP: "));
- / Serial.println(Ethernet.localIP());
+  / Serial.println(Ethernet.localIP());
   //Serial.println(F("Webserver is listening"));
+  delay(BOOT_TIME); // Boot system first
+
 }
 
 void loop() {
-  //checkTWI();
-  //updateServer();
+  checkTWI();
+  updateServer();
 }
