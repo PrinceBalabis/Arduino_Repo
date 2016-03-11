@@ -1,11 +1,15 @@
-#define TWI_BOOT_TIME 5000
-#define TWI_CHECK_DELAY 100
+#define COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK 0
+#define COMMANDEXECUTIONER_MSGORIGIN_KEYPAD 1
+
+/*
+   ------------------------------------
+    TWI
+    ------------------------------------
+*/
 #define TWI_SLAVE_ID 1
+#define TWI_CHECK_TIME 50 // How often to check for new messages for HomeNetwork 
+#define TWI_BOOT_TIME 5000
 
-
-
-#define COMMANDEXECUTIONER_MSGORIGIN_LOCAL 0
-#define COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK 1
 
 /*
    ------------------------------------
@@ -34,8 +38,8 @@
     Keypad Performance
     ------------------------------------
 */
-const uint8_t keypadUpdateTime = 50; // How often to update keypad reads in milliseconds, 20ms has worked perfectly for many months
-const uint8_t keypadHoldUpdateTime = 150; // How often to repeat command when holding a button, in milliseconds
+#define KEYPAD_UPDATE_TIME 50 // How often to update keypad reads in milliseconds, 20ms has worked perfectly for many months
+#define KEYPAD_HOLD_UPDATE_TIME 150 // How often to repeat command when holding a button, in milliseconds
 
 /*
    ------------------------------------

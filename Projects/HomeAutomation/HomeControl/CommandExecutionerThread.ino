@@ -9,7 +9,7 @@ int32_t commandToExecute = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 130); //65 bytes works great
+NIL_WORKING_AREA(commandExecutioner, 100); //65 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
@@ -19,7 +19,6 @@ NIL_THREAD(CommandExecutioner, arg)
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     nilSemWait(&cmdExSem);
 
-    bool sent = true;
 
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // If the command is from Home Network
@@ -30,7 +29,7 @@ NIL_THREAD(CommandExecutioner, arg)
 //            break;
         }
         break;
-      case COMMANDEXECUTIONER_MSGORIGIN_LOCAL: // If the command is from local origin(keypad)
+      case COMMANDEXECUTIONER_MSGORIGIN_KEYPAD: // If the command is from local origin(keypad)
         switch (commandToExecute) {
 //          case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
 //            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT);
@@ -48,6 +47,14 @@ NIL_THREAD(CommandExecutioner, arg)
 //            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORK);
 //            Serial.print(F("Starting Spotify Work Playlist"));
 //            break;
+          case BUTTON_MAINLIGHTS_TOGGLE:
+            sendTWICommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE);
+            Serial.println(F("Toggling Main Lights"));
+            break;
+          case BUTTON_PAINTINGLIGHTS_TOGGLE:
+//            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE, 20); // Painting lights node takes a while to respond due to 433MHz commands taking forever to send, thats why its best to just retry once, in order to make sure it doesnt get spammed with retries
+            Serial.println(F("Toggling Painting Lights"));
+            break;
 //          case BUTTON_MAINLIGHTS_TOGGLE:
 //            sent = homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE, 20);
 //            Serial.print(F("Toggling Main Lights"));
@@ -74,23 +81,17 @@ NIL_THREAD(CommandExecutioner, arg)
 //            break;
           case BUTTON_SPEAKER_MODE:
             toggleAudioSwitch();
-            Serial.print(F("Toggling Speaker Mode"));
+            Serial.println(F("Toggling Speaker Mode"));
             break;
           case BUTTON_PC_POWER:
             togglePCPowerSwitch();
-            Serial.print(F("Toggling PC Power Switch"));
+            Serial.println(F("Toggling PC Power Switch"));
             break;
 //          case BUTTON_PC_MONITOR_DISABLE:
 //            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_MONITOR_DISABLE);
 //            Serial.print(F("Disabling Monitors"));
 //            break;
         }
-    }
-
-    if (sent) {
-      Serial.println(F(".. Done!"));
-    } else if (!sent) {
-      Serial.println(F(".. Couldn't send!"));
     }
   }
 }

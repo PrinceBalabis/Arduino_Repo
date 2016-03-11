@@ -12,8 +12,10 @@
 #include <NilRTOS.h>
 #include <NilSerial.h>
 #include <Keypad.h>
+#include <NewRemoteTransmitter.h>
 #include "config.h"
 #include <Wire.h>
+#include "nodesConfig.h"
 
 #define Serial NilSerial
 
@@ -23,6 +25,9 @@ void setup() {
   Serial.begin(115200);
   Serial.println(F("HomeControl"));
 
+  // Start I²C bus as master
+  Wire.begin();
+  
   // PC Power switch setup
   pcPowerSetup();
 

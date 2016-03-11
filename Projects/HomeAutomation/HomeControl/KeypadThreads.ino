@@ -9,8 +9,8 @@ int state = RELEASED;
 uint8_t keyName = 0;
 
 //Code that shows the the keypad connections to the arduino terminals
-byte rowPins[4] = { 18, 19, 5, 4 }; //Rows 0 to 3
-byte colPins[4] = { 17, 16, 15, 14 }; //Columns 0 to 3
+byte rowPins[4] = { 8, 7, 6, 5 }; //Rows 0 to 3
+byte colPins[4] = { 9, 10, 11, 12 }; //Columns 0 to 3
 
 const char keymap[4][4] =
 {
@@ -66,7 +66,7 @@ uint8_t getKeyName(char keycode) {
   }
 }
 
-NIL_WORKING_AREA(keypadUpdaterThread, 100); // 64 bytes works great
+NIL_WORKING_AREA(keypadUpdaterThread, 150); // 64 bytes works great
 NIL_THREAD(KeypadUpdaterThread, arg) {
   Serial.println(F("Started KeypadUpdaterThread thread"));
 
@@ -77,11 +77,11 @@ NIL_THREAD(KeypadUpdaterThread, arg) {
   while (1) {
     // Update keypad, needs to run in a loop for keypad library to work
     keypad.getKey();
-    nilThdSleepMilliseconds(keypadUpdateTime); // Keypad update frequency
+    nilThdSleepMilliseconds(KEYPAD_UPDATE_TIME); // Keypad update frequency
   }
 }
 
-NIL_WORKING_AREA(keypadCommandThread, 0); // -12 bytes works great
+NIL_WORKING_AREA(keypadCommandThread, 50); // -12 bytes works great
 NIL_THREAD(KeypadCommandThread, arg)
 {
   Serial.println(F("Started KeypadCommandThread thread"));
@@ -94,37 +94,37 @@ NIL_THREAD(KeypadCommandThread, arg)
     {
       switch (keyName) {
         case BUTTON_MAINLIGHTS_TOGGLE:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PAINTINGLIGHTS_TOGGLE:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_POWER:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_MONITOR_DISABLE:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_SPOTIFYPLAYLIST_DINNER:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_SPOTIFYPLAYLIST_CHILL:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_SPOTIFYPLAYLIST_WORK:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_SPEAKER_POWER:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_SPEAKER_MUTE:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_SPEAKER_MODE:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
       }
     }
@@ -134,7 +134,7 @@ NIL_THREAD(KeypadCommandThread, arg)
     {
       switch (keyName) {
         case BUTTON_PC_POWER:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
       }
     }
@@ -143,14 +143,14 @@ NIL_THREAD(KeypadCommandThread, arg)
     while (state == HOLD) {
       switch (keyName) {
         case BUTTON_SPEAKER_VOLUME_UP:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_SPEAKER_VOLUME_DOWN:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
       }
       // Some delay in order to execute hold commands in regular intervals
-      nilThdSleepMilliseconds(keypadHoldUpdateTime);
+      nilThdSleepMilliseconds(KEYPAD_HOLD_UPDATE_TIME);
     }
   }
 }
