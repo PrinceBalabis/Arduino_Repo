@@ -21,7 +21,7 @@ byte callbackCommand = 0;
 void setup() {
   Serial.begin(115200);
 
-  Serial.println(F("Home Network Webserver Node"));
+  Serial.println(F("Home Network HomeControl Node"));
 
   // Start I²C bus as a slave
   Wire.begin(TWI_SLAVE_ID);
@@ -31,7 +31,7 @@ void setup() {
 
   SPI.begin(); // SPI is used by homeNetwork
   // Initialize Home Network
-  //homeNetwork.setDebug(true); // Enable debug on home Network Library
+  homeNetwork.setDebug(true); // Enable debug on home Network Library
   homeNetwork.begin(NODEID, &homeNetworkMessageReceived);
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 

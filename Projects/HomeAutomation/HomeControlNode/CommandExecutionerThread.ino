@@ -20,10 +20,12 @@ NIL_THREAD(CommandExecutioner, arg)
     // Wait for signal to run
     nilSemWait(&cmdExSem);
 
+    bool sent = sent;
+
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_KEYPAD: // Command came from keypad
         Serial.println(F("Relaying keypad command to HomeNetwork"));
-        homeNetwork.sendCommand(nodeToSendTo, commandToExecute);
+        sent = (bool)homeNetwork.sendCommand(nodeToSendTo, commandToExecute);
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Normal Command that came from the HomeNetwork
         switch (commandToExecute) {
@@ -31,11 +33,18 @@ NIL_THREAD(CommandExecutioner, arg)
             while (callbackCommand != 0) // Wait untill last callbackCommand is used
               nilThdSleepMilliseconds(1);
             callbackCommand = HOME_HOMECONTROL_CMD_PC_ON;
-            Serial.print(F("Power up PC"));
+            Serial.println(F("Powered up PC"));
             break;
         }
         break;
     }
+
+    if (sent) {
+      Serial.println(F("Command done"));
+    } else {
+      Serial.println(F("FAILED TO SEND COMMAND"));
+    }
+
   }
 }
 
