@@ -9,7 +9,7 @@ static int32_t commandToExecute = 0;
 // Declare a semaphore with an inital counter value of zero.
 SEMAPHORE_DECL(cmdExSem, 0);
 
-NIL_WORKING_AREA(commandExecutioner, 100); //65 bytes works great
+NIL_WORKING_AREA(commandExecutioner, 150); //65 bytes works great
 NIL_THREAD(CommandExecutioner, arg)
 {
   Serial.println(F("Started CommandExecutioner thread"));
@@ -31,22 +31,6 @@ NIL_THREAD(CommandExecutioner, arg)
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_KEYPAD: // If the command is from local origin(keypad)
         switch (commandToExecute) {
-//          case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
-//            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT);
-//            Serial.print(F("Starting Spotify Workout Playlist"));
-//            break;
-//          case BUTTON_PC_SPOTIFYPLAYLIST_DINNER:
-//            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_DINNER);
-//            Serial.print(F("Starting Spotify Dinner Playlist"));
-//            break;
-//          case BUTTON_PC_SPOTIFYPLAYLIST_CHILL:
-//            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_CHILL);
-//            Serial.print(F("Starting Spotify Chill Playlist"));
-//            break;
-//          case BUTTON_PC_SPOTIFYPLAYLIST_WORK:
-//            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_SPOTIFY_WORK);
-//            Serial.print(F("Starting Spotify Work Playlist"));
-//            break;
           case BUTTON_MAINLIGHTS_TOGGLE:
             sendTWICommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE);
             Serial.println(F("Toggling Main Lights"));
@@ -55,22 +39,22 @@ NIL_THREAD(CommandExecutioner, arg)
             sendTWICommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_TOGGLE);
             Serial.println(F("Toggling Painting Lights"));
             break;
-//          case BUTTON_SPEAKER_POWER:
-//            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
-//            Serial.print(F("Toggling Speaker Power"));
-//            break;
-//          case BUTTON_SPEAKER_VOLUME_UP:
+          case BUTTON_SPEAKER_POWER:
+            //sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
+            Serial.print(F("Toggling Speaker Power"));
+            break;
+          case BUTTON_SPEAKER_VOLUME_UP:
 //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
-//            Serial.print(F("Increasing Speaker Volume"));
-//            break;
-//          case BUTTON_SPEAKER_VOLUME_DOWN:
+            Serial.print(F("Increasing Speaker Volume"));
+            break;
+          case BUTTON_SPEAKER_VOLUME_DOWN:
 //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
-//            Serial.print(F("Decreasing Speaker Volume"));
-//            break;
-//          case BUTTON_SPEAKER_MUTE:
+            Serial.print(F("Decreasing Speaker Volume"));
+            break;
+          case BUTTON_SPEAKER_MUTE:
 //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
-//            Serial.print(F("Toggling Speaker Mute"));
-//            break;
+            Serial.print(F("Toggling Speaker Mute"));
+            break;
           case BUTTON_SPEAKER_MODE:
             toggleAudioSwitch();
             Serial.println(F("Toggling Speaker Mode"));
@@ -79,10 +63,10 @@ NIL_THREAD(CommandExecutioner, arg)
             togglePCPowerSwitch();
             Serial.println(F("Toggling PC Power Switch"));
             break;
-//          case BUTTON_PC_MONITOR_DISABLE:
+          case BUTTON_PC_SLEEP:
 //            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_MONITOR_DISABLE);
-//            Serial.print(F("Disabling Monitors"));
-//            break;
+            Serial.print(F("Disabling Monitors"));
+            break;
         }
     }
   }

@@ -7,7 +7,7 @@
     ------------------------------------
 */
 #define TWI_SLAVE_ID 1
-#define TWI_CHECK_TIME 50 // How often to check for new messages for HomeNetwork 
+#define TWI_CHECK_TIME 50 // How often to check for new messages from HomeNetwork 
 #define TWI_BOOT_TIME 5000
 
 
@@ -17,17 +17,17 @@
     ------------------------------------
 */
 // NextBase
-#define BUTTON_SPEAKER_POWER '3'
-#define BUTTON_SPEAKER_VOLUME_UP 'A'
-#define BUTTON_SPEAKER_VOLUME_DOWN 'B'
-#define BUTTON_SPEAKER_MUTE 'C'
-#define BUTTON_SPEAKER_MODE 'D'
+#define BUTTON_SPEAKER_POWER '9'
+#define BUTTON_SPEAKER_VOLUME_UP 'B'
+#define BUTTON_SPEAKER_VOLUME_DOWN 'C'
+#define BUTTON_SPEAKER_MUTE 'D'
+#define BUTTON_SPEAKER_MODE 'A'
 // Lights
 #define BUTTON_MAINLIGHTS_TOGGLE '1'
 #define BUTTON_PAINTINGLIGHTS_TOGGLE '4'
 // PC Controller
-#define BUTTON_PC_POWER '*'
-#define BUTTON_PC_MONITOR_DISABLE '7'
+#define BUTTON_PC_POWER '3'
+#define BUTTON_PC_SLEEP '6'
 /*
    ------------------------------------
     Keypad Performance

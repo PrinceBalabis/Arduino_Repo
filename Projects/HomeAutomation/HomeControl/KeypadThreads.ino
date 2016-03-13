@@ -102,7 +102,7 @@ NIL_THREAD(KeypadCommandThread, arg)
         case BUTTON_PC_POWER:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
-        case BUTTON_PC_MONITOR_DISABLE:
+        case BUTTON_PC_SLEEP:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_SPEAKER_POWER:

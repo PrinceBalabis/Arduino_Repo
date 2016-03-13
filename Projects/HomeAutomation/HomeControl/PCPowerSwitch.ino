@@ -19,7 +19,7 @@ void setPCPowerSwitchOnMomentarily()
 {
   //digitalWrite(pcPowerPin, true);
   PC_POWER_SWITCH_ON; // Set pin 6 to HIGH
-  nilThdSleepMilliseconds(100); // Give enough time for PC to start
+  nilThdSleepMilliseconds(50); // Give enough time for PC to start
   //digitalWrite(pcPowerPin, false);
   PC_POWER_SWITCH_OFF; // Set pin 6 to LOW
 }
