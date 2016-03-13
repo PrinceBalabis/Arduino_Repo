@@ -17,22 +17,17 @@
     ------------------------------------
 */
 // NextBase
-#define BUTTON_SPEAKER_POWER 10
-#define BUTTON_SPEAKER_VOLUME_UP 16
-#define BUTTON_SPEAKER_VOLUME_DOWN 15
-#define BUTTON_SPEAKER_MUTE 14
-#define BUTTON_SPEAKER_MODE 13
+#define BUTTON_SPEAKER_POWER '3'
+#define BUTTON_SPEAKER_VOLUME_UP 'A'
+#define BUTTON_SPEAKER_VOLUME_DOWN 'B'
+#define BUTTON_SPEAKER_MUTE 'C'
+#define BUTTON_SPEAKER_MODE 'D'
 // Lights
-#define BUTTON_MAINLIGHTS_TOGGLE 4
-#define BUTTON_PAINTINGLIGHTS_TOGGLE 3
-// Computer switch
-#define BUTTON_PC_POWER 9
+#define BUTTON_MAINLIGHTS_TOGGLE '1'
+#define BUTTON_PAINTINGLIGHTS_TOGGLE '4'
 // PC Controller
-#define BUTTON_PC_MONITOR_DISABLE 11
-#define BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT 6
-#define BUTTON_PC_SPOTIFYPLAYLIST_DINNER 5
-#define BUTTON_PC_SPOTIFYPLAYLIST_CHILL 7
-#define BUTTON_PC_SPOTIFYPLAYLIST_WORK 8
+#define BUTTON_PC_POWER '*'
+#define BUTTON_PC_MONITOR_DISABLE '7'
 /*
    ------------------------------------
     Keypad Performance
@@ -46,7 +41,7 @@
     FastDigitalIO for PC Power Switch
     ------------------------------------
 */
-#define PC_POWER_SWITCH_PIN 6
+#define PC_POWER_SWITCH_PIN 4
 #define PC_POWER_SWITCH_INIT (DDRD |= _BV(PC_POWER_SWITCH_PIN))
 #define PC_POWER_SWITCH_ON (PORTD |= _BV(PC_POWER_SWITCH_PIN))
 #define PC_POWER_SWITCH_OFF (PORTD &= ~_BV(PC_POWER_SWITCH_PIN))
@@ -57,7 +52,7 @@
     FastDigitalIO for Audio Switch
     ------------------------------------
 */
-#define AUDIO_SWITCH_PIN 2
+#define AUDIO_SWITCH_PIN 3
 #define AUDIO_SWITCH_INIT (DDRD |= _BV(AUDIO_SWITCH_PIN))
 #define AUDIO_SWITCH_SPEAKER (PORTD |= _BV(AUDIO_SWITCH_PIN))
 #define AUDIO_SWITCH_HEADSET (PORTD &= ~_BV(AUDIO_SWITCH_PIN))

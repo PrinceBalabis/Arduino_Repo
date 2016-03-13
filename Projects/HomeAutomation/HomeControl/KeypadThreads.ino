@@ -5,50 +5,50 @@
 SEMAPHORE_DECL(cmdKeypadSem, 0);
 
 // Needed global Keypad variables
-int state = RELEASED;
-uint8_t keyName = 0;
+static int state = RELEASED;
+static char keyName = 'z';
 
 //Code that shows the the keypad connections to the arduino terminals
 byte rowPins[4] = { 8, 7, 6, 5 }; //Rows 0 to 3
-byte colPins[4] = { 9, 10, 11, 12 }; //Columns 0 to 3
+byte colPins[4] = { 12, 11, 10, 9 }; //Columns 0 to 3
 
 const char keymap[4][4] =
 {
   {
-    'a', 'b', 'c', 'd'
+    '1', '2', '3', 'A'
   }
   ,
   {
-    'e', 'f', 'g', 'h'
+    '4', '5', '6', 'B'
   }
   ,
   {
-    'i', 'j', 'k', 'l'
+    '7', '8', '9', 'C'
   }
   ,
   {
-    'm', 'n', 'o', 'p'
+    '*', '0', '#', 'D'
   }
 };
 
-const uint8_t keymapName[4][4] =
-{
-  {
-    1, 2, 3, 4
-  }
-  ,
-  {
-    5, 6, 7, 8
-  }
-  ,
-  {
-    9, 10, 11, 12
-  }
-  ,
-  {
-    13, 14, 15, 16
-  }
-};
+//const uint8_t keymapName[4][4] =
+//{
+//  {
+//    1, 2, 3, 4
+//  }
+//  ,
+//  {
+//    5, 6, 7, 8
+//  }
+//  ,
+//  {
+//    9, 10, 11, 12
+//  }
+//  ,
+//  {
+//    13, 14, 15, 16
+//  }
+//};
 
 // Instance of the Keypad class
 Keypad keypad = Keypad(makeKeymap(keymap), rowPins, colPins, 4, 4);
@@ -56,15 +56,15 @@ Keypad keypad = Keypad(makeKeymap(keymap), rowPins, colPins, 4, 4);
 /**
     Gets the key name(number) of the button
  **/
-uint8_t getKeyName(char keycode) {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      if (keymap[i][j] == keycode) {
-        return keymapName[i][j];
-      }
-    }
-  }
-}
+//uint8_t getKeyName(char keycode) {
+//  for (int i = 0; i < 4; i++) {
+//    for (int j = 0; j < 4; j++) {
+//      if (keymap[i][j] == keycode) {
+//        return keymapName[i][j];
+//      }
+//    }
+//  }
+//}
 
 NIL_WORKING_AREA(keypadUpdaterThread, 150); // 64 bytes works great
 NIL_THREAD(KeypadUpdaterThread, arg) {
@@ -103,18 +103,6 @@ NIL_THREAD(KeypadCommandThread, arg)
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_PC_MONITOR_DISABLE:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
-          break;
-        case BUTTON_PC_SPOTIFYPLAYLIST_WORKOUT:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
-          break;
-        case BUTTON_PC_SPOTIFYPLAYLIST_DINNER:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
-          break;
-        case BUTTON_PC_SPOTIFYPLAYLIST_CHILL:
-          executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
-          break;
-        case BUTTON_PC_SPOTIFYPLAYLIST_WORK:
           executeCommand(keyName, COMMANDEXECUTIONER_MSGORIGIN_KEYPAD);
           break;
         case BUTTON_SPEAKER_POWER:
@@ -159,12 +147,13 @@ NIL_THREAD(KeypadCommandThread, arg)
     This function is an event which only runs when the key state is changed
  **/
 void keypadEvent(KeypadEvent key) {
-  keyName = getKeyName(key); // Save key which this event points to
+  //  keyName = getKeyName(key); // Save key which this event points to
+  keyName = key;
 
   switch (keypad.getState()) {
     case PRESSED:
       Serial.print(F("Pressed key: "));
-      Serial.println(keyName);
+      Serial.println(key);
       state = PRESSED;
       nilSemSignal(&cmdKeypadSem);
       break;
@@ -172,13 +161,13 @@ void keypadEvent(KeypadEvent key) {
     case HOLD:
       state = HOLD;
       Serial.print(F("Held key: "));
-      Serial.println(keyName);
+      Serial.println(key);
       nilSemSignal(&cmdKeypadSem);
       break;
 
     case RELEASED:
       Serial.print(F("Released key: "));
-      Serial.println(keyName);
+      Serial.println(key);
       state = RELEASED;
       nilSemSignal(&cmdKeypadSem);
       break;

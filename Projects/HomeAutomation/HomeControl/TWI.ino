@@ -23,8 +23,7 @@ NIL_THREAD(CheckTWI, arg) {
         Serial.println(command);
       }
     } else {
-      Serial.print(F("Not available: "));
-      Serial.println(available);
+      //Serial.print(F("NO TWI CONNECTION!"));
     }
     Wire.endTransmission();
     nilThdSleepMilliseconds(TWI_CHECK_TIME);
