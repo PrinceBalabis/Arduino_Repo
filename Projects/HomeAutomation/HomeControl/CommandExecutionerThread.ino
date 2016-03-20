@@ -27,6 +27,18 @@ NIL_THREAD(CommandExecutioner, arg)
             setPCPowerSwitchOnMomentarily();
             Serial.println(F("Turned PC on"));
             break;
+          case HOME_HOMECONTROL_CMD_SPEAKER_SWITCH_TOGGLE:
+            toggleAudioSwitch();
+            Serial.println(F("Toggled speaker switch "));
+            break;
+          case HOME_HOMECONTROL_CMD_SPEAKER_SWITCH_SPEAKER:
+            setAudioSwitchSpeaker();
+            Serial.println(F("Set speaker switch to speaker"));
+            break;
+          case HOME_HOMECONTROL_CMD_SPEAKER_SWITCH_HEADSET:
+            setAudioSwitchHeadset();
+            Serial.println(F("Set speaker switch to headset"));
+            break;
         }
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_KEYPAD: // If the command is from local origin(keypad)
@@ -44,15 +56,15 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.print(F("Toggling Speaker Power"));
             break;
           case BUTTON_SPEAKER_VOLUME_UP:
-//            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
+            //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
             Serial.print(F("Increasing Speaker Volume"));
             break;
           case BUTTON_SPEAKER_VOLUME_DOWN:
-//            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
+            //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
             Serial.print(F("Decreasing Speaker Volume"));
             break;
           case BUTTON_SPEAKER_MUTE:
-//            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
+            //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
             Serial.print(F("Toggling Speaker Mute"));
             break;
           case BUTTON_SPEAKER_MODE:
@@ -64,7 +76,7 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.println(F("Toggling PC Power Switch"));
             break;
           case BUTTON_PC_SLEEP:
-//            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_MONITOR_DISABLE);
+            //            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_MONITOR_DISABLE);
             Serial.print(F("Disabling Monitors"));
             break;
         }

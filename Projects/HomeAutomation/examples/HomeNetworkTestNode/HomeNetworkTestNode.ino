@@ -25,7 +25,6 @@ void setup() {
   homeNetwork.begin(NODEID, &executeHomeNetworkCommand);
   homeNetwork.setNetworkUpdateTime(HOME_SETTING_TIME_NETWORKAUTOUPDATE);
 
-
   Serial.println(F("Basic system booted up! Starting RTOS..."));
 
   nilSysBegin(); // Start Nil RTOS.

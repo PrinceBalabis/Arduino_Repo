@@ -148,22 +148,19 @@ void executeCommandFromInternet(uint16_t _nodeToSendTo, uint16_t _commandToExecu
 }
 
 void shutdownApartment() {
-  //  nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF);
   Serial.println(F("Main lights shut down!"));
-  //  nilThdSleepMilliseconds(1000);
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_OFF);
   Serial.println(F("Painting lights shut down!"));
-  //  nilThdSleepMilliseconds(1000);
   //  homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_OFF);
   //  Serial.println(F("Speaker shut down!"));
   //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_DISABLE);
+  //  Serial.println(F("PC Sleeping!"));
 }
 
 void startupApartment() {
-  //  nilThdSleepMilliseconds(1000);
-  homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON); // Turn on PC
-  //homeNetwork.sendCommand(HOME_PC_ID, HOME_PC_CMD_MONITORS_ENABLE); // Turn on PC monitors!
+  homeNetwork.sendCommand(HOME_HOMECONTROL_ID, HOME_HOMECONTROL_CMD_PC_ON); // Wake PC
+  Serial.println(F("Woke PC!"));
 
   homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON); // Turn on main lights!
   Serial.println(F("Main lights turned on"));
@@ -188,14 +185,12 @@ bool askApartmentStatus() {
     return true;
   }
 
-  //  nilThdSleepMilliseconds(1000);
   status = getPaintingLightsStatus();
   if (status) {
     Serial.println(F("Apartment seems online, turning everything off.."));
     return true;
   }
 
-  //  nilThdSleepMilliseconds(1000);
   //  status = getspeakerPowerSwitchStatus();
   //  if (status) {
   //    Serial.println(F("Apartment seems online, turning everything off.."));
@@ -263,11 +258,9 @@ void toggleApartmentMood() {
     homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_ON);
   }
   else if (!status) {// Main lights are off, check paintinglights status
-    //    nilThdDelayMilliseconds(3000);
     homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS, &status, 200);
     if (status) { // Paintinglights are on, toggle on main lights and paintinglights off
       Serial.println(F("Painting lights are on!"));
-      //nilThdDelayMilliseconds(2000);
       homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON);
       homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_OFF);
     } else {

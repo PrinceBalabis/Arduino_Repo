@@ -45,7 +45,7 @@ NIL_THREAD(CommandExecutioner, arg)
             sent = homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS, &answer, 200);
             break;
           case TESTING_CMD_WEB_PC_SLEEP:
-            sent = homeNetwork.sendCommand(HOME_WEBSERVER_ID, HOME_WEBSERVER_CMD_PC_SLEEP);
+            sent = homeNetwork.sendCommand(HOME_PI_ID, HOME_PI_CMD_PC_SLEEP);
             break;
         }
         break;

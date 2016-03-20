@@ -34,8 +34,11 @@ Home Control
 #define HOME_HOMECONTROL_ID 00
 
 // Command(message type: typeCommand)
-// Starts from 17 because buttons use 1-16
-#define HOME_HOMECONTROL_CMD_PC_ON 17
+#define HOME_HOMECONTROL_CMD_PC_ON 1
+#define HOME_HOMECONTROL_CMD_SPEAKER_SWITCH_TOGGLE 2
+#define HOME_HOMECONTROL_CMD_SPEAKER_SWITCH_SPEAKER 3
+#define HOME_HOMECONTROL_CMD_SPEAKER_SWITCH_HEADSET 4
+
 
 /*************************************************************************************************************************************
 Main Room Lights & 433MHz Controller
@@ -79,14 +82,14 @@ Disabled speaker for now because of inconsistencies with IR, waiting for better 
 /*************************************************************************************************************************************
 Webserver
 *************************************************************************************************************************************/
-#define HOME_WEBSERVER_ID 04
+#define HOME_PI_ID 04
 
 // Command
-#define HOME_WEBSERVER_CMD_PC_SLEEP 1
-#define HOME_WEBSERVER_CMD_SPOTIFY_CHILL 2
-#define HOME_WEBSERVER_CMD_SPOTIFY_DINNER 3
-#define HOME_WEBSERVER_CMD_SPOTIFY_WORKOUT 4
-#define HOME_WEBSERVER_CMD_SPOTIFY_WORK 5
+#define HOME_PI_CMD_PC_SLEEP 1
+#define HOME_PI_CMD_SPOTIFY_CHILL 2
+#define HOME_PI_CMD_SPOTIFY_DINNER 3
+#define HOME_PI_CMD_SPOTIFY_WORKOUT 4
+#define HOME_PI_CMD_SPOTIFY_WORK 5
 
 /*************************************************************************************************************************************
 Bed Switch

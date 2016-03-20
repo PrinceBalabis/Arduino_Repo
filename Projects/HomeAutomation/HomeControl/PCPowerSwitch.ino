@@ -2,8 +2,8 @@ static bool pcPowerSwitchStatus = false;
 
 void pcPowerSetup()
 {
-  PC_POWER_SWITCH_INIT; // Set pin 6 as output
-  PC_POWER_SWITCH_OFF; // Set pin 6 to LOW
+  PC_POWER_SWITCH_INIT; // Set pin as output
+  PC_POWER_SWITCH_OFF; // Set pin to LOW
   //pinMode(pcPowerPin, OUTPUT);
   //digitalWrite(pcPowerPin, LOW);
 }
@@ -18,9 +18,9 @@ void togglePCPowerSwitch()
 void setPCPowerSwitchOnMomentarily()
 {
   //digitalWrite(pcPowerPin, true);
-  PC_POWER_SWITCH_ON; // Set pin 6 to HIGH
+  PC_POWER_SWITCH_ON; // Set pin to HIGH
   nilThdSleepMilliseconds(50); // Give enough time for PC to start
   //digitalWrite(pcPowerPin, false);
-  PC_POWER_SWITCH_OFF; // Set pin 6 to LOW
+  PC_POWER_SWITCH_OFF; // Set pin to LOW
 }
 

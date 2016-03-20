@@ -7,7 +7,7 @@ NIL_THREAD(CheckTWI, arg) {
 
   while (1) {
 
-    while (command != 0) { // Wait here untill HomeControl ran command before getting a new one
+    while (command != 0) { // Wait here untill HomeControl ran command before getting a new one from TWI buffer
       nilThdDelayMilliseconds(10);
     }
 
@@ -23,14 +23,14 @@ NIL_THREAD(CheckTWI, arg) {
         Serial.println(command);
       }
     } else {
-      //Serial.print(F("NO TWI CONNECTION!"));
+      Serial.print(F("NO TWI CONNECTION!"));
     }
     Wire.endTransmission();
     nilThdSleepMilliseconds(TWI_CHECK_TIME);
   }
 }
 
-// This function is called to send a command to home network when command is received from internet
+// This function is called to send a command to home network when command is received from Keypad
 void sendTWICommand(uint16_t node, uint16_t command) {
   Serial.print(F("Sending TWI.. Node="));
   Serial.print(node);

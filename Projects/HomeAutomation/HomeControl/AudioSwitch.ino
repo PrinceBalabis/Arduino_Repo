@@ -1,8 +1,6 @@
 void audioSwitchSetup() {
-  //pinMode(2, OUTPUT);
-  //digitalWrite(2, LOW);
-  AUDIO_SWITCH_INIT; // Set pin 2 as output
-  AUDIO_SWITCH_SPEAKER; // Set pin 2 to LOW and make it to speaker as default
+  AUDIO_SWITCH_INIT; // Set pin as output
+  AUDIO_SWITCH_SPEAKER; // Set pin to LOW and make it to speaker as default
 }
 
 bool toggleAudioSwitch() {
