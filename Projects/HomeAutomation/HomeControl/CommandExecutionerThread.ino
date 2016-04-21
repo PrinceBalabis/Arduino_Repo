@@ -18,8 +18,7 @@ NIL_THREAD(CommandExecutioner, arg)
   {
     // Wait for signal from either HNListenThread or Keypad Thread to continue
     nilSemWait(&cmdExSem);
-
-
+    
     switch (commandOrigin) {
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // If the command is from Home Network
         switch (commandToExecute) {
@@ -52,19 +51,19 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.println(F("Toggling Painting Lights"));
             break;
           case BUTTON_SPEAKER_POWER:
-            //sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
+            sendTWICommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_POWER_TOGGLE);
             Serial.print(F("Toggling Speaker Power"));
             break;
           case BUTTON_SPEAKER_VOLUME_UP:
-            //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
+            sendTWICommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_UP);
             Serial.print(F("Increasing Speaker Volume"));
             break;
           case BUTTON_SPEAKER_VOLUME_DOWN:
-            //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
+            sendTWICommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_VOLUME_DOWN);
             Serial.print(F("Decreasing Speaker Volume"));
             break;
           case BUTTON_SPEAKER_MUTE:
-            //            sent = homeNetwork.sendCommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
+            sendTWICommand(HOME_SPEAKER_ID, HOME_SPEAKER_CMD_MUTE_TOGGLE);
             Serial.print(F("Toggling Speaker Mute"));
             break;
           case BUTTON_SPEAKER_MODE:
