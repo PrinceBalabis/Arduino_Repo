@@ -1,27 +1,27 @@
 /*
- *
- * Before running this sketch you must configure ESP-05 to connect to your network at boot
- * Also it must run at 38400 baud
- * Set WiFi Mode to only STA
- *    AT+CWMODE=1
- * Join Access Point
- *    AT+CWJAP="Router","kungarike"
- * Enable watchdog, this restarts the module when an error occured
- *    AT+CSYSWDTENABLE
- * Set to 38400 baud
- *    AT+CIOBAUD=38400
- * Restart to save settings
- *    AT+RST
- *
+
+   Before running this sketch you must configure ESP-05 to connect to your network at boot
+   Also it must run at 38400 baud
+   Set WiFi Mode to only STA
+      AT+CWMODE=1
+   Join Access Point
+      AT+CWJAP="Router","kungarike"
+   Disable watchdog, this doesnt restart the module when an error occured
+      AT+CSYSWDTDISABLE
+   Set to 38400 baud
+      AT+CIOBAUD=38400
+   Restart to save settings
+      AT+RST
+
  * * Make sure the ESP-05 has at least 200-300 mA!!!! (by using separate power supply)
- * Runs at 3.3V
- * 
- * If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
- *
- * How to Send a GET HTTP Request from a simple internet browser:
- * Enter this in browser to send command 13
- * http://princehome.duckdns.org:9500?c13
- */
+   Runs at 3.3V
+
+   If there is still no answer from ESP-05, unplug and replug the ESP-05 onto the breadboard to fully reset it
+
+   How to Send a GET HTTP Request from a simple internet browser:
+   Enter this in browser to send command 13
+   http://princehome.mooo.com:9500?c13
+*/
 
 #include <SoftwareSerial.h>
 
@@ -72,11 +72,11 @@ void loop()
       Serial.println(pinNumber);
 
       // Build string that is send back to client that sent command
-      //      String content;
-      //      content = "Command: ";
-      //      content += pinNumber;
-      //
-      //      sendHTTPResponse(connectionId, content);
+      String content;
+      content = "Command: ";
+      content += pinNumber;
+
+      sendHTTPResponse(connectionId, content);
 
       // Dont need close command as timeout is only 1 second, doesnt work anyway!
       // make close command
@@ -90,10 +90,10 @@ void loop()
 }
 
 /*
-* Name: sendData
-* Description: Function used to send data to ESP8266.
-* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
-* Returns: The response from the esp8266 (if there is a reponse)
+  Name: sendData
+  Description: Function used to send data to ESP8266.
+  Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+  Returns: The response from the esp8266 (if there is a reponse)
 */
 String sendData(String command, const int timeout, boolean debug)
 {
@@ -133,8 +133,8 @@ String sendData(String command, const int timeout, boolean debug)
 }
 
 /*
-* Name: sendHTTPResponse
-* Description: Function that sends HTTP 200, HTML UTF-8 response
+  Name: sendHTTPResponse
+  Description: Function that sends HTTP 200, HTML UTF-8 response
 */
 void sendHTTPResponse(int connectionId, String content)
 {
@@ -153,9 +153,9 @@ void sendHTTPResponse(int connectionId, String content)
 }
 
 /*
-* Name: sendCIPDATA
-* Description: sends a CIPSEND=<connectionId>,<data> command
-*
+  Name: sendCIPDATA
+  Description: sends a CIPSEND=<connectionId>,<data> command
+
 */
 void sendCIPData(int connectionId, String data)
 {
@@ -169,10 +169,10 @@ void sendCIPData(int connectionId, String data)
 }
 
 /*
-* Name: sendCommand
-* Description: Function used to send data to ESP8266.
-* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
-* Returns: The response from the esp8266 (if there is a reponse)
+  Name: sendCommand
+  Description: Function used to send data to ESP8266.
+  Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+  Returns: The response from the esp8266 (if there is a reponse)
 */
 String sendCommand(String command, const int timeout, boolean debug)
 {

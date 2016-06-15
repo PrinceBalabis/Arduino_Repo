@@ -30,7 +30,7 @@ void setup()
   Serial.println("Set WiFi Mode to only STA");
   sendCommand("AT+CWMODE=1", 5000); // Set WiFi Mode to only STA
   Serial.println("Set WiFi Mode to only STA");
-  sendCommand("AT+CWJAP=\"Router\",\"kungarike\"", 5000); // Set WiFi Mode to only STA
+  sendCommand("AT+CWJAP=\"Router24G\",\"kungarike\"", 5000); // Set WiFi Mode to only STA
   Serial.println("Enable watchdog, this restarts the module when an error occured");
   sendCommand("AT+CSYSWDTENABLE", 5000); // Enable watchdog, this restarts the module when an error occured
   Serial.println("Print IP address");
