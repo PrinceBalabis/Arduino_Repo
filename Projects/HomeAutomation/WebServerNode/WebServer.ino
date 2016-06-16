@@ -51,9 +51,18 @@ NIL_THREAD(WebServerThread, arg) {
           // Send command to commandExecutioner to run
           executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
-          // Send response back to client
-          sendResponse(connectionId, command);
+          while (executionerIdle == 0) {// Wait untill CommandExecutiner is done
+            nilThdSleepMilliseconds(20);
+          }
 
+          if (answered == 1) {
+            // Send answer(from a question) response back to client
+            sendResponse(connectionId, answer);
+            answered = 0;
+          } else {
+            // Send normal response back to client
+            sendResponse(connectionId, command);
+          }
         }
       }
     }
