@@ -47,7 +47,7 @@ SoftwareSerial esp8266(2, 3);
 
 void setup() {
   Serial.begin(115200);
-  Serial.println(F("Home Network Testing Node"));
+  Serial.println(F("Home Network Webserver Node"));
 
   esp8266.begin(38400); // your esp's baud rate might be different
 

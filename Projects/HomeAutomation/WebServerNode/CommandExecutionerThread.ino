@@ -26,9 +26,9 @@ NIL_THREAD(CommandExecutioner, arg)
            Serial.println(F("Toggle Main Lights command!"));
            homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_TOGGLE);
            break;
-//          case QSN_MAINLIGHTS_STATUS:
-//
-//            break;
+          case QSN_MAINLIGHTS_STATUS:
+
+            break;
 //          case CMD_APARTMENT_SHUTDOWN:
 //            Serial.println(F("Shut-down Apartment Command!"));
 //            shutdownApartment();

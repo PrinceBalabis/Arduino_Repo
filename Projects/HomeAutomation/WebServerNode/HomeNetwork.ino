@@ -4,18 +4,18 @@
  * This function is executed automatically by the HomeNetwork Library when a message is received.
  */
 void executeHomeNetworkCommand(uint16_t msgSender, unsigned char msgType, int32_t msgContent) {
-//  switch (msgType) {
-//    case HOME_TYPE_COMMAND: // If its a simple command
-//      Serial.print(F("Command"));
-//      //Send message to CommandExecutionerThread for decoding
-//      executeCommand(msgContent, COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK);
-//      break;
-//    case HOME_TYPE_QUESTION: // If its a question
-//      Serial.print(F("Question"));
-//      switch (msgContent) {
-//          //No questions yet
-//      }
-//  }
+  switch (msgType) {
+    case HOME_TYPE_COMMAND: // If its a simple command
+      Serial.print(F("Command"));
+      //Send message to CommandExecutionerThread for decoding
+      executeCommand(msgContent, COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK);
+      break;
+    case HOME_TYPE_QUESTION: // If its a question
+      Serial.print(F("Question"));
+      switch (msgContent) {
+          //No questions yet
+      }
+  }
 }
 
 /**

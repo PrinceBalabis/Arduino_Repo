@@ -4,7 +4,7 @@ NIL_WORKING_AREA(webServerThread, 90);
 NIL_THREAD(WebServerThread, arg) {
   Serial.println(F("Started WebServerThread"));
 
-  // initialize digital pin 13 as an output.
+  // initialize a pin as an output for LED.
   pinMode(DEBUG_LED, OUTPUT);
   digitalWrite(DEBUG_LED, LOW); // Turn LED off to indicate Webserver is not started
 
@@ -21,8 +21,6 @@ NIL_THREAD(WebServerThread, arg) {
         // get the connection id so that we can then disconnect
         int connectionId = esp8266.read() - 48; // subtract 48 because the read() function returns
         // the ASCII decimal value and 0 (the first decimal number) starts at 48
-        Serial.print(F("Client:"));
-        Serial.print(connectionId);
 
         //Read the command
         esp8266.find("c"); // advance cursor to "c"
@@ -41,109 +39,83 @@ NIL_THREAD(WebServerThread, arg) {
         for (int i = 0; i < commandLength + 1; i++) {
           command = 10 * command + commandArray[i];
         }
+        if (command != 180) { // If command shows 180, its just some browsers like chrome actually sending an ACK of some sorts that
+          //the message was received.
 
-        // Print command
-        Serial.print(",Command:");
-        Serial.println(command);
+          // Print details(CLient & command)
+          Serial.print(F("Client:"));
+          Serial.print(connectionId);
+          Serial.print(F(",Command:"));
+          Serial.println(command);
 
+          // Send command to commandExecutioner to run
+          executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
-        // Send command to commandExecutioner to run
-        executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
+          // Send response back to client
+          sendResponse(connectionId, command);
 
-        // Build string that is send back to client that sent command
-        //      String content;
-        //      content = "Command: ";
-        //      content += pinNumber;
-        //
-        //      sendHTTPResponse(connectionId, content);
-
-        nilThdSleepMilliseconds(1100); // Dont get another HTTP Request for so many seconds, in order to fix HTTP Client GET Request resends when they time out
-        // Make close command, in order to close connection with HTTP Client.
-        // DOES ONLY WORK FIRST TIME THIS COMMAND RUNS, THE SECOND TIME IT DOESNT, FIRMWARE BUG!!! CANNOT FIX
-        //sendCommand("AT+CIPCLOSE=0", 1000, DEBUG_TOGGLE); // close connection
+        }
       }
     }
-
-    nilThdSleepMilliseconds(1); // Redo this send program every few moments, give enough time for other threads to run
+    nilThdSleepMilliseconds(10); // Redo this send program every few moments, give enough time for other threads to run
   }
 }
 
+void sendResponse(int connectionId, uint8_t command) {
+  // Build string that is send back to client that sent command
+  String content;
+  content = "Command: ";
+  content += command;
+
+  // CIP Data
+  // Clear Serial communication before sending command
+  while (esp8266.available()) { // When serial data is available from ESP-05
+    esp8266.read(); // Throw out data
+  }
+
+  esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
+
+  // Receive response from ESP-05
+  unsigned long startTime = millis();
+  while ((startTime + 1000) > millis()) {
+    if (esp8266.available()) { // When serial data is available from ESP-05
+      while (esp8266.available()) {
+        if (DEBUG_TOGGLE)
+          Serial.write(esp8266.read()); // Write to serial
+        else
+          esp8266.read(); // Throw out data
+        nilThdSleepMilliseconds(1); // Give some buffer to Serial.
+      }
+      break; // Exit out of while loop(stop waiting for timeout to end)
+    }
+  }
+
+  // build HTTP response
+  esp8266.print(F("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n"));
+  esp8266.print(F("Content-Length: "));
+  esp8266.print(F("1"));
+  esp8266.print(F("\r\nConnection: close\r\n\r\n"));
+  esp8266.print(F("1"));
+  for (int i = 0; i < 80; i++) {
+    esp8266.print(F("a"));
+  }
+
+  startTime = millis();
+  while ((startTime + 50) > millis()) {
+    if (esp8266.available()) { // When serial data is available from ESP-05
+      if (DEBUG_TOGGLE)
+        Serial.write(esp8266.read()); // Write to serial
+      else
+        esp8266.read(); // Throw out data
+    }
+  }
+}
 
 /*
-* Name: sendData
-* Description: Function used to send data to ESP8266.
-* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
-* Returns: The response from the esp8266 (if there is a reponse)
-*/
-//void sendData(String command, const int timeout, boolean debug)
-//{
-//  String response = "";
-//
-//  int dataSize = command.length();
-//  char data[dataSize];
-//  command.toCharArray(data, dataSize);
-//
-//  esp8266.write(data, dataSize); // send the read character to the esp8266
-//  if (debug)
-//  {
-//    Serial.println("\r\n====== HTTP Response From Arduino ======");
-//    Serial.write(data, dataSize);
-//    Serial.println("\r\n========================================");
-//  }
-//
-//  unsigned long startTime = millis();
-//
-//  while ((startTime + timeout) > millis()) {
-//    if (esp8266.available()) { // When serial data is available from ESP-05
-//      if (debug)
-//        Serial.write(esp8266.read()); // Write to serial
-//      else
-//        esp8266.read(); // Throw out data
-//    }
-//  }
-//}
-
-/*
-* Name: sendHTTPResponse
-* Description: Function that sends HTTP 200, HTML UTF-8 response
-*/
-//void sendHTTPResponse(int connectionId, String content)
-//{
-//
-//  // build HTTP response
-//  String httpResponse;
-//  String httpHeader;
-//  // HTTP Header
-//  httpHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n";
-//  httpHeader += "Content-Length: ";
-//  httpHeader += content.length();
-//  httpHeader += "\r\n";
-//  httpHeader += "Connection: close\r\n\r\n";
-//  httpResponse = httpHeader + content + " "; // There is a bug in this code: the last character of "content" is not sent, I cheated by adding this extra space
-//  sendCIPData(connectionId, httpResponse);
-//}
-//
-///*
-//* Name: sendCIPDATA
-//* Description: sends a CIPSEND=<connectionId>,<data> command
-//*
-//*/
-//void sendCIPData(int connectionId, String data)
-//{
-//  String cipSend = "AT+CIPSEND=";
-//  cipSend += connectionId;
-//  cipSend += ",";
-//  cipSend += data.length();
-//  cipSend += "\r\n";
-//  sendCommand(cipSend, 1000, DEBUG_TOGGLE);
-//  sendData(data, 1000, DEBUG_TOGGLE);
-//}
-
-/*
-* Name: sendCommand
-* Description: Function used to send data to ESP8266.
-* Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
-* Returns: The response from the esp8266 (if there is a reponse)
+  Name: sendCommand
+  Description: Function used to send data to ESP8266.
+  Params: command - the data/command to send; timeout - the time to wait for a response; debug - print to Serial window?(true = yes, false = no)
+  Returns: The response from the esp8266 (if there is a reponse)
 */
 bool sendCommand(char cmd[], const int timeout, const boolean debug) {
 
@@ -160,11 +132,15 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
   unsigned long startTime = millis();
   while ((startTime + timeout) > millis()) {
     if (esp8266.available()) { // When serial data is available from ESP-05
-      answerReceived = true;
-      if (debug)
-        Serial.write(esp8266.read()); // Write to serial
-      else
-        esp8266.read(); // Throw out data
+      while (esp8266.available()) {
+        answerReceived = true;
+        if (debug)
+          Serial.write(esp8266.read()); // Write to serial
+        else
+          esp8266.read(); // Throw out data
+        nilThdSleepMilliseconds(1); // Give some buffer to Serial.
+      }
+      break; // Exit out of while loop(stop waiting for timeout to end)
     }
   }
   return answerReceived;
@@ -200,6 +176,12 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
 //}
 
 void initESP8266() {
+  // Fix boot problem
+  for (int i = 0; i < 200; i++) {
+    esp8266.println(F("A"));
+    nilThdSleepMilliseconds(1); // Makes sure loop doesnt crash RTOS
+  }
+  // Start normal initializatin
   if (sendCommand("AT+RST", 3000, DEBUG_TOGGLE)) { // Reset module
     digitalWrite(DEBUG_LED, HIGH);   // turn the LED on to indicate start successfull
     nilThdSleepMilliseconds(5000); // Wait for module to connect to network
