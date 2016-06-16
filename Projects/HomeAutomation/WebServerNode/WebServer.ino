@@ -62,18 +62,15 @@ NIL_THREAD(WebServerThread, arg) {
 }
 
 void sendResponse(int connectionId, uint8_t command) {
-  // Build string that is send back to client that sent command
-  String content;
-  content = "Command: ";
-  content += command;
-
-  // CIP Data
   // Clear Serial communication before sending command
   while (esp8266.available()) { // When serial data is available from ESP-05
     esp8266.read(); // Throw out data
   }
-
-  esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
+  // CIP Data
+  char cipSend[17] = "AT+CIPSEND=0,150";
+  cipSend[11] = connectionId + '0';
+  esp8266.println(cipSend); // Send to ESP-05
+  //esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
 
   // Receive response from ESP-05
   unsigned long startTime = millis();
@@ -93,9 +90,13 @@ void sendResponse(int connectionId, uint8_t command) {
   // build HTTP response
   esp8266.print(F("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=UTF-8\r\n"));
   esp8266.print(F("Content-Length: "));
-  esp8266.print(F("1"));
+  if (command > 1) {
+    esp8266.print(F("2"));
+  } else {
+    esp8266.print(F("1"));
+  }
   esp8266.print(F("\r\nConnection: close\r\n\r\n"));
-  esp8266.print(F("1"));
+  esp8266.print(command);
   for (int i = 0; i < 80; i++) {
     esp8266.print(F("a"));
   }
@@ -191,10 +192,13 @@ void initESP8266() {
     sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
     //Blink LED
-    digitalWrite(DEBUG_LED, HIGH);
+    digitalWrite(DEBUG_LED, LOW);
     nilThdSleepMilliseconds(100);
     digitalWrite(DEBUG_LED, HIGH);
-
+    nilThdSleepMilliseconds(100);
+    digitalWrite(DEBUG_LED, LOW);
+    nilThdSleepMilliseconds(100);
+    digitalWrite(DEBUG_LED, HIGH);
     Serial.println("Server Ready and waiting clients");
   } else {
     Serial.println("ESP-05 initialization failed! PLEASE RESET POWER SWITCH....");
