@@ -26,13 +26,28 @@
 #define DEBUG_TOGGLE 1
 #define DEBUG_LED A0
 
-// Webserver Commands
-#define CMD_MAINLIGHTS_TOGGLE 1 // Toggle mainlights
-#define QSN_MAINLIGHTS_STATUS 2 // Ask mainlights status
+// Central Lights
+#define QSN_MAINLIGHTS_STATUS 2 // Ask Central Lights status
+#define CMD_MAINLIGHTS_TOGGLE 1 // Toggle Central Lights
+#define CMD_MAINLIGHTS_ON 12 // Turn Central Lights on
+#define CMD_MAINLIGHTS_OFF 13 // Turn Central Lights off
+
+
+// Painting Lights
+#define QSN_PAINTINGLIGHTS_STATUS 9 // Ask Painting Lights Status
+#define CMD_PAINTINGLIGHTS_TOGGLE 8 // Toggle Painting Lights 
+#define CMD_PAINTINGLIGHTS_ON 14 // Turn Painting Lights on
+#define CMD_PAINTINGLIGHTS_OFF 15 // Turn Painting Lights off
+
+// Apartment
+#define QSN_APARTMENT_STATUS 11 // Status Apartment
+#define CMD_APARTMENT_TOGGLE 5 // Toggle Apartment
 #define CMD_APARTMENT_SHUTDOWN 3 // Shutdown Apartment
 #define CMD_APARTMENT_STARTUP 4 // Startup Apartment
-#define CMD_APARTMENT_TOGGLE 5 // Toggle Apartment
+
+// Speakers
 #define CMD_SPEAKER_MUTE_TOGGLE 6 // Toggle speaker mute
 #define CMD_SPEAKER_MODE_TOGGLE 7 // Toggle speaker mode
-#define CMD_PAINTINGLIGHTS_TOGGLE 8 // Toggle Painting Lights 
-#define CMD_APARTMENT_MOOD_TOGGLE 9 // Toggle Apartment mood
+
+// Macros
+#define CMD_APARTMENT_MOOD_TOGGLE 10 // Toggle Apartment mood

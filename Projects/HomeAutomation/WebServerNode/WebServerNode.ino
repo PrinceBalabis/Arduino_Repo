@@ -46,7 +46,6 @@ HomeNetwork homeNetwork(radio, network);
 SoftwareSerial esp8266(2, 3);
 
 bool executionerIdle = 0;
-bool answered = 0;
 int32_t answer = -999;
 
 void setup() {
