@@ -72,7 +72,7 @@ void sendResponse(int connectionId, uint8_t command) {
     esp8266.read(); // Throw out data
   }
   // CIP Data
-  char cipSend[17] = "AT+CIPSEND=0,200";
+  char cipSend[17] = "AT+CIPSEND=0,130";
   cipSend[11] = connectionId + '0';
   esp8266.println(cipSend); // Send to ESP-05
   //esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
@@ -104,12 +104,12 @@ void sendResponse(int connectionId, uint8_t command) {
   }
   esp8266.print(F("\r\nConnection: close\r\n\r\n"));
   esp8266.print(command);
-  for (int i = 0; i < 200; i++) {
+  for (int i = 0; i < 50; i++) {
     esp8266.print(F("a"));
   }
 
   startTime = millis();
-  while ((startTime + 50) > millis()) {
+  while ((startTime + 1000) > millis()) {
     if (esp8266.available()) { // When serial data is available from ESP-05
       while (esp8266.available()) {
         esp8266.read(); // Throw out data
