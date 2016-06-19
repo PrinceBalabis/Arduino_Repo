@@ -269,7 +269,8 @@ bool HomeNetwork::sendQuestion(uint16_t msgReceiver, int32_t msgContent, int32_t
 		if (debug)
 			Serial.print(F("Send-try->"));
 		if (send(msgReceiver, msgContent, HOME_TYPE_QUESTION, HOME_SETTING_DEFAULT_SEND_TRIES)) { // Send question, and wait for answer only if question was successfully sent
-			Serial.print(F("Question Sent->"));
+			if (debug)
+				Serial.print(F("Question Sent->"));
 
 			startTime = millis();
 			while (1) {

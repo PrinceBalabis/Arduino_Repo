@@ -16,7 +16,7 @@
 #define RF24_PIN_CSN 9
 
 // How often to auto update network. Should be short because this node is parent for many child nodes
-#define HOME_SETTING_TIME_NETWORKAUTOUPDATE 1
+#define HOME_SETTING_TIME_NETWORKAUTOUPDATE 2
 
 /*
 *  ------------------------------------
@@ -50,4 +50,5 @@
 #define CMD_SPEAKER_MODE_TOGGLE 7 // Toggle speaker mode
 
 // Macros
+#define QSN_APARTMENT_MOOD_STATUS 16 // Ask Apartment mood status(True for (dark mode) on, False for off)
 #define CMD_APARTMENT_MOOD_TOGGLE 10 // Toggle Apartment mood

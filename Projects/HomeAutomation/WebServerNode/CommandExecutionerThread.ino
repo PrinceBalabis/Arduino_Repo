@@ -99,6 +99,11 @@ NIL_THREAD(CommandExecutioner, arg)
             Serial.println(F("Apartment Mood Toggle Command!"));
             toggleApartmentMood();
             break;
+          case QSN_APARTMENT_MOOD_STATUS:
+            Serial.println(F("Checking Apartment Mood!"));
+            askApartmentMood();
+            break;
+
         }
         break;
       case COMMANDEXECUTIONER_MSGORIGIN_HOMENETWORK: // Command that came from HomeNetwork
@@ -152,28 +157,44 @@ bool askApartmentStatus() {
   return false;
 }
 
-void toggleApartmentMood() {
+bool askApartmentMood() {
 
   if (!homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_MAINLIGHTS_STATUS, &answer, 200)) {
     Serial.print(F("Couldn't get an answer from Lights Node!->"));
+    answer = 1;
+    return 1;
   }
   else if (answer) {
     Serial.print(F("Central lights are on!->"));
-    homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF);
-    homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_ON);
     answer = 0;
+    return 0;
   }
   else if (!homeNetwork.sendQuestion(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_QSN_PAINTINGLIGHTS_STATUS, &answer, 200)) {
     Serial.print(F("Couldn't get an answer from Lights Node!->"));
+    answer = 1;
+    return 1;
   }
   else if (answer) {
     Serial.print(F("Painting lights are on!->"));
+    answer = 1;
+    return 1;
+  } else {
+    //If both Main lights and painting lights are off
+    answer = 0;
+    return 0;
+  }
+}
+
+
+void toggleApartmentMood() {
+  if (!askApartmentMood()) {
+    homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_OFF);
+    homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_ON);
+    answer = 1;
+  }
+  else {
     homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_MAINLIGHTS_ON);
     homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_OFF);
-    answer = 1;
-  } else {
-    //If both Main lights and painting lights are off, toggle painting lights on
-    homeNetwork.sendCommand(HOME_LIGHTS433POWER_ID, HOME_LIGHTS433POWER_CMD_PAINTINGLIGHTS_ON);
     answer = 0;
   }
 }

@@ -17,7 +17,9 @@ NIL_THREAD(WebServerThread, arg) {
     {
       if (esp8266.find("+IPD,"))
       {
-        nilThdSleepMilliseconds(50); // wait for the serial buffer to fill up (read all the serial data)
+        while (!esp8266.available()) {
+          nilThdSleepMilliseconds(1);
+        }
         // get the connection id so that we can then disconnect
         int connectionId = esp8266.read() - 48; // subtract 48 because the read() function returns
         // the ASCII decimal value and 0 (the first decimal number) starts at 48
@@ -52,7 +54,7 @@ NIL_THREAD(WebServerThread, arg) {
           executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
           while (executionerIdle == 0) {// Wait untill CommandExecutiner is done
-            nilThdSleepMilliseconds(5);
+            nilThdSleepMilliseconds(1);
           }
 
           // Send answer(from a question & status frmo after a command) response back to client
@@ -60,7 +62,7 @@ NIL_THREAD(WebServerThread, arg) {
         }
       }
     }
-    nilThdSleepMilliseconds(10); // Redo this send program every few moments, give enough time for other threads to run
+    nilThdSleepMilliseconds(1); // Redo this send program every few moments, give enough time for other threads to run
   }
 }
 
@@ -70,7 +72,7 @@ void sendResponse(int connectionId, uint8_t command) {
     esp8266.read(); // Throw out data
   }
   // CIP Data
-  char cipSend[17] = "AT+CIPSEND=0,150";
+  char cipSend[17] = "AT+CIPSEND=0,200";
   cipSend[11] = connectionId + '0';
   esp8266.println(cipSend); // Send to ESP-05
   //esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
@@ -80,11 +82,13 @@ void sendResponse(int connectionId, uint8_t command) {
   while ((startTime + 1000) > millis()) {
     if (esp8266.available()) { // When serial data is available from ESP-05
       while (esp8266.available()) {
-        if (DEBUG_TOGGLE)
-          Serial.write(esp8266.read()); // Write to serial
-        else
-          esp8266.read(); // Throw out data
-        nilThdSleepMilliseconds(1); // Give some buffer to Serial.
+        while (esp8266.available()) {
+          if (DEBUG_TOGGLE)
+            Serial.write(esp8266.read()); // Write to serial
+          else
+            esp8266.read(); // Throw out data
+        }
+        nilThdSleepMilliseconds(1); //Wait for buffer
       }
       break; // Exit out of while loop(stop waiting for timeout to end)
     }
@@ -100,17 +104,17 @@ void sendResponse(int connectionId, uint8_t command) {
   }
   esp8266.print(F("\r\nConnection: close\r\n\r\n"));
   esp8266.print(command);
-  for (int i = 0; i < 80; i++) {
+  for (int i = 0; i < 200; i++) {
     esp8266.print(F("a"));
   }
 
   startTime = millis();
   while ((startTime + 50) > millis()) {
     if (esp8266.available()) { // When serial data is available from ESP-05
-      if (DEBUG_TOGGLE)
-        Serial.write(esp8266.read()); // Write to serial
-      else
+      while (esp8266.available()) {
         esp8266.read(); // Throw out data
+      }
+      break; // Stop waiting for more serial data after done reading
     }
   }
 }
@@ -136,13 +140,13 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
   unsigned long startTime = millis();
   while ((startTime + timeout) > millis()) {
     if (esp8266.available()) { // When serial data is available from ESP-05
+      //nilThdSleepMilliseconds(50); // Give some buffer to Serial.
       while (esp8266.available()) {
         answerReceived = true;
         if (debug)
           Serial.write(esp8266.read()); // Write to serial
         else
           esp8266.read(); // Throw out data
-        nilThdSleepMilliseconds(1); // Give some buffer to Serial.
       }
       break; // Exit out of while loop(stop waiting for timeout to end)
     }
@@ -202,9 +206,9 @@ void initESP8266() {
     digitalWrite(DEBUG_LED, LOW);
     nilThdSleepMilliseconds(100);
     digitalWrite(DEBUG_LED, HIGH);
-    Serial.println("Server Ready and waiting clients");
+    Serial.println(F("Server Ready and waiting clients"));
   } else {
-    Serial.println("ESP-05 initialization failed! PLEASE RESET POWER SWITCH....");
+    Serial.println(F("ESP-05 initialization failed! PLEASE RESET POWER SWITCH...."));
     digitalWrite(DEBUG_LED, LOW);   // turn the LED off to indicate start unsuccessfull
     while (1);
   }

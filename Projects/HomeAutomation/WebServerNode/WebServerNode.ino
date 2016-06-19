@@ -6,8 +6,8 @@
       AT+CWMODE=1
    Join Access Point
       AT+CWJAP="Router","kungarike"
-   Enable watchdog, this restarts the module when an error occured
-      AT+CSYSWDTENABLE
+   Disable watchdog
+      AT+CSYSWDTDISABLE
    Set to 38400 baud
       AT+CIOBAUD=38400
    Restart to save settings
@@ -52,7 +52,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println(F("Home Network Webserver Node"));
 
-  esp8266.begin(38400); // your esp's baud rate might be different
+  esp8266.begin(57600); // your esp's baud rate might be different
 
   SPI.begin(); // SPI is used by homeNetwork
 

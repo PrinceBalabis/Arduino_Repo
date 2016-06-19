@@ -22,7 +22,7 @@ void setup()
   Serial.println("Started Wi-Fi module Serial Relay Sketch");
 
   // set the data rate for the SoftwareSerial port
-  mySerial.begin(38400);
+  mySerial.begin(115200);
 }
 char cmd[32];
 
