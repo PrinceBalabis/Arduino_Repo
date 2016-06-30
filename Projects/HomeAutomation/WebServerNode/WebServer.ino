@@ -50,6 +50,17 @@ NIL_THREAD(WebServerThread, arg) {
           Serial.print(F(",Command:"));
           Serial.println(command);
 
+          // Clear Serial communication before sending command
+          while (esp8266.available()) { // When serial data is available from ESP-05
+            esp8266.read(); // Throw out data
+          }
+          // CIP Data
+          char cipSend[17] = "AT+CIPSEND=0,200";
+          cipSend[11] = connectionId + '0';
+          esp8266.println(cipSend); // Send to ESP-05
+          //esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
+
+
           // Send command to commandExecutioner to run
           executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
@@ -60,7 +71,7 @@ NIL_THREAD(WebServerThread, arg) {
           // Send answer(from a question & status frmo after a command) response back to client
           sendResponse(connectionId, answer);
 
-          sendCommand("AT+CIPCLOSE=5\r\n", 1000, DEBUG_TOGGLE); // "=5" closes connection to all connected clients,
+          //sendCommand("AT+CIPCLOSE=5\r\n", 1000, DEBUG_TOGGLE); // "=5" closes connection to all connected clients,
           // this is needed or else "busy p..." bug occurs
         }
       }
@@ -70,16 +81,6 @@ NIL_THREAD(WebServerThread, arg) {
 }
 
 void sendResponse(int connectionId, uint8_t command) {
-  // Clear Serial communication before sending command
-  while (esp8266.available()) { // When serial data is available from ESP-05
-    esp8266.read(); // Throw out data
-  }
-  // CIP Data
-  char cipSend[17] = "AT+CIPSEND=0,200";
-  cipSend[11] = connectionId + '0';
-  esp8266.println(cipSend); // Send to ESP-05
-  //esp8266.println(F("AT+CIPSEND=0,150")); // Send to ESP-05
-
   // Receive response from ESP-05
   unsigned long startTime = millis();
   while ((startTime + 1000) > millis()) {
@@ -107,7 +108,7 @@ void sendResponse(int connectionId, uint8_t command) {
   }
   esp8266.print(F("\r\nConnection: close\r\n\r\n"));
   esp8266.print(command);
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 150; i++) {
     esp8266.print(F("a"));
   }
 
