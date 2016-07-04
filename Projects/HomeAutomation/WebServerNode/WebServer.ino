@@ -15,9 +15,13 @@ NIL_THREAD(WebServerThread, arg) {
   while (TRUE) {
     if (esp8266.available()) // check if the esp is sending a message
     {
-      if (esp8266.find("+IPD,"))
+      if (DEBUG_TOGGLE)
+        Serial.println(F("ESP8266 has something to say")); // DEBUG
+      if (esp8266.find("+IPD,")) // Find the part where the +IPD command is
       {
-        while (!esp8266.available()) {
+        if (DEBUG_TOGGLE)
+          Serial.println(F("New connection!")); // DEBUG
+        while (!esp8266.available()) { // Wait untill we found +IPD
           nilThdSleepMilliseconds(1);
         }
         // get the connection id so that we can then disconnect
@@ -25,6 +29,8 @@ NIL_THREAD(WebServerThread, arg) {
         // the ASCII decimal value and 0 (the first decimal number) starts at 48
 
         //Read the command
+        if (DEBUG_TOGGLE)
+          Serial.println(F("Reading the command")); // DEBUG
         esp8266.find("c"); // advance cursor to "c"
         uint8_t commandArray[2]; // Command interval 0 to 99(two numbers)
         uint8_t commandLength = 0;
@@ -36,7 +42,10 @@ NIL_THREAD(WebServerThread, arg) {
           }
           commandLength++;
         }
+
         //Save command to simple uint8_t
+        if (DEBUG_TOGGLE)
+          Serial.println(F("Saving command as uint8_t")); // DEBUG
         uint8_t command = 0;
         for (int i = 0; i < commandLength + 1; i++) {
           command = 10 * command + commandArray[i];
@@ -51,10 +60,15 @@ NIL_THREAD(WebServerThread, arg) {
           Serial.println(command);
 
           // Clear Serial communication before sending command
+          if (DEBUG_TOGGLE)
+            Serial.println(F("Clearing Serial buffer before sending command")); // DEBUG
           while (esp8266.available()) { // When serial data is available from ESP-05
             esp8266.read(); // Throw out data
           }
+
           // CIP Data
+          if (DEBUG_TOGGLE)
+            Serial.println(F("Sending CIP data")); // DEBUG
           char cipSend[17] = "AT+CIPSEND=0,200";
           cipSend[11] = connectionId + '0';
           esp8266.println(cipSend); // Send to ESP-05
@@ -62,19 +76,44 @@ NIL_THREAD(WebServerThread, arg) {
 
 
           // Send command to commandExecutioner to run
+          if (DEBUG_TOGGLE)
+            Serial.println(F("Executing command received")); // DEBUG
           executeCommand(command, COMMANDEXECUTIONER_MSGORIGIN_LOCAL);
 
-          while (executionerIdle == 0) {// Wait untill CommandExecutiner is done
+          if (DEBUG_TOGGLE)
+            Serial.println(F("Waiting untill CommandExecutioner is done running")); // DEBUG
+          while (executionerIdle == 0) {// Wait untill CommandExecutioner is done
             nilThdSleepMilliseconds(1);
           }
 
+          if (DEBUG_TOGGLE)
+            Serial.println(F("Sending answer/reply to connected user")); // DEBUG
           // Send answer(from a question & status frmo after a command) response back to client
           sendResponse(connectionId, answer);
 
           //sendCommand("AT+CIPCLOSE=5\r\n", 1000, DEBUG_TOGGLE); // "=5" closes connection to all connected clients,
           // this is needed or else "busy p..." bug occurs
         }
+      } else { // Not a connection
+        if (DEBUG_TOGGLE)
+          Serial.println(F("Was not a new connection, ignoring data from esp8266..."));
       }
+      // Clear remaining garbage Serial data
+      unsigned long startTime = millis();
+      while ((startTime + 1000) > millis()) {
+        if (esp8266.available()) { // When serial data is available from ESP-05
+          while (esp8266.available()) {
+            if (DEBUG_TOGGLE) {
+              Serial.write(esp8266.read()); // Write to serial
+            } else {
+              esp8266.read(); // Throw out data
+            }
+            nilThdSleepMilliseconds(1); // Let Serial buffer fill up
+          }
+          break; // Stop waiting for more serial data after done reading
+        }
+      }
+      Serial.println(F("\r\nDone, waiting for new command"));
     }
     nilThdSleepMilliseconds(1); // Redo this send program every few moments, give enough time for other threads to run
   }
@@ -92,7 +131,7 @@ void sendResponse(int connectionId, uint8_t command) {
           else
             esp8266.read(); // Throw out data
         }
-        nilThdSleepMilliseconds(1); //Wait for buffer
+        nilThdSleepMilliseconds(2); //Wait for buffer
       }
       break; // Exit out of while loop(stop waiting for timeout to end)
     }
@@ -110,16 +149,6 @@ void sendResponse(int connectionId, uint8_t command) {
   esp8266.print(command);
   for (int i = 0; i < 150; i++) {
     esp8266.print(F("a"));
-  }
-
-  startTime = millis();
-  while ((startTime + 1000) > millis()) {
-    if (esp8266.available()) { // When serial data is available from ESP-05
-      while (esp8266.available()) {
-        esp8266.read(); // Throw out data
-      }
-      break; // Stop waiting for more serial data after done reading
-    }
   }
 }
 
