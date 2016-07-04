@@ -131,7 +131,7 @@ void sendResponse(int connectionId, uint8_t command) {
           else
             esp8266.read(); // Throw out data
         }
-        nilThdSleepMilliseconds(2); //Wait for buffer
+        nilThdSleepMilliseconds(1); //Wait for buffer
       }
       break; // Exit out of while loop(stop waiting for timeout to end)
     }
@@ -232,6 +232,10 @@ void initESP8266() {
     sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
     //Blink LED
+    digitalWrite(DEBUG_LED, LOW);
+    nilThdSleepMilliseconds(100);
+    digitalWrite(DEBUG_LED, HIGH);
+    nilThdSleepMilliseconds(100);
     digitalWrite(DEBUG_LED, LOW);
     nilThdSleepMilliseconds(100);
     digitalWrite(DEBUG_LED, HIGH);
