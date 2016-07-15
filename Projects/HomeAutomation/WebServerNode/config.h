@@ -25,6 +25,8 @@
  */
 #define DEBUG_TOGGLE 1
 #define DEBUG_LED A0
+#define RESET_PIN 5
+
 
 // Central Lights
 #define QSN_MAINLIGHTS_STATUS 2 // Ask Central Lights status

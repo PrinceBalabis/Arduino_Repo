@@ -1,5 +1,5 @@
 
-NIL_WORKING_AREA(webServerThread, 90);
+NIL_WORKING_AREA(webServerThread, 130);
 
 NIL_THREAD(WebServerThread, arg) {
   Serial.println(F("Started WebServerThread"));
@@ -131,7 +131,7 @@ void sendResponse(int connectionId, uint8_t command) {
           else
             esp8266.read(); // Throw out data
         }
-        nilThdSleepMilliseconds(1); //Wait for buffer
+        nilThdSleepMilliseconds(2); //Wait for buffer
       }
       break; // Exit out of while loop(stop waiting for timeout to end)
     }
@@ -218,10 +218,13 @@ bool sendCommand(char cmd[], const int timeout, const boolean debug) {
 
 void initESP8266() {
   // Fix boot problem
-  for (int i = 0; i < 200; i++) {
-    esp8266.println(F("A"));
-    nilThdSleepMilliseconds(1); // Makes sure loop doesnt crash RTOS
-  }
+  pinMode(RESET_PIN, OUTPUT); // Set up Reset pin
+  hardwareReset(); // Hardware Reset ESP-05
+  //  for (int i = 0; i < 200; i++) {
+  //    esp8266.println(F("A"));
+  //    nilThdSleepMilliseconds(1); // Makes sure loop doesnt crash RTOS
+  //  }
+  //nilThdSleepMilliseconds(2000); // Wait for serial buffer to empty
   // Start normal initializatin
   if (sendCommand("AT+RST", 3000, DEBUG_TOGGLE)) { // Reset module
     digitalWrite(DEBUG_LED, HIGH);   // turn the LED on to indicate start successfull
@@ -232,22 +235,30 @@ void initESP8266() {
     sendCommand("AT+CIPSTO=1", 2000, DEBUG_TOGGLE); // Set server timeout to some seconds, clients stop waiting for response after some seconds
 
     //Blink LED
-    digitalWrite(DEBUG_LED, LOW);
-    nilThdSleepMilliseconds(100);
-    digitalWrite(DEBUG_LED, HIGH);
-    nilThdSleepMilliseconds(100);
-    digitalWrite(DEBUG_LED, LOW);
-    nilThdSleepMilliseconds(100);
-    digitalWrite(DEBUG_LED, HIGH);
-    nilThdSleepMilliseconds(100);
-    digitalWrite(DEBUG_LED, LOW);
-    nilThdSleepMilliseconds(100);
-    digitalWrite(DEBUG_LED, HIGH);
+    blinkLED();
+    blinkLED();
+    digitalWrite(DEBUG_LED, HIGH); // Set LED On permanently
     Serial.println(F("Server Ready and waiting clients"));
   } else {
     Serial.println(F("ESP-05 initialization failed! PLEASE RESET POWER SWITCH...."));
     digitalWrite(DEBUG_LED, LOW);   // turn the LED off to indicate start unsuccessfull
     while (1);
   }
+}
+
+void blinkLED() {
+  digitalWrite(DEBUG_LED, LOW);
+  nilThdSleepMilliseconds(100);
+  digitalWrite(DEBUG_LED, HIGH);
+  nilThdSleepMilliseconds(100);
+  digitalWrite(DEBUG_LED, LOW);
+  nilThdSleepMilliseconds(100);
+}
+
+void hardwareReset() {
+  digitalWrite(RESET_PIN, LOW);    // turn the LED off by making the voltage LOW
+  nilThdSleepMilliseconds(2000); // Wait for module to connect to network
+  digitalWrite(RESET_PIN, HIGH);   // turn the LED on (HIGH is the voltage level)
+  nilThdSleepMilliseconds(5000); // Wait for module to connect to network
 }
 
