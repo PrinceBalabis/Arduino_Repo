@@ -1,6 +1,6 @@
 /*
-EasyVR library v1.8
-Copyright (C) 2014 RoboTech srl
+EasyVR library v1.9
+Copyright (C) 2016 RoboTech srl
 
 Written for Arduino and compatible boards for use with EasyVR modules or
 EasyVR Shield boards produced by VeeaR <www.veear.eu>
@@ -225,10 +225,32 @@ bool EasyVR::setKnob(int8_t knob)
   return false;
 }
 
+bool EasyVR::setTrailingSilence(int8_t dur)
+{
+  sendCmd(CMD_TRAILING);
+  sendArg(-1);
+  sendArg(dur);
+
+  if (recv(DEF_TIMEOUT) == STS_SUCCESS)
+    return true;
+  return false;
+}
+
 bool EasyVR::setLevel(int8_t level)
 {
   sendCmd(CMD_LEVEL);
   sendArg(level);
+
+  if (recv(DEF_TIMEOUT) == STS_SUCCESS)
+    return true;
+  return false;
+}
+
+bool EasyVR::setCommandLatency(int8_t mode)
+{
+  sendCmd(CMD_FAST_SD);
+  sendArg(-1);
+  sendArg(mode);
 
   if (recv(DEF_TIMEOUT) == STS_SUCCESS)
     return true;
@@ -818,6 +840,95 @@ bool EasyVR::dumpMessage(int8_t index, int8_t& type, int32_t& length)
   }
   _status.v = 0;
   return true;
+}
+
+bool EasyVR::realtimeLipsync(int16_t threshold, uint8_t timeout)
+{
+  sendCmd(CMD_LIPSYNC);
+  sendArg(-1);
+  sendArg((threshold >> 5) & 0x1F);
+  sendArg(threshold & 0x1F);
+  sendArg((timeout >> 4) & 0x0F);
+  sendArg(timeout & 0x0F);
+
+  int sts = recv(DEF_TIMEOUT);
+  if (sts != STS_LIPSYNC)
+  {
+    readStatus(sts);
+    return false;
+  }
+  return true;
+}
+
+bool EasyVR::fetchMouthPosition(int8_t& value)
+{
+  send(ARG_ACK);
+  int rx = recv(DEF_TIMEOUT);
+  if (rx >= ARG_MIN && rx <= ARG_MAX)
+  {
+    value = rx - ARG_ZERO;
+    return true;
+  }
+  // check if finished
+  if (rx >= 0)
+    readStatus(rx);
+  return false;
+}
+
+// Service functions
+
+bool EasyVR::exportCommand(int8_t group, int8_t index, uint8_t* data)
+{
+  sendCmd(CMD_SERVICE);
+  sendArg(SVC_EXPORT_SD - ARG_ZERO);
+  sendGroup(group);
+  sendArg(index);
+  
+  if (recv(STORAGE_TIMEOUT) != STS_SERVICE)
+    return false;
+  
+  int8_t rx;
+  if (!recvArg(rx) || rx != SVC_DUMP_SD - ARG_ZERO)
+    return false;
+  
+  for (int i = 0; i < 258; ++i)
+  {
+    if (!recvArg(rx))
+      return false;
+    data[i] = (rx << 4) & 0xF0;
+    if (!recvArg(rx))
+      return false;
+    data[i] |= (rx & 0x0F);
+  }
+  return true;
+}
+
+bool EasyVR::importCommand(int8_t group, int8_t index, const uint8_t* data)
+{
+  sendCmd(CMD_SERVICE);
+  sendArg(SVC_IMPORT_SD - ARG_ZERO);
+  sendGroup(group);
+  sendArg(index);
+  
+  int8_t tx;
+  for (int i = 0; i < 258; ++i)
+  {
+    tx = (data[i] >> 4) & 0x0F;
+    sendArg(tx);
+    tx = data[i] & 0x0F;
+    sendArg(tx);
+  }
+  if (recv(STORAGE_TIMEOUT) != STS_SUCCESS)
+    return false;
+  return true;
+}
+
+void EasyVR::verifyCommand(int8_t group, int8_t index)
+{
+  sendCmd(CMD_SERVICE);
+  sendArg(SVC_VERIFY_SD - ARG_ZERO);
+  sendGroup(group);
+  sendArg(index);
 }
 
 // Bridge Mode implementation

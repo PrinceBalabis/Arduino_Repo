@@ -33,8 +33,8 @@
   Details are displayed on the serial monitor window.
 
 **
-  Example code for the EasyVR library v1.7.1
-  Written in 2015 by RoboTech srl for VeeaR <http:://www.veear.eu>
+  Example code for the EasyVR library v1.9.1
+  Written in 2016 by RoboTech srl for VeeaR <http:://www.veear.eu>
 
   To the extent possible under law, the author(s) have dedicated all
   copyright and related and neighboring rights to this software to the
@@ -92,8 +92,8 @@ void setup()
     // setup EasyVR serial port
     port.begin(9600);
     // run normally
-    pcSerial.println(F("---"));
     pcSerial.println(F("Bridge not started!"));
+    pcSerial.println(F("---"));
     break;
     
   case EasyVR::BRIDGE_NORMAL:
@@ -102,8 +102,8 @@ void setup()
     // soft-connect the two serial ports (PC and EasyVR)
     easyvr.bridgeLoop(pcSerial);
     // resume normally if aborted
-    pcSerial.println(F("---"));
     pcSerial.println(F("Bridge connection aborted!"));
+    pcSerial.println(F("---"));
     break;
     
   case EasyVR::BRIDGE_BOOT:
@@ -112,8 +112,8 @@ void setup()
     // soft-connect the two serial ports (PC and EasyVR)
     easyvr.bridgeLoop(pcSerial);
     // resume normally if aborted
-    pcSerial.println(F("---"));
     pcSerial.println(F("Bridge connection aborted!"));
+    pcSerial.println(F("---"));
     break;
   }
 
@@ -127,7 +127,9 @@ void setup()
   easyvr.setPinOutput(EasyVR::IO1, LOW);
   pcSerial.print(F("EasyVR detected, version "));
   pcSerial.println(easyvr.getID());
-  
+
+  easyvr.setDelay(0); // speed-up replies
+
   if (easyvr.getID() >= EasyVR::EASYVR3_1)
   {
     if (!easyvr.checkMessages() && easyvr.getError() == EasyVR::ERR_CUSTOM_INVALID)
@@ -140,27 +142,36 @@ void setup()
     }
   }
 
-  pcSerial.println(F("Recorded messages:"));
-  for (int8_t idx = 0; idx < 32; ++idx)
+  pcSerial.print(F("Recorded messages:"));
+  if (easyvr.getID() >= EasyVR::EASYVR3_1)
   {
-    int8_t bits = -1; int32_t len = 0;
-    if (easyvr.dumpMessage(idx, bits, len) && (bits == 0))
-      continue; // skip empty
-    pcSerial.print(idx);
-    pcSerial.print(F(" = "));
-    if (bits < 0)
-      pcSerial.println(F(" has errors"));
-    else
+    pcSerial.println();
+    for (int8_t idx = 0; idx < 32; ++idx)
     {
-      pcSerial.print(bits);
-      pcSerial.print(F(" bits, size "));
-      pcSerial.println(len);
+      int8_t bits = -1; int32_t len = 0;
+      if (easyvr.dumpMessage(idx, bits, len) && (bits == 0))
+        continue; // skip empty
+      pcSerial.print(idx);
+      pcSerial.print(F(" = "));
+      if (bits < 0)
+        pcSerial.println(F(" has errors"));
+      else
+      {
+        pcSerial.print(bits);
+        pcSerial.print(F(" bits, size "));
+        pcSerial.println(len);
+      }
     }
   }
+  else
+    pcSerial.println(F("n/a"));
 
   easyvr.setTimeout(5);
   lang = EasyVR::ENGLISH;
   easyvr.setLanguage(lang);
+  // use fast recognition
+  easyvr.setTrailingSilence(EasyVR::TRAILING_MIN);
+  easyvr.setCommandLatency(EasyVR::MODE_FAST);
 
   int16_t count = 0;
 

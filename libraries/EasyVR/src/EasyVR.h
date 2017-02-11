@@ -1,6 +1,6 @@
 /** @file
-EasyVR library v1.8
-Copyright (C) 2014 RoboTech srl
+EasyVR library v1.9
+Copyright (C) 2016 RoboTech srl
 
 Written for Arduino and compatible boards for use with EasyVR modules or
 EasyVR Shield boards produced by VeeaR <www.veear.eu>
@@ -131,6 +131,9 @@ public:
     EASYVR2_3, /**< Identifies an EasyVR module version 2, firmware revision 3 */
     EASYVR3 = 8, /**< Identifies an EasyVR module version 3, firmware revision 0 */
     EASYVR3_1, /**< Identifies an EasyVR module version 3, firmware revision 1 */
+    EASYVR3_2, /**< Identifies an EasyVR module version 3, firmware revision 2 */
+    EASYVR3_3, /**< Identifies an EasyVR module version 3, firmware revision 3 */
+    EASYVR3_4, /**< Identifies an EasyVR module version 3, firmware revision 4 */
   };
   /** Language to use for recognition of built-in words */
   enum Language
@@ -185,6 +188,30 @@ public:
     HARD,     /**< Slightly higher value, fewer results reported */
     HARDER,   /**< Higher value, fewer results reported */
     HARDEST,  /**< Highest value, fewest results reported */
+  };
+  /** Trailing silence settings used for recognition of built-in words or
+  custom grammars (including the mixed trigger group), in a range from
+  100ms to 875ms in steps of 25ms. */
+  enum TrailingSilence
+  {
+    TRAILING_MIN = 0,     /**< Lowest value (100ms), minimum latency */
+    TRAILING_DEF = 12,    /**< Default value (400ms) after power on or reset */
+    TRAILING_MAX = 31,    /**< Highest value (875ms), maximum latency */
+    TRAILING_100MS = 0,   /**< Silence duration is 100ms */
+    TRAILING_200MS = 4,   /**< Silence duration is 200ms */
+    TRAILING_300MS = 8,   /**< Silence duration is 300ms */
+    TRAILING_400MS = 12,  /**< Silence duration is 400ms */
+    TRAILING_500MS = 16,  /**< Silence duration is 500ms */
+    TRAILING_600MS = 20,  /**< Silence duration is 600ms */
+    TRAILING_700MS = 24,  /**< Silence duration is 700ms */
+    TRAILING_800MS = 28,  /**< Silence duration is 800ms */
+  };
+  /** Latency settings used for recognition of custom commands or passwords
+  (excluding the mixed trigger group) */
+  enum CommandLatency
+  {
+    MODE_NORMAL,  /**< Normal settings (default), higher latency */
+    MODE_FAST,    /**< Fast settings, better response time */
   };
   /** Constants to use for baudrate settings */
   enum Baudrate
@@ -277,6 +304,12 @@ public:
     MSG_EMPTY = 0,   /**< Empty message slot */
     MSG_8BIT = 8,    /**< Message recorded with 8-bits PCM */
   };
+  /** Threshold for real-time lip-sync */
+  enum LipsyncThreshold
+  {
+    RTLS_THRESHOLD_DEF = 270,   /**< Default threshold */
+    RTLS_THRESHOLD_MAX = 1023,  /**< Maximum threshold */
+  };
   /** Error codes used by various functions */
   enum ErrorCode
   {
@@ -313,6 +346,11 @@ public:
 
     ERR_T2SI_TRIG_OOV           = 0x2D, /**< trigger recognized Out Of Vocabulary */
     ERR_T2SI_TOO_SHORT          = 0x2F, /**< utterance was too short */
+
+    //-- 3x: Record and Play errors (standard RP and messaging)
+    ERR_RP_BAD_LEVEL            = 0x31, /**<  play - illegal compression level */
+    ERR_RP_NO_MSG               = 0x38, /**<  play, erase, copy - msg doesn't exist */
+    ERR_RP_MSG_EXISTS           = 0x39, /**<  rec, copy - msg already exists */
 
     //-- 4x: Synthesis errors (talk, sxtalk)
     ERR_SYNTH_BAD_VERSION       = 0x4A, /**< bad release number in speech file */
@@ -385,17 +423,30 @@ public:
   */
   bool setMicDistance(int8_t dist);
   /**
-    Sets the confidence threshold to use for recognition of built-in words.
+    Sets the confidence threshold to use for recognition of built-in words or custom grammars.
     @param knob (0-4) is one of values in #Knob
     @retval true if the operation is successful
   */
   bool setKnob(int8_t knob);
+  /**
+    Sets the trailing silence duration for recognition of built-in words or custom grammars.
+    @param dur (0-31) is the silence duration as defined in #TrailingSilence
+    @retval true if the operation is successful
+  */
+  bool setTrailingSilence(int8_t dur);
   /**
     Sets the strictness level to use for recognition of custom commands.
     @param level (1-5) is one of values in #Level
     @retval true if the operation is successful
   */
   bool setLevel(int8_t level);
+  /**
+    Enables or disables fast recognition for custom commands and passwords.
+    Fast SD/SV recognition can improve response time.
+    @param mode (0-1) is one of the values in #CommandLatency
+    @retval true if the operation is successful
+  */
+  bool setCommandLatency(int8_t mode);
   /**
     Sets the delay before any reply of the module.
     @param millis (0-1000) is the delay duration in milliseconds, rounded to
@@ -581,6 +632,12 @@ public:
     constaints (up to 32 custom commands can be created)
   */
   bool isMemoryFull() { return _status.b._memfull; }
+  /**
+    Retrieves the invalid protocol indicator.
+    @retval true if an invalid sequence has been detected in the communication
+    protocol
+  */
+  bool isInvalid() { return _status.b._invalid; }
   // pin I/O functions
   /**
     Configures an I/O pin as an output and sets its value
@@ -725,7 +782,7 @@ public:
   /**
     Starts recording a message. Manually check for completion with #hasFinished().
     @param index (0-31) is the index of the target message slot
-    @param bits (4 or 8) specifies the audio format (see #MessageType)
+    @param bits (8) specifies the audio format (see #MessageType)
     @param timeout (0-31) is the maximum recording time (0=infinite)
     @note The module is busy until recording times out or the end of memory is
     reached. You can interrupt an ongoing recording with #stop().
@@ -749,7 +806,7 @@ public:
   /**
     Retrieves the type and length of a recorded message
     @param index (0-31) is the index of the target message slot
-    @param type (0,4,8) is a variable that holds the message format when the
+    @param type (0,8) is a variable that holds the message format when the
     function returns (see #MessageType)
     @param length is a variable that holds the message length in bytes when
     the function returns
@@ -758,6 +815,53 @@ public:
     function fails, to know the reason of the failure.
   */
   bool dumpMessage(int8_t index, int8_t& type, int32_t& length);
+  /**
+    Starts real-time lip-sync on the input voice signal.
+    Retrieve output values with #fetchMouthPosition() or abort with #stop().
+    @param threshold (0-1023) is a measure of the strength of the input signal
+    below which the mouth is considered to be closed (see #LipsyncThreshold,
+    adjust based on microphone settings, distance and background noise)
+    @param timeout (0-255) is the maximum duration of the function in seconds,
+    0 means infinite
+    @retval true if the operation is successfully started
+  */
+  bool realtimeLipsync(int16_t threshold, uint8_t timeout);
+  /**
+    Retrieves the current mouth position during lip-sync.
+    @param value (0-31) is filled in with the current mouth opening position
+    @retval true if the operation is successful, false if lip-sync has finished
+  */
+  bool fetchMouthPosition(int8_t& value);
+  // service functions
+  /**
+    Retrieves all internal data associated to a custom command.
+    @param group (0-16) is the target group, or one of the values in #Groups
+    @param index (0-31) is the index of the command within the selected group
+    @param data points to an array of at least 258 bytes that holds the
+    command raw data
+    @retval true if the operation is successful
+  */
+  bool exportCommand(int8_t group, int8_t index, uint8_t* data);
+  /**
+    Overwrites all internal data associated to a custom command.
+    When commands are imported this way, their training should be tested again
+    with #verifyCommand()
+    @param group (0-16) is the target group, or one of the values in #Groups
+    @param index (0-31) is the index of the command within the selected group
+    @param data points to an array of at least 258 bytes that holds the
+    command raw data
+    @retval true if the operation is successful
+  */
+  bool importCommand(int8_t group, int8_t index, const uint8_t* data);
+  /**
+    Verifies training of a custom command (useful after import).
+    Similarly to #trainCommand(), you should check results after #hasFinished()
+    returns true
+    @param group (0-16) is the target group, or one of the values in #Groups
+    @param index (0-31) is the index of the command within the selected group
+  */
+  void verifyCommand(int8_t group, int8_t index);
+  // bridge mode
   /**
     Tests if bridge mode has been requested on the specified port
     @param port is the target serial port (usually the PC serial port)
