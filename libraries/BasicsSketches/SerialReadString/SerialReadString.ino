@@ -1,17 +1,21 @@
-void setup() {
-  Serial.begin(9600);
+//This is the Serial Receiver
+String recievedString = "";
 
+void setup()
+{
+  Serial.begin(9600); // set up Serial library at 9600 bps
 }
 
-void loop() {
-  if (Serial.available() > 0) {
-    String string = "";
-
-    while (Serial.available() > 0) {
-      delay(5);
-      string += (char)Serial.read();
-    }
-
-    Serial.println(string);
+void loop()
+{
+  while (Serial.available()) 
+  {
+    recievedString += Serial.readString();
   }
+  if(recievedString.length() != 0) // Print string if we got something
+  {
+    recievedString += "\r\n";
+    Serial.print(recievedString); // Print string
+  }
+  recievedString = ""; // Clear variable
 }
