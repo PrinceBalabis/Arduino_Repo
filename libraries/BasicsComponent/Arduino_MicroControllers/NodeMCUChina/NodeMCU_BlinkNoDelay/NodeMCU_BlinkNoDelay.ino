@@ -4,6 +4,11 @@
   NOTE FOR THE RED LED, LED TOGGLE IS INVERTED, HIGH IS OFF, LOW IS ON
 
 
+  MAJOR BUG:
+  If it cannot connect to the Wi-Fi hotspot, try reconnecting the power/USB cable to reset the ESP
+
+  Put a large capacitor(or even better, several small ones) between 5V/VIN and Ground to improve reliability
+
   Remember to install the CH340G drivers.
 
   Board settings:
@@ -11,7 +16,7 @@
   -80MHz
   -921600
   -4M(3M)
-*/
+  */
 
 // constants won't change. Used here to set a pin number :
 const int ledPinESP =  2;// LED on ESP on pin 2

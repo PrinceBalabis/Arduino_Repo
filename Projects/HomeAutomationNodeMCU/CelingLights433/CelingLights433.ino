@@ -1,8 +1,13 @@
 /*
   ---------------------------------------------------------------
 
+  Server port: 6548
 
+  The first line of the GET Request looks like this: "GET /LED=ON HTTP1.1"
+  To get the command, we remove the first part("GET "), then we only read from what is left, until
+  a space is detected(" HTTP1.1")
 
+  
   MAJOR BUG:
   If it cannot connect to the Wi-Fi hotspot, try reconnecting the power/USB cable to reset the ESP
 

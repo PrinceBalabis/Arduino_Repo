@@ -11,6 +11,8 @@
   MAJOR BUG:
   If it cannot connect to the Wi-Fi hotspot, try reconnecting the power/USB cable to reset the ESP
 
+  Put a large capacitor(or even better, several small ones) between 5V/VIN and Ground to improve reliability
+
   Remember to install the CH340G drivers.
 
   Board settings:
