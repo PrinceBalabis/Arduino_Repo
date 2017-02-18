@@ -15,15 +15,15 @@
 class HTTPTask : public Task {
   protected:
     void setup() {
+      delay(100); // Let other tasks start first
       // Connect to WiFi network
       Serial.println(F(""));
       Serial.println(F(""));
       Serial.print(F("Connecting to Wi-Fi: "));
       Serial.print(ssid);
       Serial.print(F("..."));
-      WiFi.config(ip[0], ip[1], ip[2], ip[3]); // Set static IP address
-      WiFi.begin(ssid, password);
 
+      WiFi.begin(ssid, password);
       uint8_t wifiCounter = 0;
       while (WiFi.status() != WL_CONNECTED && wifiCounter < wifiConnectTimeout) {
         delay(1000);
