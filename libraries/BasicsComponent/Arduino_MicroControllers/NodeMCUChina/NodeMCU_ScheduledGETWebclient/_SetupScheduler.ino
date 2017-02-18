@@ -12,8 +12,8 @@ void setup() {
   pinMode(ledPinESP, OUTPUT);
   pinMode(ledPinBoard, OUTPUT);
 
-  digitalWrite(ledPinESP, LOW); // Turn on LED(LED is inverted, so HIGH is off)
-  digitalWrite(ledPinBoard, LOW); // Turn on LED(LED is inverted, so HIGH is off)
+  digitalWrite(ledPinESP, HIGH); // Turn off LED
+  digitalWrite(ledPinBoard, LOW); // Turn on LED(LED is inverted, so LOW is on)
 
   // Initialize Serial
   delay(2000); // Wait some time, in order to allow ESP8266 to boot

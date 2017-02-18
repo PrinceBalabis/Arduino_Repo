@@ -8,7 +8,7 @@
 
   Board settings:
   -NodeMCU 1.0(ESP-12E)
-  -80MHz
+  -160MHz
   -921600
   -4M(3M)
  */
@@ -16,8 +16,8 @@
 #include <Arduino.h>
 #include <Scheduler.h>
 
-const int ledPinESP =  2;// LED on ESP on pin 2
-const int ledPinBoard =  16; // LED on board on pin 16
+const int ledPinESP =  D4;// LED on ESP on pin D4(Must call D4 in code)
+const int ledPinBoard =  D0; // LED on board on pin D0(Must call D0 in code)
 
 class PrintTask : public Task {
   protected:

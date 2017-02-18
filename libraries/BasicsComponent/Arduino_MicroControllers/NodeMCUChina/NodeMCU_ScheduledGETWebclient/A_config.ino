@@ -13,7 +13,7 @@
 */
 const char* ssid = "Router";
 const char* password = "kungarike";
-const uint8_t wifiConnectTimeout = 10; // The amount of seconds to wait until giving up connecting to Wi-Fi
+const uint8_t wifiConnectTimeout = 5; // The amount of seconds to wait until giving up connecting to Wi-Fi
 const char* testingHost = "www.google.se";
 
 /*
@@ -21,8 +21,8 @@ const char* testingHost = "www.google.se";
   Pin-outs
   ---------------------------------------------------------------
 */
-const int ledPinESP =  2;// LED on ESP on pin 2
-const int ledPinBoard =  16; // LED on board on pin 16
+const int ledPinESP =  D4;// LED on ESP on pin D4(Must call D4 in code)
+const int ledPinBoard =  D0; // LED on board on pin D0(Must call D0 in code)
 
 /*
   ---------------------------------------------------------------

@@ -10,7 +10,7 @@
 
   Board settings:
   -NodeMCU 1.0(ESP-12E)
-  -80MHz
+  -160MHz
   -921600
   -4M(3M)
 */

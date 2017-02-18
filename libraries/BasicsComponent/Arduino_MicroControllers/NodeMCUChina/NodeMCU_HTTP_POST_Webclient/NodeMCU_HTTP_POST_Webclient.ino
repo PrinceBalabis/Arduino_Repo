@@ -9,7 +9,7 @@
 
   Board settings:
   -NodeMCU 1.0(ESP-12E)
-  -80MHz
+  -160MHz
   -921600
   -4M(3M)
 */
@@ -19,10 +19,10 @@
 const char* ssid     = "Router";
 const char* password = "kungarike";
 const char* postserver = "postserver";
-const uint8_t wifiConnectTimeout = 10; // The amount of seconds to wait until giving up connecting to Wi-Fi
+const uint8_t wifiConnectTimeout = 5; // The amount of seconds to wait until giving up connecting to Wi-Fi
 
-const int ledPinESP =  2;// LED on ESP on pin 2
-const int ledPinBoard =  16; // LED on board on pin 16
+const int ledPinESP =  D4;// LED on ESP on pin D4(Must call D4 in code)
+const int ledPinBoard =  D0; // LED on board on pin D0(Must call D0 in code)
 
 void setup() {
   delay(2000); // Wait some time, in order to allow ESP8266 to boot
@@ -37,8 +37,11 @@ void setup() {
   Serial.println();
   Serial.println();
   // Connecting to the WiFi network
-  Serial.print(F("Connecting to "));
+  Serial.println(F(""));
+  Serial.println(F(""));
+  Serial.print(F("Connecting to Wi-Fi: "));
   Serial.print(ssid);
+  Serial.print(F("..."));
   WiFi.begin(ssid, password);
   uint8_t wifiCounter = 0;
   while (WiFi.status() != WL_CONNECTED && wifiCounter < wifiConnectTimeout) {
@@ -47,19 +50,21 @@ void setup() {
     wifiCounter++;
   }
   if (wifiCounter == wifiConnectTimeout) { // Wi-Fi could not connect
-    Serial.println(F("Wi-Fi connection timeout. Could not connect to Wi-Fi..."));
-    Serial.println(F("Try plugging out and back in the USB-cable"));
-    Serial.println(F("STOPPING PROGRAM"));
-    digitalWrite(ledPinBoard, HIGH); // Turn off status LED(LED is inverted, so HIGH is off)
-    // Stop program
-    while (1) {
-      delay(1);
+    Serial.println(F("Wi-Fi connection timeout."));
+    Serial.println(F("Could not connect to Wi-Fi..."));
+    Serial.println(F("Try unplugging & replugging the USB-cable to reset the ESP8266"));
+    Serial.println(F("HALTING PROGRAM...."));
+    while (1) { // Stop program and blink LED
+      digitalWrite(ledPinBoard, HIGH); // Turn on LED(LED is inverted, so HIGH is off)
+      delay(100);
+      digitalWrite(ledPinBoard, LOW); // Turn on LED(LED is inverted, so LOW is on)
+      delay(100);
     }
   } else { // do normal startup operation
-    Serial.println(F("Connected to Wi-Fi!"));
-    Serial.print("IP address: ");
+    Serial.println(F("Connected!"));
+    Serial.print(F("IP address: "));
     Serial.println(WiFi.localIP());
-    delay(100);
+    delay(100); // Some time for serial buffer to empty
   }
 }
 

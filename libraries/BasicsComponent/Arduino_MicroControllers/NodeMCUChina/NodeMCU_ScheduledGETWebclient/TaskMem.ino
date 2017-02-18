@@ -8,7 +8,6 @@ class MemTask : public Task {
   public:
     void setup() {
       Serial.println(F("Starting Memory Task..."));
-
       taskMemStarted = 1; // Set started flag
     }
 

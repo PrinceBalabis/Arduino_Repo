@@ -18,7 +18,6 @@
 */
 
 bool taskHTTPStarted = 0;
-bool taskCeilingLightsStarted = 0;
 bool taskMemStarted = 0;
 
 /*
@@ -26,17 +25,4 @@ bool taskMemStarted = 0;
   Task-to-Task communication
   ---------------------------------------------------------------
 */
-bool ceilingLightsStatus = 0; // Current status of the ceilingLights
-
-
-/*
-  ---------------------------------------------------------------
-  Wallswitches
-  ---------------------------------------------------------------
-*/
-
-unsigned long leftInterruptDetected = 0; // Has a value above 0 when an interrupt is detected
-unsigned long rightInterruptDetected = 0; // Has a value above 0 when an interrupt is detected
-unsigned long lastLeftInterruptDetected = 0; // Save last interrupt time
-unsigned long lastRightInterruptDetected = 0; // Save last interrupt time
 

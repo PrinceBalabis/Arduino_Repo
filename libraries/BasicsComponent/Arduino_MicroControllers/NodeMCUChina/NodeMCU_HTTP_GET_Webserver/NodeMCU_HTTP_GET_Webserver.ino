@@ -1,12 +1,14 @@
 /* GET Webserver with ability to control the built in LED using a GET-Request or UI buttons
 
-  To toggle LED on: 192.168.10.206/LED=ON
-  To toggle LED off: 192.168.10.206/LED=OFF
-  To return status/show UI buttons = 192.168.10.206
+  To toggle LED on: 192.168.10.206:80/led=on
+  To toggle LED off: 192.168.10.206:80/led=off
+  To return status/show UI buttons = 192.168.10.206:80
 
   The first line of the GET Request looks like this: "GET /LED=ON HTTP1.1"
   To get the command, we remove the first part("GET "), then we only read from what is left, until
   a space is detected(" HTTP1.1")
+
+  When using the pins, use the Arduino macros for pins(D2 for Digital pin 2, A0 for analog pin 0 etc)
 
   MAJOR BUG:
   If it cannot connect to the Wi-Fi hotspot, try reconnecting the power/USB cable to reset the ESP
@@ -17,7 +19,7 @@
 
   Board settings:
   -NodeMCU 1.0(ESP-12E)
-  -80MHz
+  -160MHz
   -921600
   -4M(3M)
 */
@@ -28,25 +30,28 @@ WiFiClient client;
 const char* ssid = "Router";
 const char* password = "kungarike";
 const uint8_t wifiConnectTimeout = 5; // The amount of seconds to wait until giving up connecting to Wi-Fi
+const uint16_t serverPort = 80; // Port for this server, so we can access it from the internet
+const int ledPinESP =  D4;// LED on ESP on pin D4(Must call D4 in code)
+const int ledPinBoard =  D0; // LED on board on pin D0(Must call D0 in code)
 
-const int ledPinESP =  2;// LED on ESP on pin 2
-const int ledPinBoard =  16; // LED on board on pin 16
-
-WiFiServer server(80);
+WiFiServer server(serverPort);
 
 void setup() {
   delay(2000); // Wait some time, in order to allow ESP8266 to boot
   Serial.begin(250000);
   delay(100); // Some time for serial buffer to empty
 
+  pinMode(ledPinESP, OUTPUT);
   pinMode(ledPinBoard, OUTPUT);
-  digitalWrite(ledPinBoard, LOW); // Turn off status LED(LED is inverted, so LOW is on)
+  digitalWrite(ledPinESP, HIGH); // Turn off LED
+  digitalWrite(ledPinBoard, LOW); // Turn on LED(LED is inverted, so LOW is on)
 
   // Connect to WiFi network
   Serial.println(F(""));
   Serial.println(F(""));
-  Serial.print(F("Connecting to "));
+  Serial.print(F("Connecting to Wi-Fi: "));
   Serial.print(ssid);
+  Serial.print(F("..."));
 
   WiFi.begin(ssid, password);
 
@@ -59,18 +64,26 @@ void setup() {
   if (wifiCounter == wifiConnectTimeout) { // Wi-Fi could not connect
     Serial.println(F("Wi-Fi connection timeout."));
     Serial.println(F("Could not connect to Wi-Fi..."));
-    Serial.println(F("Try plugging replugging the USB-cable to reset the ESP8266"));
+    Serial.println(F("Try unplugging & replugging the USB-cable to reset the ESP8266"));
     Serial.println(F("HALTING PROGRAM...."));
-    while (1) delay(100); // Stop program
+    while (1) { // Stop program and blink LED
+      digitalWrite(ledPinBoard, HIGH); // Turn on LED(LED is inverted, so HIGH is off)
+      delay(100);
+      digitalWrite(ledPinBoard, LOW); // Turn on LED(LED is inverted, so LOW is on)
+      delay(100);
+    }
   } else { // do normal startup operation
-    Serial.println(F("Connected to Wi-Fi!"));
+    Serial.println(F("Connected!"));
     Serial.print(F("IP address: "));
-    Serial.println(WiFi.localIP());
+    Serial.print(WiFi.localIP());
+    Serial.print(F(":"));
+    Serial.println(serverPort);
     // Start the server
     server.begin();
-    Serial.println(F("Server started..."));
+    Serial.println(F("Started HTTP GET-Webserver Task"));
     Serial.println(F(""));
     digitalWrite(ledPinBoard, HIGH); // Turn on LED(LED is inverted, so HIGH is off)
+    delay(100); // Some time for serial buffer to empty
   }
 }
 
@@ -94,11 +107,10 @@ void loop() {
 
   // Match the request
   uint8_t value = 0;
-  if (request.indexOf("LED=ON") != -1)  {
+  if (request.indexOf("led=on") != -1)  {
     digitalWrite(ledPinBoard, LOW);
     value = HIGH;
-  }
-  if (request.indexOf("LED=OFF") != -1)  {
+  } else if (request.indexOf("led=off") != -1)  {
     digitalWrite(ledPinBoard, HIGH);
     value = LOW;
   }
@@ -109,17 +121,22 @@ void loop() {
   client.println(""); //  do not forget this one
   client.println("<!DOCTYPE HTML>");
   client.println("<html>");
+  client.println("<head><style>body{width:300px;margin:0 auto;}</style></head>\n"); // Set max width of webpage in pixels
+  client.println("<title>LED Control</title>\n"); // Set server title
+  client.println("<meta http-equiv=\"refresh\" content=\"5;URL=/\">\n"); // Tell the webbrowser to update the page every few seconds
+  client.println("<meta content='width=device-width, initial-scale=1' name='viewport'/>\n"); // Optimize page width for mobiles
 
-  client.print("Led pin is now: ");
-
+  client.print("<h1>LED Control</h1>\n"); // Top header
+  client.print("Led pin is ");
   if (value == HIGH) {
-    client.print("On");
+    client.print("on&emsp;&emsp;");
+    //   client.println("<br><br>");
+    client.println("<a href=\"/led=off\"\"><button>Turn Off </button></a><br />");
   } else {
-    client.print("Off");
+    client.print("off&emsp;&emsp;");
+    //   client.println("<br><br>");
+    client.println("<a href=\"/led=on\"\"><button>Turn On </button></a>");
   }
-  client.println("<br><br>");
-  client.println("<a href=\"/LED=ON\"\"><button>Turn On </button></a>");
-  client.println("<a href=\"/LED=OFF\"\"><button>Turn Off </button></a><br />");
   client.println("</html>");
 
   Serial.println("Client disonnected");

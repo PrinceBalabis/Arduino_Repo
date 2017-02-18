@@ -14,8 +14,9 @@ class HTTPTask : public Task {
       Serial.println(F("Starting HTTP Task..."));
 
       // Connecting to the WiFi network
-      Serial.print(F("Connecting to "));
+      Serial.print(F("Connecting to Wi-Fi: "));
       Serial.print(ssid);
+      Serial.print(F("..."));
       WiFi.begin(ssid, password);
       uint8_t wifiCounter = 0;
       while (WiFi.status() != WL_CONNECTED && wifiCounter < wifiConnectTimeout) {
@@ -24,18 +25,20 @@ class HTTPTask : public Task {
         wifiCounter++;
       }
       if (wifiCounter == wifiConnectTimeout) { // Wi-Fi could not connect
-        Serial.println(F("Wi-Fi connection timeout. Could not connect to Wi-Fi..."));
-        Serial.println(F("Try plugging out and back in the USB-cable"));
-        Serial.println(F("STOPPING PROGRAM"));
-        digitalWrite(ledPinBoard, HIGH); // Turn off status LED(LED is inverted, so HIGH is off)
-        // Stop program
-        while (1) {
-          delay(1);
+        Serial.println(F("Wi-Fi connection timeout."));
+        Serial.println(F("Could not connect to Wi-Fi..."));
+        Serial.println(F("Try unplugging & replugging the USB-cable to reset the ESP8266"));
+        Serial.println(F("HALTING PROGRAM...."));
+        while (1) { // Stop program and blink LED
+          digitalWrite(ledPinBoard, HIGH); // Turn on LED(LED is inverted, so HIGH is off)
+          delay(100);
+          digitalWrite(ledPinBoard, LOW); // Turn on LED(LED is inverted, so LOW is on)
+          delay(100);
         }
       } else { // do normal startup operation
-        Serial.println(F("Connected to Wi-Fi!"));
-        Serial.print("IP address: ");
-        Serial.println(WiFi.localIP());
+        Serial.println(F("Connected!"));
+        Serial.print(F("IP address: "));
+        Serial.print(WiFi.localIP());
         taskHTTPStarted = 1; // Set startup flag
       }
     }

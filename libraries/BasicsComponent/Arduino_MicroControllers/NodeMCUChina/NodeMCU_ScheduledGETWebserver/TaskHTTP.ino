@@ -2,11 +2,6 @@
   ---------------------------------------------------------------
 
 
-  The first line of the GET Request looks like this: "GET /LED=ON HTTP1.1"
-  To get the command, we remove the first part("GET "), then we only read from what is left, until
-  a space is detected(" HTTP1.1")
-
-
   Notes:
   WiFi.status()-function does not properly work with scheduler. So we had to make up another way to setup WiFi
   Most of the Serial.println in loop() is commented out because its so slow it holds the other tasks waiting
@@ -15,6 +10,8 @@
 class HTTPTask : public Task {
   protected:
     void setup() {
+      Serial.println(F("Starting HTTP Task..."));
+
       // Connect to WiFi network
       Serial.println(F(""));
       Serial.println(F(""));
@@ -64,8 +61,6 @@ class HTTPTask : public Task {
       // Check if a client has connected
       WiFiClient client = getServer()->available();
       if (client) {
-        // Pause interrupts
-        //noInterrupts();
 
         // Wait until the client sends some data
         while (!client.available()) delayMicroseconds(1);
@@ -79,12 +74,13 @@ class HTTPTask : public Task {
         client.flush();
 
         // Match the request
-        if (request.indexOf("ceilinglights=on") != -1)  {
-          setCeilingLights(HIGH);
-        } else if (request.indexOf("ceilinglights=off") != -1)  {
-          setCeilingLights(LOW);
-        } else if (request.indexOf("ceilinglights=toggle") != -1)  {
-          toggleCeilingLights();
+        uint8_t value = 0;
+        if (request.indexOf("led=on") != -1)  {
+          digitalWrite(ledPinBoard, LOW);
+          value = HIGH;
+        } else if (request.indexOf("led=off") != -1)  {
+          digitalWrite(ledPinBoard, HIGH);
+          value = LOW;
         }
 
         // Return the response
@@ -98,25 +94,21 @@ class HTTPTask : public Task {
         client.println("<meta http-equiv=\"refresh\" content=\"5;URL=/\">\n"); // Tell the webbrowser to update the page every few seconds
         client.println("<meta content='width=device-width, initial-scale=1' name='viewport'/>\n"); // Optimize page width for mobiles
 
-        client.print("<h1>Home Control</h1>\n"); // Top header
-        client.print("Ceiling Lights are ");
-        if (ceilingLightsStatus == HIGH) {
-          client.print("on&emsp;&emsp;");
+        client.print("<h1>LED Control</h1>\n"); // Top header
+        client.print("Led pin is ");
+        if (value == HIGH) {
+          client.print("on&emsp;&emsp;"); // Tab = &emsp;
           //client.println("<br><br>");
-          client.println("</html>");
-          client.println("<a href=\"/ceilinglights=off\"\"><button>Turn Off </button></a><br />");
+          client.println("<a href=\"/led=off\"\"><button>Turn Off </button></a><br />");
         } else {
-          client.print("off&emsp;&emsp;");
+          client.print("off&emsp;&emsp;"); /// Tab = &emsp;
           //client.println("<br><br>");
-          client.println("</html>");
-          client.println("<a href=\"/ceilinglights=on\"\"><button>Turn On </button></a>");
+          client.println("<a href=\"/led=on\"\"><button>Turn On </button></a>");
         }
+        client.println("</html>");
 
         Serial.println("Client disonnected");
         Serial.println();
-
-        // Unpause interrupts
-        // interrupts();
       }
     }
   private:

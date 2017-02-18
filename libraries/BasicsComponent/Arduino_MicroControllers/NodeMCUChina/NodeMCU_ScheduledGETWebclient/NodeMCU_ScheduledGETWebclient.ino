@@ -1,7 +1,6 @@
 /*
   ---------------------------------------------------------------
 
-  Server port: 6548
 
 
   MAJOR BUG:
@@ -11,11 +10,12 @@
 
   Remember to install the CH340G drivers.
 
-  Board Uploading settings:
+  Board settings:
   -NodeMCU 1.0(ESP-12E)
   -160MHz
   -921600
   -4M(3M)
+
 
     -There is noise on the ADC when receiving/transmitting on Wi-Fi
     while using the ADC! Try to use one function at a time to minimize ADC noise
@@ -45,8 +45,5 @@
 */
 void setup();
 void loop();
-void leftWallSwitchInterruptWrap();
-void rightWallSwitchInterruptWrap();
-
 
 
