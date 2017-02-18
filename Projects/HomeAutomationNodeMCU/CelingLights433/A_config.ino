@@ -13,8 +13,10 @@
 */
 const char* ssid = "Router";
 const char* password = "kungarike";
-const uint8_t wifiConnectTimeout = 5; // The amount of seconds to wait until giving up connecting to Wi-Fi
+const uint8_t ip[] = {192, 168, 10, 206};
 const uint16_t serverPort = 6548; // Port for this server, so we can access it from the internet
+const uint8_t wifiConnectTimeout = 5; // The amount of seconds to wait until giving up connecting to Wi-Fi
+
 /*
   ---------------------------------------------------------------
   Pin-outs

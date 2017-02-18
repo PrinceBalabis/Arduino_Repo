@@ -21,7 +21,7 @@ class HTTPTask : public Task {
       Serial.print(F("Connecting to Wi-Fi: "));
       Serial.print(ssid);
       Serial.print(F("..."));
-
+      WiFi.config(ip[0], ip[1], ip[2], ip[3]); // Set static IP address
       WiFi.begin(ssid, password);
 
       uint8_t wifiCounter = 0;
