@@ -1,8 +1,8 @@
 /* GET Webserver with ability to control the built in LED using a GET-Request or UI buttons
 
+  To return status/show UI buttons = 192.168.10.206:80
   To toggle LED on: 192.168.10.206:80/led=on
   To toggle LED off: 192.168.10.206:80/led=off
-  To return status/show UI buttons = 192.168.10.206:80
 
   The first line of the GET Request looks like this: "GET /LED=ON HTTP1.1"
   To get the command, we remove the first part("GET "), then we only read from what is left, until
@@ -100,17 +100,17 @@ void loop() {
 
   // Read the first line of the request
   Serial.print("New client command: ");
-  client.find("GET /"); // Remove the first part of the request("GET /")
+  client.readStringUntil('/');// Remove the first part of the request("GET /")
   String request = client.readStringUntil(' '); // Read untill space is detected("LED=ON HTTP1.1")
-  Serial.println(request);
-  client.flush();
+  Serial.println(request); // Print the command
+  client.flush(); // Clear the network buffer
 
   // Match the request
   uint8_t value = 0;
-  if (request.indexOf("led=on") != -1)  {
+  if (request == "led=on")  {
     digitalWrite(ledPinBoard, LOW);
     value = HIGH;
-  } else if (request.indexOf("led=off") != -1)  {
+  } else if (request == "led=off")  {
     digitalWrite(ledPinBoard, HIGH);
     value = LOW;
   }

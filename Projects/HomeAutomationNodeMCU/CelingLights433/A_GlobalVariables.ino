@@ -17,16 +17,16 @@
   ---------------------------------------------------------------
 */
 
-bool taskHTTPStarted = 0;
-bool taskCeilingLightsStarted = 0;
-bool taskMemStarted = 0;
+volatile bool taskHTTPStarted = 0;
+volatile bool taskCeilingLightsStarted = 0;
+volatile bool taskMemStarted = 0;
 
 /*
   ---------------------------------------------------------------
   Task-to-Task communication
   ---------------------------------------------------------------
 */
-bool ceilingLightsStatus = 0; // Current status of the ceilingLights
+volatile bool ceilingLightsStatus = 0; // Current status of the ceilingLights
 
 
 /*
@@ -34,9 +34,7 @@ bool ceilingLightsStatus = 0; // Current status of the ceilingLights
   Wallswitches
   ---------------------------------------------------------------
 */
-
-unsigned long leftInterruptDetected = 0; // Has a value above 0 when an interrupt is detected
-unsigned long rightInterruptDetected = 0; // Has a value above 0 when an interrupt is detected
-unsigned long lastLeftInterruptDetected = 0; // Save last interrupt time
-unsigned long lastRightInterruptDetected = 0; // Save last interrupt time
+volatile unsigned long lastLeftInterruptDetected = 0; // Save last interrupt time for left switch
+volatile unsigned long lastRightInterruptDetected = 0; // Save last interrupt time for right switch
+volatile unsigned long lastInterruptDetected = 0; // Save last interrupt time for both switches
 

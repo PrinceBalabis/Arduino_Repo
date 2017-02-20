@@ -65,7 +65,7 @@ class HTTPTask : public Task {
       WiFiClient client = getServer()->available();
       if (client) {
         // Pause interrupts
-        //noInterrupts();
+        pauseInterrupts();
 
         // Wait until the client sends some data
         while (!client.available()) delayMicroseconds(1);
@@ -73,17 +73,17 @@ class HTTPTask : public Task {
 
         // Read the first line of the request
         Serial.print("New client command: ");
-        client.find("GET /"); // Remove the first part of the request("GET /")
-        String request = client.readStringUntil(' '); // Read untill space is detected("LED=ON HTTP1.1")
-        Serial.println(request);
-        client.flush();
+        client.readStringUntil('/');// Remove the first part of the request("GET /")
+        String request = client.readStringUntil(' '); // Read untill space is detected("ceilinglights=on HTTP1.1")
+        Serial.println(request); // Print the command
+        client.flush(); // Clear the network buffer
 
         // Match the request
-        if (request.indexOf("ceilinglights=on") != -1)  {
+        if (request == "ceilinglights=on") {
           setCeilingLights(HIGH);
-        } else if (request.indexOf("ceilinglights=off") != -1)  {
+        } else if (request == "ceilinglights=off") {
           setCeilingLights(LOW);
-        } else if (request.indexOf("ceilinglights=toggle") != -1)  {
+        } else if (request == "ceilinglights=toggle") {
           toggleCeilingLights();
         }
 
@@ -116,7 +116,7 @@ class HTTPTask : public Task {
         Serial.println();
 
         // Unpause interrupts
-        // interrupts();
+        unpauseInterrupts();
       }
     }
   private:

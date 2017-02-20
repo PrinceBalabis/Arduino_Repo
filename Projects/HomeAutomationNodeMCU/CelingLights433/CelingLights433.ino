@@ -45,8 +45,11 @@
 */
 void setup();
 void loop();
-void leftWallSwitchInterruptWrap();
-void rightWallSwitchInterruptWrap();
+void pauseInterrupts();
+void unpauseInterrupts();
+
+//void leftWallSwitchInterruptWrap();
+//void rightWallSwitchInterruptWrap();
 
 
 

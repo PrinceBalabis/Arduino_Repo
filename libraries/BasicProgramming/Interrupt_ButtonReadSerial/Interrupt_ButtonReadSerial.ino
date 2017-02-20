@@ -1,6 +1,6 @@
 /*
-   Reads a button connected to a pin
-   and continously prints the value to serial.
+   Attaches an interrupt to the pin connected to a button.
+   Toggles the LED depending if the button is pressed  or not
    The digital pin reads "1" when the button is NOT pressed.
    It reads "0" when the button is pressed.
 
@@ -28,8 +28,7 @@
    Ground -> A2 -> B2 - Digital pin
 */
 
-const int buttonPin = 5; // Pin of the pushbutton
-bool buttonState = 0; // Save the current state of the button
+const int buttonPin = 12;     // the number of the pushbutton pin
 
 void setup() {
   // Initialize serial communication at 9600 bits per second:
@@ -38,11 +37,21 @@ void setup() {
   // Initialize the button pin as an input.
   // Also activate the internal pull-up resistor
   pinMode(buttonPin, INPUT_PULLUP);
-}
-// the loop routine runs over and over again forever:
-void loop() {
-  buttonState = digitalRead(buttonPin); // Read the button state
-  Serial.println(buttonState);
-  delay(10);
+  // Attach the pin to the button to interrupt
+  attachInterrupt(digitalPinToInterrupt(buttonPin), buttonInterrupt, CHANGE);
 }
 
+void loop() {
+  // Not used
+}
+
+/*
+  The interrupt function which runs when the interrupt is triggered
+  Keep interrupt function as short as possible so it doesn't affect other time sensitive stuff
+  But of course most stuff that should have low response time should be here
+*/
+void buttonInterrupt() {
+    Serial.println("asdadad");
+
+  Serial.println(digitalRead(buttonPin));
+}

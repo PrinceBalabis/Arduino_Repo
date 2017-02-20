@@ -22,35 +22,23 @@ void setup() {
   Serial.println("");
   Serial.println("This node controls the ceiling lights and 433MHZ switches");
 
-  // Initialize pin for wall switch
+  // Initialize relay for ceiling lights
   initCeilingLights();
+
+  // Initialize wallswitches
+  initWallSwitches();
 
   Serial.println("Starting scheduler...");
   delay(100); // Some time for serial buffer to empty
 
   // Declare tasks
-  Scheduler.start(&wallswitch_task); // Declare HTTP webclient task
+  //  Scheduler.start(&wallswitch_task); // Declare HTTP webclient task
   Scheduler.start(&http_task); // Declare HTTP webclient task
   //Scheduler.start(&mem_task); // Declare printing of heap memory task
 
   // Start scheduler/all tasks declared
   Scheduler.begin();
 }
-
-/*
-  ---------------------------------------------------------------
-  Needed for interrupt-functions to properly work within classes.
-  Read more: http://forum.arduino.cc/index.php?topic=41713.0
-  ---------------------------------------------------------------
-*/
-WallSwitchTask wallSwitchTask;
-void leftWallSwitchInterruptWrap() {
-  wallSwitchTask.leftWallSwitchInterrupt();
-}
-void rightWallSwitchInterruptWrap() {
-  wallSwitchTask.rightWallSwitchInterrupt();
-}
-
 /*
   ---------------------------------------------------------------
     This loop function is not used.

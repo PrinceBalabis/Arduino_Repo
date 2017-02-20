@@ -26,8 +26,9 @@ const int ledPinBoard =  D0; // LED on board on pin D0(Must call D0 in code)
 const int ceilingLightsPin =  D1; // pin to the relay which controls the ceilinglights
 const int leftWallSwitchPin =  D5; // pin connected to the left wall switch
 const int rightWallSwitchPin =  D2; // pin connected to the right wall switch
-unsigned long interruptCoolDown = 100000; // (Microseconds)The amount of time to wait untill accepting another interrupt
-
+// (Milliseconds)The amount of time to wait untill accepting another buttonpress
+// 200ms seeems to be the sweet spot for the NodeMCU
+const unsigned long interruptDebounce = 200;
 /*
   ---------------------------------------------------------------
    Execution frequency in milliseconds(does not mean sample time and does not account for execution times).

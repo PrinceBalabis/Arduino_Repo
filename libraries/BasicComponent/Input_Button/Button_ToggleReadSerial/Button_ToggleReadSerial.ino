@@ -1,7 +1,7 @@
 /*
    Reads a button connected to a pin
    and only prints out on serial whenever the button is pressed
-   The digital pin reads "1" when the pin is NOT pressed.
+   The digital pin reads "1" when the button is NOT pressed.
    It reads "0" when the pin is pressed.
 
    Having the pull-up resistor activated(INPUT_PULLUP) means there is no need
@@ -28,7 +28,7 @@
    Ground -> A2 -> B2 - Digital pin
 */
 
-const int buttonPin = 5; // Pin of the pushbutton
+const int buttonPin = 12; // Pin of the pushbutton
 bool buttonState = 0; // Save the current state of the button
 bool lastButtonState = 0; // Save the last state
 
