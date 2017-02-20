@@ -75,6 +75,7 @@ const unsigned long interruptDebounce = 200;
 // "volatile" tells the program that the variable can change at any time. This is
 // needed when using the varibles in interrupts
 volatile unsigned long lastinterruptDetected = 0; // Save last interrupt time
+volatile uint16_t counter = 0; // Count amount of presses
 
 // This is the function which is called upon interrupt
 // Keep this function as short as possible so it does not cause program malfunction,
@@ -85,11 +86,13 @@ void interruptFunction() {
   // Run time-sensitive function in the top of this function.
   unsigned long interruptDetected = millis(); // Store current time(program runtime)
   bool buttonState = digitalRead(interruptPin);
-  
+
   //Serial.print("Interrupt...");
   if (interruptDetected - lastinterruptDetected > interruptDebounce) {
     lastinterruptDetected = interruptDetected; // Save last interrupt detected
-    Serial.print("Accepted: ");
+    counter++; // Increment counter
+    Serial.print(counter);
+    Serial.print(": Accepted: ");
     Serial.println(buttonState); // You will see both 1 or 0 print out, because of the debouncing
   } else {
     //Serial.println("On cooldown");

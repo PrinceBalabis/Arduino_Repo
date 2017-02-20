@@ -76,6 +76,7 @@ const unsigned long interruptDebounce = 200;
 // needed when using the varibles in interrupts
 volatile unsigned long lastinterruptDetected = 0; // Save last interrupt time
 volatile unsigned long lastDetectionWasAPress = 0; // Save last pressed state
+volatile uint16_t counter = 0; // Count amount of presses
 
 // This is the function which is called upon interrupt
 // Keep this function as short as possible so it does not cause program malfunction,
@@ -91,7 +92,9 @@ void interruptFunction() {
   if (interruptDetected - lastinterruptDetected > interruptDebounce && !lastDetectionWasAPress) {
     lastinterruptDetected = interruptDetected; // Save last interrupt detected
     lastDetectionWasAPress = 1;
-    Serial.print("Accepted: ");
+    counter++; // Increment counter
+    Serial.print(counter);
+    Serial.print(": Accepted: ");
     Serial.println(buttonState); // You will see both 1 or 0 print out, because of the debouncing
   } else {
     lastDetectionWasAPress = 0;
