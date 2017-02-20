@@ -1,9 +1,9 @@
 /*
- * The NodeMCU has a built-in programmable button on pin 16(same as board LED)
+ * The NodeMCU has a built-in programmable button on pin D0(same as board LED)
  * Whenever the button is pressed, the LED on the NodeMCU is toggled.
  * The board LED and user buttno is on the same pin, which means this has to be
- * taken into consideration when programming. When pessing the button, the LED on the 
- * board will light up, this cannot be changed.
+ * taken into consideration when programming. When pressing the button, the LED on the 
+ * board will light up, this cannot be changed programmably
 
  
   MAJOR BUG:
@@ -26,18 +26,19 @@ const int buttonPin = D0; // Button is same pin as the board LED
 const int ledPinESP =  D4;// LED on ESP on pin D4(Must call D4 in code)
 
 void setup() {
-  pinMode(buttonPin, INPUT);
-  pinMode(ledPinESP, OUTPUT);
+  pinMode(buttonPin, INPUT); // Set pin to button as input
+  pinMode(ledPinESP, OUTPUT); // Set pin to LED as output
 }
 
 void loop() {
-  if (digitalRead(buttonPin) == HIGH)
+  if (digitalRead(buttonPin) == HIGH) // Button pressed
   {
-    digitalWrite(ledPinESP, HIGH);
+    digitalWrite(ledPinESP, HIGH); // Turn LED on
   }
-  else
+  else // Button released
   {
-    digitalWrite(ledPinESP, LOW);
+    digitalWrite(ledPinESP, LOW); // Turn LED off
+    // Read the button for next read
     pinMode(buttonPin, OUTPUT);
     digitalWrite(buttonPin, HIGH);
     pinMode(buttonPin, INPUT);

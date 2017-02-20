@@ -50,7 +50,7 @@ void setup() {
   Serial.begin(250000);
   delay(100); // Some time for serial buffer to empty
 
-  pinMode(interruptPin, INPUT);
+  pinMode(interruptPin, INPUT_PULLUP);
   //pinMode(interruptPin, OUTPUT); // Next line won't work if the pin is not set to output
   //digitalWrite(interruptPin, 0); // Set to low so we can see the rise
   //CHANGE TO RISING OR FALLING DEPENDING ON YOUR GOALS
