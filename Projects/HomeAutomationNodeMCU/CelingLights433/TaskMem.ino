@@ -13,7 +13,6 @@ class MemTask : public Task {
 
     void loop() {
       delay(10000);
-
       Serial.print(F("Free Heap: "));
       Serial.print(ESP.getFreeHeap());
       Serial.println(F(" bytes"));

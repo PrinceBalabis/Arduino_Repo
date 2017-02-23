@@ -22,7 +22,6 @@ class HTTPTask : public Task {
       Serial.print(F("Connecting to Wi-Fi: "));
       Serial.print(ssid);
       Serial.print(F("..."));
-
       WiFi.begin(ssid, password);
       uint8_t wifiCounter = 0;
       while (WiFi.status() != WL_CONNECTED && wifiCounter < wifiConnectTimeout) {
