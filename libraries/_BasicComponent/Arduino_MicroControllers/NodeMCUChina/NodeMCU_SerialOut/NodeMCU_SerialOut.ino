@@ -17,7 +17,7 @@
 
 void setup() {
   delay(2000); // Wait some time, in order to allow ESP8266 to boot
-  Serial.begin(250000);
+  Serial.begin(115200);
   delay(100); // Some time for serial buffer to empty
 
 }

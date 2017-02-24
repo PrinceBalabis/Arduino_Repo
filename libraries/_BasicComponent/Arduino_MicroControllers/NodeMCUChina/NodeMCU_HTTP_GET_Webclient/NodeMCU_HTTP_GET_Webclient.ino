@@ -27,7 +27,7 @@ const int ledPinBoard =  D0; // LED on board on pin D0(Must call D0 in code)
 
 void setup() {
   delay(2000); // Wait some time, in order to allow ESP8266 to boot
-  Serial.begin(250000);
+  Serial.begin(115200);
   delay(100); // Some time for serial buffer to empty
 
   pinMode(ledPinBoard, OUTPUT);
