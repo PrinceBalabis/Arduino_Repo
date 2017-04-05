@@ -114,41 +114,41 @@ class HTTPTask : public Task {
         client.println("<meta content='width=device-width, initial-scale=1' name='viewport'/>\n"); // Optimize page width for mobiles
 
         client.print("<h1>Home Control</h1>\n"); // Top header
-        client.print("Master switch&emsp;&emsp;");
+        client.print("Master Switch&emsp;&emsp;");
         client.println("</html>");
-        client.println("<a href=\"/masterswitch=off\"\"><button>Turn Off Everything</button></a>");
+        client.println("<a href=\"/masterswitch=off\"\"><button><font color=\"red\">Turn Off Everything</font></button></a>");
         client.println("<br>"); // new row;
         client.print("Ceiling Lights are ");
         if (ceilingLightsStatus == HIGH) {
-          client.print("on&emsp;&emsp;");
+          client.print("<font color=\"green\">On</font>&emsp;&emsp;");
           client.println("</html>");
-          client.println("<a href=\"/ceilinglights=off\"\"><button>Turn Off </button></a>");
+          client.println("<a href=\"/ceilinglights=off\"\"><button><font color=\"red\">Turn Off</font></button></a>");
         } else {
-          client.print("off&emsp;&emsp;");
+          client.print("<font color=\"red\">Off</font>&emsp;&emsp;");
           client.println("</html>");
-          client.println("<a href=\"/ceilinglights=on\"\"><button>Turn On </button></a>");
+          client.println("<a href=\"/ceilinglights=on\"\"><button><font color=\"green\">Turn On</font></button></a>");
         }
         client.println("<br>"); // new row;
         client.print("Painting Lights are ");
         if (paintingLightsStatus == HIGH) {
-          client.print("on&emsp;&emsp;");
+          client.print("<font color=\"green\">On</font>&emsp;&emsp;");
           client.println("</html>");
-          client.println("<a href=\"/paintinglights=off\"\"><button>Turn Off </button></a>");
+          client.println("<a href=\"/paintinglights=off\"\"><button><font color=\"red\">Turn Off</font></button></a>");
         } else {
-          client.print("off&emsp;&emsp;");
+          client.print("<font color=\"red\">Off</font>&emsp;&emsp;");
           client.println("</html>");
-          client.println("<a href=\"/paintinglights=on\"\"><button>Turn On </button></a>");
+          client.println("<a href=\"/paintinglights=on\"\"><button><font color=\"green\">Turn On</font></button></a>");
         }
         client.println("<br>"); // new row;
         client.print("Desk Lights are ");
         if (deskLightsStatus == HIGH) {
-          client.print("on&emsp;&emsp;");
+          client.print("<font color=\"green\">On</font>&emsp;&emsp;");
           client.println("</html>");
-          client.println("<a href=\"/desklights=off\"\"><button>Turn Off </button></a>");
+          client.println("<a href=\"/desklights=off\"\"><button><font color=\"red\">Turn Off</font></button></a>");
         } else {
-          client.print("off&emsp;&emsp;");
+          client.print("<font color=\"red\">Off</font>&emsp;&emsp;");
           client.println("</html>");
-          client.println("<a href=\"/desklights=on\"\"><button>Turn On </button></a>");
+          client.println("<a href=\"/desklights=on\"\"><button><font color=\"green\">Turn On</font></button></a>");
         }
 
         Serial.println("Client disonnected");
