@@ -3,7 +3,6 @@
 
   Server port: 6548
 
-
   MAJOR BUG:
   If it cannot connect to the Wi-Fi hotspot, try reconnecting the power/USB cable to reset the ESP
 
@@ -17,12 +16,12 @@
   -921600
   -4M(3M)
 
-    -There is noise on the ADC when receiving/transmitting on Wi-Fi
-    while using the ADC! Try to use one function at a time to minimize ADC noise
+  -There is noise on the ADC when receiving/transmitting on Wi-Fi
+  while using the ADC! Try to use one function at a time to minimize ADC noise
 
-    -Sometimes it won't be able to connect to Wi-Fi after uploading new
-    code, try pressing the RESET switch on the ESP8266, this should reset the Wi-Fi module.
-      If it didn't work, try disconnecting then reconnecting the power/USB-cable.
+  -Sometimes it won't be able to connect to Wi-Fi after uploading new
+  code, try pressing the RESET switch on the ESP8266, this should reset the Wi-Fi module.
+  If it didn't work, try disconnecting then reconnecting the power/USB-cable.
   ---------------------------------------------------------------
 */
 
@@ -36,6 +35,9 @@
 #include <Scheduler.h>
 //Needed for HTTP GET Webclient
 #include <ESP8266WiFi.h>
+//Needed for 433MHz transmitter
+#include <NewRemoteTransmitter.h>
+
 
 /*
   ---------------------------------------------------------------

@@ -32,7 +32,6 @@ void setup() {
   delay(100); // Some time for serial buffer to empty
 
   // Declare tasks
-  //  Scheduler.start(&wallswitch_task); // Declare HTTP webclient task
   Scheduler.start(&http_task); // Declare HTTP webclient task
   //Scheduler.start(&mem_task); // Declare printing of heap memory task
 

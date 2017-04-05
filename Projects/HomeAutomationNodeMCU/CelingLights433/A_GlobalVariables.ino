@@ -26,8 +26,9 @@ volatile bool taskMemStarted = 0;
   Task-to-Task communication
   ---------------------------------------------------------------
 */
-volatile bool ceilingLightsStatus = 0; // Current status of the ceilingLights
-
+volatile bool ceilingLightsStatus = 0; // Current status of the ceilinglights
+volatile bool paintingLightsStatus = 0; // Current status of the paintinglights
+volatile bool deskLightsStatus = 0; // Current status of the desklights
 
 /*
   ---------------------------------------------------------------

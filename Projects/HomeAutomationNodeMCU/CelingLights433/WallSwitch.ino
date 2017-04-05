@@ -8,6 +8,7 @@ void initWallSwitches() {
   // Initialize the reading of digital pins
   pinMode(leftWallSwitchPin, INPUT_PULLUP);
   pinMode(rightWallSwitchPin, INPUT_PULLUP);
+  delay(200);
   // Enable interrupts
   unpauseInterrupts();
 }
@@ -41,8 +42,7 @@ void leftWallSwitchInterrupt() {
 void rightWallSwitchInterrupt() {
   if (!debounceCalculation(&lastRightInterruptDetected)) {
     Serial.print("Right switch triggered: ");
-    toggleCeilingLights();
-    //togglePaintingLights();
+    togglePaintingLights();
   }
 }
 
