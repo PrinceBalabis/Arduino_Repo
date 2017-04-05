@@ -17,6 +17,14 @@
   -921600
   -4M(3M)
 */
+#include <NewRemoteTransmitter.h>
+
+// The code for the 433MHz receiver
+#define LIGHTS_433MHZ_CODE 1
+
+//Set pin in the second parameter
+NewRemoteTransmitter transmitter(15303606, D7, 260, 2);
+
 
 // constants won't change. Used here to set a pin number :
 const int ledPinESP =  D0;// LED on ESP on pin D4(Must call D4 in code)
@@ -30,7 +38,7 @@ int ledState = LOW;             // ledState used to set the LED
 unsigned long previousMillis = 0;        // will store last time LED was updated
 
 // constants won't change :
-const long interval = 500;           // interval at which to toggle (milliseconds)
+const long interval = 3000;           // interval at which to toggle (milliseconds)
 
 void setup() {
   // Wait some time, in order to allow ESP8266 to boot
@@ -39,7 +47,6 @@ void setup() {
   // set the digital pin as output:
   pinMode(ledPinESP, OUTPUT);
   pinMode(ledPinBoard, OUTPUT);
-
 }
 
 void loop() {
@@ -64,6 +71,8 @@ void loop() {
 
     // set the LED with the ledState of the variable:
     digitalWrite(ledPinBoard, ledState);
-    digitalWrite(ledPinESP, !ledState);
+    digitalWrite(ledPinESP, ledState);
+    transmitter.sendUnit(PAINTINGLIGHTS_433MHZ_CODE, ledState);
+
   }
 }
