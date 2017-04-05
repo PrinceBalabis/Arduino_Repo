@@ -2,30 +2,18 @@
   ----------------------------------------------------------------------------------------------
   GET Webserver with ability to control the built in LED using a GET-Request or UI buttons
 
+  To return webpage with status and show UI buttons = ip:port
+  To toggle LED on: ip:port/led=on
+  To toggle LED off: ip:port/led=off
+  To only get status of LED(just raw status, no HTTP components): ip:port/led=status
+
   Remove the serial.print's to improve the server performance
+  There is a stopwatch to time the processing time
 
-  To return status/show UI buttons = 192.168.10.206:80
-  To toggle LED on: 192.168.10.206:80/led=on
-  To toggle LED off: 192.168.10.206:80/led=off
-
+  How we read a GET-request works:
   The first line of the GET Request looks like this: "GET /led=on HTTP1.1"
   To get the command, we remove the first part("GET /"), then we only read from what is left, until
   a space is detected(" HTTP1.1")
-
-  When using the pins, use the Arduino macros for pins(D2 for Digital pin 2, A0 for analog pin 0 etc)
-
-  MAJOR BUG:
-  If it cannot connect to the Wi-Fi hotspot, try reconnecting the power/USB cable to reset the ESP
-
-  Put a large capacitor(or even better, several small ones) between 5V/VIN and Ground to improve reliability
-
-  Remember to install the CH340G drivers.
-
-  Board settings:
-    -NodeMCU 1.0(ESP-12E)
-    -160MHz
-    -921600
-    -4M(3M)
   ----------------------------------------------------------------------------------------------
 */
 
@@ -43,7 +31,7 @@
 */
 const char* ssid = "Router";
 const char* password = "kungarike";
-const uint16_t serverPort = 80; // Port for this server, so we can access it from the internet
+const uint16_t serverPort = 6567; // Port for this server, so we can access it from the internet
 const uint8_t wifiConnectTimeout = 5; // Amount of time(seconds) to wait until giving up on connecting to Wi-Fi AP
 const String serverTitle = "LED Control"; // Title of the webpage
 const String serverMaxPageWidth = "300"; // Max width of web page in pixels
@@ -132,26 +120,13 @@ void loop() {
   unsigned long timeStart = millis(); // Start stopwatch
   client = server.available(); // Check if a client has connected
   if (client) { // Client connected
-    // Return the HTTP header response
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-Type: text/html");
-    client.println(""); //  do not forget this one
-    client.println("<!DOCTYPE HTML>");
-    client.println("<html>");
-    client.println("<head><style>body{width:" + serverMaxPageWidth + "px;margin:0 auto;}</style></head>\n"); // Set max width of webpage in pixels
-    client.println("<title>" + serverTitle + "</title>\n"); // Set server title
-    if (serverClientAutoRefreshEnabled) client.println("<meta http-equiv=\"refresh\" content=\"" + serverClientAutoRefresh + ";URL=/\">\n"); // Tell the webbrowser to update the page every few seconds
-    client.println("<meta content='width=device-width, initial-scale=1' name='viewport'/>\n"); // Optimize page width for mobiles
-    // Return the some of the HTTP body response
-    client.print("<h1>LED Control</h1>\n"); // Header 1
-    client.print("Led pin is "); // Print the status of the LED
-
     // Check if the client sent a request/command
     while (!client.available()) delayMicroseconds(1); // Wait until the client sends some data
     // Read the first line of the request
     //Serial.print("New client...");
     client.readStringUntil('/');// Remove the first part of the request("GET /")
     String request = client.readStringUntil(' '); // Read untill space is detected("led=on HTTP1.1")
+    bool returnHTTPResponse = 0; // Send an HTTP response if this is set to 1
     if (request.length() > 0) { // Only process the request if the client has a command
       // Print the command
       //Serial.print("command: ");
@@ -161,26 +136,44 @@ void loop() {
       if (request == "led=on")  {
         digitalWrite(ledPinBoard, LOW);
         state = HIGH;
+        returnHTTPResponse = 1; // Return HTTP response
       } else if (request == "led=off")  {
         digitalWrite(ledPinBoard, HIGH);
         state = LOW;
+        returnHTTPResponse = 1; // Return HTTP response
+      } else if (request == "led=status")  {
+        client.print(state); // return the state of the LED
       }
     } else { // No command
+      returnHTTPResponse = 1; // Return HTTP response
       //Serial.print("no command...");
     }
-
-    // Return the rest of the HTTP body response
-    if (state == HIGH) {
-      client.print("on");
-      client.print("&emsp;&emsp;"); // Tabs
-      client.println("<a href=\"/led=off\"\"><button>Turn Off </button></a><br />");
-    } else {
-      client.print("off");
-      client.print("&emsp;&emsp;"); // Tabs
-      client.println("<a href=\"/led=on\"\"><button>Turn On </button></a>");
+    if (returnHTTPResponse) {
+      // Return the HTTP header response
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: text/html");
+      client.println(""); //  do not forget this one
+      client.println("<!DOCTYPE HTML>");
+      client.println("<html>");
+      client.println("<head><style>body{width:" + serverMaxPageWidth + "px;margin:0 auto;}</style></head>\n"); // Set max width of webpage in pixels
+      client.println("<title>" + serverTitle + "</title>\n"); // Set server title
+      if (serverClientAutoRefreshEnabled) client.println("<meta http-equiv=\"refresh\" content=\"" + serverClientAutoRefresh + ";URL=/\">\n"); // Tell the webbrowser to update the page every few seconds
+      client.println("<meta content='width=device-width, initial-scale=1' name='viewport'/>\n"); // Optimize page width for mobiles
+      // Return the HTTP body response
+      client.print("<h1>LED Control</h1>\n"); // Header 1
+      client.print("Led pin is "); // Print the status of the LED
+      if (state == HIGH) {
+        client.print("on");
+        client.print("&emsp;&emsp;"); // Tabs
+        client.println("<a href=\"/led=off\"\"><button>Turn Off </button></a><br />");
+      } else {
+        client.print("off");
+        client.print("&emsp;&emsp;"); // Tabs
+        client.println("<a href=\"/led=on\"\"><button>Turn On </button></a>");
+      }
+      client.println("</html>");
     }
-    client.println("</html>");
-
+    
     client.flush(); // Waits until all outgoing characters in buffer has been sent.
     //Serial.print("disonnected...");
     //Serial.print("processed in ");
