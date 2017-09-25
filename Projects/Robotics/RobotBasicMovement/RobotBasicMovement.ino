@@ -4,7 +4,6 @@
  */
 
 #include <ChibiOS_AVR.h>
-#include <firFilter.h>
 
 static WORKING_AREA(waThread1, 128);
 static WORKING_AREA(waThread2, 128);

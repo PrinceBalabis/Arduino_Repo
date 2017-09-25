@@ -1,7 +1,14 @@
-int Pin0 = 10;
-int Pin1 = 11;
-int Pin2 = 12;
-int Pin3 = 13;
+/*
+ * Made to work with the ULN2003 Driver Test Module Board and 28BYJ-48 Step motor
+ * 
+ * Make sure that the pins connected between the module and the Arduino arent backwards or
+ * else this won't function(i.e inverse the pins)
+ */
+
+int Pin0 = 9;
+int Pin1 = 10;
+int Pin2 = 11;
+int Pin3 = 12;
 int _step = 0;
 boolean dir = true;// gre
 

@@ -22,6 +22,11 @@ class HTTPTask : public Task {
       Serial.print(F("Connecting to Wi-Fi: "));
       Serial.print(ssid);
       Serial.print(F("..."));
+      ESP.wdtDisable(); // Fix Watchdog reset bug, makes NodeMCU reset after a while
+      ESP.wdtEnable(WDTO_8S); // Fix Watchdog reset bug, makes NodeMCU reset after a while
+      WiFi.disconnect(); // Fix bug where NodeMCU cant connect to Wi-Fi after soft reset
+      WiFi.setAutoConnect(true); // Fix bug where NodeMCU cant connect to Wi-Fi after soft reset
+      WiFi.mode(WIFI_STA); // Fix bug where NodeMCU cant connect to Wi-Fi after soft reset
       WiFi.begin(ssid, password);
       uint8_t wifiCounter = 0;
       while (WiFi.status() != WL_CONNECTED && wifiCounter < wifiConnectTimeout) {
@@ -57,8 +62,10 @@ class HTTPTask : public Task {
     }
 
     void loop()  {
+      ESP.wdtFeed(); // Fix Watchdog reset bug, makes NodeMCU reset after a while
       yield(); // Allow other essential backgrund tasks to run
       delay(serverUpdateExeutionFrequency); // Frequency to check if HTTP request should run
+
 
       // Check if a client has connected
       WiFiClient client = getServer()->available();

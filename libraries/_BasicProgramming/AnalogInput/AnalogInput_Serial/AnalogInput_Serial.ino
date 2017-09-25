@@ -1,10 +1,12 @@
 void setup() {
-  Serial.begin(9600); 
+  Serial.begin(115200); 
   //  analogReference(EXTERNAL);
+    analogReadResolution(12); // 0 - 4095
+
 }
 
 void loop() {           
-  Serial.print(analogRead(A0));
+  Serial.print(analogRead(A8));
   Serial.print(" ");      
   
   Serial.println();

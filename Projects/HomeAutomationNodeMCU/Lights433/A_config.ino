@@ -38,7 +38,7 @@ const int mhz433Pin = D7; // pin to the 433MHz transmitter
    then the total sample time is 15ms(10+5).
   ---------------------------------------------------------------
 */
-const uint32_t serverUpdateExeutionFrequency = 100; // How often to check if a new client has connected
+const uint32_t serverUpdateExeutionFrequency = 500; // How often to check if a new client has connected
 //const uint32_t wallSwitchUpdateExecutionFrequency = 100; // How often to check if the wall switches has been pressed
 
 /*

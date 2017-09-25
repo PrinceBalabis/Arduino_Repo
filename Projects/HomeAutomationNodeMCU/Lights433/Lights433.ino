@@ -12,7 +12,7 @@
 
   Board Uploading settings:
   -NodeMCU 1.0(ESP-12E)
-  -160MHz
+  -80MHz
   -921600
   -4M(3M)
 
