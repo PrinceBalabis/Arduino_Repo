@@ -1,10 +1,10 @@
 /*
-// Run AT twice in order to get first "OK" response!!!
+Run AT twice in order to get first "OK" response!!!
+
+Connect the bluetooth module RX pin to Arduino TX pin
+Connect the bluetooth module TX pin to Arduino RX pin
 
  */
-#include <SoftwareSerial.h>
-
-SoftwareSerial mySerial(2, 3); // RX, TX
 
 void setup()
 {
@@ -17,15 +17,15 @@ void setup()
   Serial.println("Started Bluetooth module Serial Relay Sketch!");
 
   // set the data rate for the SoftwareSerial port
-  mySerial.begin(9600);
+  Serial1.begin(9600);
  // mySerial.print("AT");
 }
 
 void loop() // run over and over
 {
-  if (mySerial.available())
-    Serial.write(mySerial.read());
+  if (Serial1.available())
+    Serial.write(Serial1.read());
   if (Serial.available())
-    mySerial.write(Serial.read());
+    Serial1.write(Serial.read());
 }
 
