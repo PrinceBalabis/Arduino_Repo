@@ -7,7 +7,7 @@ unsigned long start, finished, elapsed;
  
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(9600z);
 }
  
 void loop()
